@@ -37,5 +37,20 @@ namespace Dora
             }
             else { MessageBox.Show("Pogrešni podaci"); this.Close(); }
         }
+        private void txtUserName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (usernameInput.Text.Length > 0)
+                tbUsername.Visibility = Visibility.Collapsed;
+            else
+                tbUsername.Visibility = Visibility.Visible;
+        }
+
+        private void pwbPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (passwordInput.Password.Length > 0)
+                tbPassword.Visibility = Visibility.Collapsed;
+            else
+                tbPassword.Visibility = Visibility.Visible;
+        }
     }
 }

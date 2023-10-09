@@ -4,6 +4,17 @@
              xmlns:local="clr-namespace:Dora"
              StartupUri="Login.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/BorderStyles.xaml"/>
+                <ResourceDictionary Source="Styles/ButtonStyles.xaml"/>
+                <ResourceDictionary Source="Styles/TextBlockStyles.xaml"/>
+                <ResourceDictionary Source="Styles/TextBoxStyles.xaml"/>
+                <ResourceDictionary Source="Styles/InfoCardStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
+        
+        
     </Application.Resources>
 </Application>

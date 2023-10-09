@@ -5,27 +5,61 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dora"
         mc:Ignorable="d"
-        Title="Login to Dora" Height="400" Width="400">
-    <Grid Background="#0b5394">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" FontWeight="DemiBold" FontSize="16">Dora</Label>
-        <Label Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold">LOGIN</Label>
-        <Label Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14" FontWeight="DemiBold" Margin="5">Username:</Label>
-        <TextBox Name="usernameInput" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="18" Width="160" Margin="10"></TextBox>
-        <Label Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="14" FontWeight="DemiBold" Margin="5">Password:</Label>
-        <PasswordBox Name="passwordInput" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="18" Width="160" Margin="10"></PasswordBox>
-        <Button Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="100" Click="Button_Click">Log in</Button>
-    </Grid>
+        Background="#D7D8EC"
+        Title="Login to Dora" Height="500" Width="800">
+    <Border Style="{StaticResource BorderStyle}">
+
+        <StackPanel Orientation="Vertical"
+                    Margin="20">
+            <TextBlock Text="Login" 
+                       Style="{StaticResource LoginTextBlock}"/>
+            <Grid VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Username" 
+                     FontWeight="Bold" 
+                     FontSize="16"
+                     Grid.Row="0"
+                     Style="{StaticResource DefaultTextBlock}"/>
+                <TextBox Name="usernameInput" 
+                     Grid.Column="1"
+                     Grid.Row="1"
+                     TextChanged="txtUserName_TextChanged"       
+                     Style="{StaticResource LoginTextBox}"/>
+                <TextBlock Name="tbUsername"
+                     Text="Enter your username"
+                     IsHitTestVisible="False"
+                     Grid.Row="1"    
+                     Margin="4,0"
+                     VerticalAlignment="Center"
+                     Style="{StaticResource DefaultTextBlock}"/>
+                <TextBlock Text="Password" 
+                     FontWeight="Bold"
+                     FontSize="16"
+                     Grid.Row="2"
+                     Style="{StaticResource DefaultTextBlock}"/>
+                <PasswordBox Grid.Row="3"
+                     Name="passwordInput"
+                     Password=""
+                     PasswordChanged="pwbPassword_PasswordChanged"        
+                     Style="{StaticResource LoginPasswordBox}"/>
+                <TextBlock Name="tbPassword"
+                     Text="Enter your password"
+                     IsHitTestVisible="False"
+                     Grid.Row="3"    
+                     Margin="4,0"
+                     VerticalAlignment="Center"
+                     Style="{StaticResource DefaultTextBlock}"/>
+            </Grid>
+            <Button x:Name="LoginBtn"
+                    Click="Button_Click"
+                    Style="{StaticResource LoginButtonStyle}"/>
+            <TextBlock Text="Forgot password?"
+                       Style="{StaticResource SignUpTextBlock}"/>
+        </StackPanel>
+    </Border>
 </Window>

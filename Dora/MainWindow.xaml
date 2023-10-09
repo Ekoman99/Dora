@@ -3,31 +3,217 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+        xmlns:uc="clr-namespace:Dora.UI"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:Dora"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1600">
+        Title="MainWindow" Height="900" Width="1600" WindowStartupLocation="CenterScreen"
+        Background="Transparent">
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="80"></RowDefinition>
-            <RowDefinition></RowDefinition>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="1" Grid.Column="0">
-            <Button Height="80" FontSize="16" Click="CSV_File_Selection">Load CSV file</Button>
-        </StackPanel>
-        <TabControl Grid.Column="1" Grid.Row="1">
-            <TabItem Header="RSRP">
-                <Grid Background="#FFE5E5E5">
-                    <TextBlock Text="{Binding Path=FilePath, UpdateSourceTrigger=PropertyChanged}" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5"/>
-            </TabItem>
-        </TabControl>
 
+        <!--Menu-->
+        <Border CornerRadius="0 0 0 10">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Color="#C1C3E5" Offset="0"/>
+                    <GradientStop Color="#D7D8EC" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <StackPanel>
+                <!--user-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 35 0 0">
+                    <Border CornerRadius="10" Width="40" Height="40">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
+                                <GradientStop Color="#7f7cf1" Offset="0"/>
+                                <GradientStop Color="#27396b" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                        <TextBlock Text="AD" Foreground="#ffffff" FontSize="22" FontWeight="SemiBold"
+                                   TextAlignment="Center" VerticalAlignment="Center" Margin="3 0 0 2"/>
+                    </Border>
+
+                    <StackPanel Margin="10 0 0 0" VerticalAlignment="Center">
+                        <TextBlock Text="Admin" FontSize="15" Margin="0 0 0 5" Foreground="black"/>
+                        <TextBlock Text="Version" FontSize="11" Foreground="#7788bf"/>
+                    </StackPanel>
+                    
+                </StackPanel>
+
+                <Separator Height="0.8" Margin="20 30" Background="#46558a"/>
+                
+                <!--menu-->
+                <Button Style="{StaticResource menuButtonActive}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="ArrowDown" Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="RSRP" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <!--<fa:IconImage Icon="Home"/>-->
+                        <TextBlock Text="RSRQ" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <!--<fa:IconImage Icon="Home"/>-->
+                        <TextBlock Text="SINR" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <!--<fa:IconImage Icon="Home"/>-->
+                        <TextBlock Text="RSRP" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Click="CSV_File_Selection" Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="FileCsv" Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="Load CSV file" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="PowerOff" Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="Log off" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            
+        </Border>
+        
+        <!--Main Window-->
+        <Border Grid.Column="1" CornerRadius="0 00 10 0" >
+            <Border.Background>
+                <LinearGradientBrush StartPoint="1,0" EndPoint="0,1">
+                    <GradientStop Color="#C1C3E5" Offset="0"/>
+                    <GradientStop Color="#D7D8EC" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="200"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 0 20">
+                    <!--<Button Content="min" Style="{StaticResource topMenuButton}" Background="#DCC742" Foreground="#ffffff" Click="MinimiseButton_Click"/>
+                    <Button Content="close" Style="{StaticResource topMenuButtonRight}" Background="#EC3535" Foreground="#ffffff" Click="CloseButton_Click"/>-->
+                </StackPanel>
+                
+                <!--program name-->
+                <TextBlock Text="Dora" FontSize="26" Foreground="Black" HorizontalAlignment="Left" FontWeight="SemiBold" Margin="50 15 0 20"/>
+                
+                <!--infocards-->
+                <Grid Grid.Row="2" Margin="50 20 15 40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <uc:InfoCard Grid.Column="0" x:Name="rsrpMin" Title="Minimum" Number="No file selected" Icon="Eye" Background1="#5cc459" Background2="#81cc53" EllipseBackground1="#A5E345" EllipseBackground2="#B2EE53"/>
+                    <uc:InfoCard Grid.Column="1" x:Name="rsrpAverage" Title="Average" Number="No file selected" Icon="Eye" Background1="#3BA5D0" Background2="#349DC8" EllipseBackground1="#52C2DE" EllipseBackground2="#5ED0EC"/>
+                    <uc:InfoCard Grid.Column="2" x:Name="rsrpMax" Title="Maximum" Number="No file selected" Icon="Eye" Background1="#C54848" Background2="#C41F1F" EllipseBackground1="#F75555" EllipseBackground2="#F82727"/>
+
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="300"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!--chart-->
+                    <Border CornerRadius="20" Padding="35 25" Background="#243771" Margin="50 0 10 40">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 25">
+                                <fa:IconImage Icon="Circle" Style="{StaticResource titleIcon}"/>
+                                <TextBlock Text="Chart" Style="{StaticResource titleText}"/>
+                            </StackPanel>
+
+                            <!-- graph-->
+                            <lvc:CartesianChart Grid.Row="1" Margin="25 0 0 25">
+                                <lvc:CartesianChart.Background>
+                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                        <GradientStop Color="#26376f" Offset="0"/>
+                                        <GradientStop Color="#6a6ae4" Offset="1.5"/>
+                                    </LinearGradientBrush>
+                                </lvc:CartesianChart.Background>
+
+                                <lvc:CartesianChart.DataTooltip>
+                                    <lvc:DefaultTooltip Background="#24336a" Foreground="#d5e2ff"/>
+                                </lvc:CartesianChart.DataTooltip>
+
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis Foreground="#717eb2" ShowLabels="True">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator StrokeThickness="0"/>
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
+                                </lvc:CartesianChart.AxisX>
+
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Foreground="#717eb2" ShowLabels="True">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator StrokeThickness="0"/>
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
+                                </lvc:CartesianChart.AxisY>
+
+                                <lvc:CartesianChart.Series>
+                                    <lvc:LineSeries x:Name="cartesianChart" Stroke="#ada4fd" StrokeThickness="2" PointGeometry="{x:Null}" 
+                        LineSmoothness="0.0">
+                                        <lvc:LineSeries.Fill>
+                                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                                <GradientStop Color="#b397e2" Offset="0.4"/>
+                                                <GradientStop Color="#6a6ae4" Offset="1.2"/>
+                                            </LinearGradientBrush>
+                                        </lvc:LineSeries.Fill>
+                                    </lvc:LineSeries>
+                                </lvc:CartesianChart.Series>
+                            </lvc:CartesianChart>
+
+                        </Grid>
+                    </Border>
+                    <!--sidemenu-->
+                    <Border Grid.Column="1" CornerRadius="20" Padding="0 25" Background="#243771" Margin="15 0 47 40">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Orientation="Horizontal" Margin="20 0 0 15">
+                                <fa:IconImage Icon="Circle" Style="{StaticResource titleIcon}"/>
+                                <TextBlock Text="Settings" Style="{StaticResource titleText}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+                    
+            </Grid>
+        </Border>
     </Grid>
 </Window>
