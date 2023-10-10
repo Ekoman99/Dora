@@ -85,7 +85,7 @@ namespace Dora
                     rsrpMin.Number = maximumValue.ToString() + "dBm";
                     float averageValue = rsrpCollection.Average();
                     rsrpAverage.Number = averageValue.ToString("n2") + "dBm";
-                    MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue);
+                    /*MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue);*/
 
                     /*var lineSeries = new LineSeries
                     {
@@ -124,6 +124,12 @@ namespace Dora
 
             [Name("Time [hh:mm:ss]")]
             public DateTime Time { get; set; }
+
+            [Name(" Latitude")]
+            public float Latitude { get; set; }
+
+            [Name(" Longitude")]
+            public float Longitude { get; set; }
         }
 
         public List<CsvData> LoadDataFromCsv(string filePath)
@@ -144,6 +150,20 @@ namespace Dora
             return dataList;
         }
 
-        
+        private void MapShow_Click(object sender, RoutedEventArgs e)
+        {
+
+            var coordinates = new List<(double Latitude, double Longitude)>
+            {
+                (45.772042325977885, 15.98029954968336),
+                (45.77367361725392, 15.975119210105513),
+                // Add more coordinates as needed
+            };
+
+            var mapWindow = new RouteWindow(coordinates);
+            mapWindow.Show();
+
+
+        }
     }
 }

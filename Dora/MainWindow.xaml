@@ -209,6 +209,10 @@
                                 <fa:IconImage Icon="Circle" Style="{StaticResource titleIcon}"/>
                                 <TextBlock Text="Settings" Style="{StaticResource titleText}"/>
                             </StackPanel>
+
+                            <StackPanel Grid.Row="1">
+                                <Button Width="120" Height="30" Content="Show map" Click="MapShow_Click"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </Grid>
