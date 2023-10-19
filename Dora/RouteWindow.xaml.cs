@@ -58,6 +58,11 @@ namespace Dora
 
             // Subscribe to the mouse wheel event for zooming
             gmapControl.MouseWheel += GmapControl_MouseWheel;
+
+            this.Closed += (sender, e) =>
+            {
+                DisposeMapControl();
+            };
         }
 
         private void GmapControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -77,6 +82,11 @@ namespace Dora
                     gmapControl.Zoom -= 1;
                 }
             }
+        }
+
+        public void DisposeMapControl()
+        {
+            gmapControl.Dispose();
         }
     }
 }

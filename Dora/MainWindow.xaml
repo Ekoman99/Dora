@@ -154,46 +154,7 @@
                             </StackPanel>
 
                             <!-- graph-->
-                            <lvc:CartesianChart Grid.Row="1" Margin="25 0 0 25">
-                                <lvc:CartesianChart.Background>
-                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                        <GradientStop Color="#26376f" Offset="0"/>
-                                        <GradientStop Color="#6a6ae4" Offset="1.5"/>
-                                    </LinearGradientBrush>
-                                </lvc:CartesianChart.Background>
-
-                                <lvc:CartesianChart.DataTooltip>
-                                    <lvc:DefaultTooltip Background="#24336a" Foreground="#d5e2ff"/>
-                                </lvc:CartesianChart.DataTooltip>
-
-                                <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis Foreground="#717eb2" ShowLabels="True">
-                                        <lvc:Axis.Separator>
-                                            <lvc:Separator StrokeThickness="0"/>
-                                        </lvc:Axis.Separator>
-                                    </lvc:Axis>
-                                </lvc:CartesianChart.AxisX>
-
-                                <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis Foreground="#717eb2" ShowLabels="True">
-                                        <lvc:Axis.Separator>
-                                            <lvc:Separator StrokeThickness="0"/>
-                                        </lvc:Axis.Separator>
-                                    </lvc:Axis>
-                                </lvc:CartesianChart.AxisY>
-
-                                <lvc:CartesianChart.Series>
-                                    <lvc:LineSeries x:Name="cartesianChart" Stroke="#ada4fd" StrokeThickness="2" PointGeometry="{x:Null}" 
-                        LineSmoothness="0.0">
-                                        <lvc:LineSeries.Fill>
-                                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                                <GradientStop Color="#b397e2" Offset="0.4"/>
-                                                <GradientStop Color="#6a6ae4" Offset="1.2"/>
-                                            </LinearGradientBrush>
-                                        </lvc:LineSeries.Fill>
-                                    </lvc:LineSeries>
-                                </lvc:CartesianChart.Series>
-                            </lvc:CartesianChart>
+                            <Grid Grid.Row="1" Name="oxyplotChartContainer"/>
 
                         </Grid>
                     </Border>

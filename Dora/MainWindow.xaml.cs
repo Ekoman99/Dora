@@ -20,9 +20,9 @@ using System.Globalization;
 using CsvHelper.Configuration.Attributes;
 using System.Collections;
 using Newtonsoft.Json.Linq;
-using LiveCharts.Wpf;
-using LiveCharts.Helpers;
-using LiveCharts;
+using OxyPlot.Axes;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace Dora
 {
@@ -34,8 +34,7 @@ namespace Dora
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = this;           
-
+            this.DataContext = this;
         }        
         
         public string FilePath
@@ -43,8 +42,6 @@ namespace Dora
             get { return (string)GetValue(filePathCSVProperty); }
             set { SetValue(filePathCSVProperty, value); }
         }
-
-        public SeriesCollection SeriesCollection { get; set; }
 
         public static readonly DependencyProperty filePathCSVProperty =
             DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
@@ -65,49 +62,14 @@ namespace Dora
                     dataLoadedCSV = true;
                 }
 
-                List<CsvData> inputDataList = LoadDataFromCsv(FilePath);
-                /*dataListView.ItemsSource = csvDataList; za staru verziju i prikaz liste test*/
+                List<BaseCsvData> inputDataList = LoadDataFromCsv(FilePath);
+                /* dataListView.ItemsSource = csvDataList; za staru verziju i prikaz liste test */
 
                 if (dataLoadedCSV == true)
                 {
-                    // Create an ObservableCollection to store the data.
-                    ObservableCollection<float> rsrpCollection = new ObservableCollection<float>();
-
-                    // Copy data from the list to the ObservableCollection.
-                    foreach (var item in inputDataList)
-                    {
-                        rsrpCollection.Add(item.RSRP);
-                    }
-
-                    float minimumValue = rsrpCollection.Min();
-                    rsrpMax.Number = minimumValue.ToString() + "dBm";
-                    float maximumValue = rsrpCollection.Max();
-                    rsrpMin.Number = maximumValue.ToString() + "dBm";
-                    float averageValue = rsrpCollection.Average();
-                    rsrpAverage.Number = averageValue.ToString("n2") + "dBm";
-                    /*MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue);*/
-
-                    /*var lineSeries = new LineSeries
-                    {
-                        Values = inputDataList.AsChartValues()
-                    };*/
-
-                    List<DateTime> listTime = new List<DateTime>();
-                    List<float> listRSRP = new List<float>();
-
-                    foreach (var item in inputDataList)
-                    {
-                        listTime.Add(item.Time);
-                        listRSRP.Add(item.RSRP);
-                    }
-
-                    var chartValues = listRSRP.AsChartValues();
-                    var lineSeries = new LineSeries
-                    {
-                        Values = chartValues
-                    };
-
-                    cartesianChart.Values = chartValues;
+                    //initial screen showing RSRP
+                    ShowScreen(inputDataList, "RSRP");
+                    InsertGraph(inputDataList, "RSRP");
                 }
             }
             catch (Exception ex)
@@ -117,26 +79,12 @@ namespace Dora
             }
             
         }
-        public class CsvData
+        
+        public List<BaseCsvData> LoadDataFromCsv(string filePath)
         {
-            [Name(" RSRP [dBm]")]
-            public float RSRP { get; set; }
+            List<BaseCsvData> dataList = new List<BaseCsvData>();
 
-            [Name("Time [hh:mm:ss]")]
-            public DateTime Time { get; set; }
-
-            [Name(" Latitude")]
-            public float Latitude { get; set; }
-
-            [Name(" Longitude")]
-            public float Longitude { get; set; }
-        }
-
-        public List<CsvData> LoadDataFromCsv(string filePath)
-        {
-            List<CsvData> dataList = new List<CsvData>();
-
-            // csv file reader
+            // csv file reader storing into BaseCsvData object list
             var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
             csvConfig.Delimiter = ";";
             csvConfig.HasHeaderRecord = true; // csv header.
@@ -144,7 +92,7 @@ namespace Dora
             using (var reader = new StreamReader(filePath))
             using (var csv = new CsvReader(reader, csvConfig))
             {
-                dataList = csv.GetRecords<CsvData>().ToList();
+                dataList = csv.GetRecords<BaseCsvData>().ToList();                
             }
 
             return dataList;
@@ -162,8 +110,139 @@ namespace Dora
 
             var mapWindow = new RouteWindow(coordinates);
             mapWindow.Show();
+        }
+
+        private double CalculateAverage(List<BaseCsvData> list, string propertyName)
+        {
+            double average = 0;
+
+            if(list.Count > 0)
+            {
+                average = list.Average(item =>
+                {
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(propertyName);
+                    if (propertyInfo != null)
+                    {
+                        object propertyValue = propertyInfo.GetValue(item, null);
+                        if (propertyValue is double || propertyValue is int || propertyValue is float)
+                        {
+                            return Convert.ToDouble(propertyValue);
+                        }
+                    }
+                    return 0;
+                });
+            }
+
+            return average;
+        }
+
+        private double CalculateMinimum(List<BaseCsvData> list, string propertyName)
+        {
+            double average = 0;
+
+            if (list.Count > 0)
+            {
+                average = list.Min(item =>
+                {
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(propertyName);
+                    if (propertyInfo != null)
+                    {
+                        object propertyValue = propertyInfo.GetValue(item, null);
+                        if (propertyValue is double || propertyValue is int || propertyValue is float)
+                        {
+                            return Convert.ToDouble(propertyValue);
+                        }
+                    }
+                    return 0;
+                });
+            }
+
+            return average;
+        }
+
+        private double CalculateMaximum (List<BaseCsvData> list, string propertyName)
+        {
+            double average = 0;
+
+            if (list.Count > 0)
+            {
+                average = list.Max(item =>
+                {
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(propertyName);
+                    if (propertyInfo != null)
+                    {
+                        object propertyValue = propertyInfo.GetValue(item, null);
+                        if (propertyValue is double || propertyValue is int || propertyValue is float)
+                        {
+                            return Convert.ToDouble(propertyValue);
+                        }
+                    }
+                    return 0;
+                });
+            }
+
+            return average;
+        }
+
+        private void ShowScreen(List<BaseCsvData> inputDataList, string dataSelection)
+        {
+            double minimumValue = CalculateMinimum(inputDataList, dataSelection);
+            rsrpMax.Number = minimumValue.ToString() + "dBm";
+            double maximumValue = CalculateMaximum(inputDataList, dataSelection);
+            rsrpMin.Number = maximumValue.ToString() + "dBm";
+            double averageValue = CalculateAverage(inputDataList, dataSelection);
+            rsrpAverage.Number = averageValue.ToString("n2") + "dBm";
+            /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+            List<DateTime> listTime = new List<DateTime>();
+            List<float> listRSRP = new List<float>();
 
 
+            for (int i = 0; i < inputDataList.Count; i++)
+            {
+                listTime.Add(inputDataList[i].Time);
+                listRSRP.Add((float)inputDataList[i].RSRP);
+            }
+
+            /*var chartValues = listRSRP.AsChartValues();
+            var lineSeries = new LineSeries
+            {
+                Values = chartValues
+            };*/
+        }
+
+        private void InsertGraph (List<BaseCsvData> inputList, string dataSelection)
+        {
+            // Create a new PlotModel
+            var model = new PlotModel();
+
+            // Create an example series (you can modify this to fit your data)
+            var series = new LineSeries();
+            series.Points.Add(new DataPoint(0, 0));
+            series.Points.Add(new DataPoint(1, 1));
+            series.Points.Add(new DataPoint(2, 0));
+            series.Points.Add(new DataPoint(3, 2));
+
+            // Add the series to the model
+            model.Series.Add(series);
+
+            // Create axes (if needed)
+            var xAxis = new LinearAxis { Position = AxisPosition.Bottom };
+            var yAxis = new LinearAxis { Position = AxisPosition.Left };
+
+            // Add axes to the model (if needed)
+            model.Axes.Add(xAxis);
+            model.Axes.Add(yAxis);
+
+            // Replace the chart container with the OxyPlot chart
+            var oxyplotChart = new OxyPlot.Wpf.PlotView
+            {
+                Model = model,
+        };
+
+            oxyplotChartContainer.Children.Clear();
+            oxyplotChartContainer.Children.Add(oxyplotChart);
         }
     }
+    
 }
