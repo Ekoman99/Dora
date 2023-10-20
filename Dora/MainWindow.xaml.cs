@@ -186,9 +186,9 @@ namespace Dora
 
         private void ShowScreen(List<BaseCsvData> inputDataList, string dataSelection)
         {
-            double minimumValue = CalculateMinimum(inputDataList, dataSelection);
+            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
             rsrpMax.Number = minimumValue.ToString() + "dBm";
-            double maximumValue = CalculateMaximum(inputDataList, dataSelection);
+            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
             rsrpMin.Number = maximumValue.ToString() + "dBm";
             double averageValue = CalculateAverage(inputDataList, dataSelection);
             rsrpAverage.Number = averageValue.ToString("n2") + "dBm";
@@ -214,10 +214,17 @@ namespace Dora
         private void InsertGraph (List<BaseCsvData> inputList, string dataSelection)
         {
             // Create a new PlotModel
-            var model = new PlotModel();
+            var model = new PlotModel
+            {
+                Background = OxyColors.Transparent, // Transparent background
+                PlotAreaBorderColor = OxyColors.Transparent,
+            };
 
-            // Create an example series (you can modify this to fit your data)
-            var series = new LineSeries();
+            // Create series
+            var series = new LineSeries
+            {
+                Color = OxyColors.White,
+            };
 
             for (int i = 0; i < inputList.Count; i++)
             {
@@ -228,8 +235,30 @@ namespace Dora
             model.Series.Add(series);
 
             // Create axes (if needed)
-            var xAxis = new LinearAxis { Position = AxisPosition.Bottom };
-            var yAxis = new LinearAxis { Position = AxisPosition.Left };
+            var xAxis = new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Time", // Optional axis title
+                MajorGridlineColor = OxyColor.FromRgb(255, 255, 255), // White gridlines
+                MajorGridlineStyle = LineStyle.Solid, // Gridline style
+                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
+                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
+                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+            };
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "RSRP",
+                MajorGridlineColor = OxyColor.FromRgb(255, 255, 255),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+            };
 
             // Add axes to the model (if needed)
             model.Axes.Add(xAxis);
@@ -239,7 +268,8 @@ namespace Dora
             var oxyplotChart = new OxyPlot.Wpf.PlotView
             {
                 Model = model,
-        };
+                Background = Brushes.Transparent
+            };
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
