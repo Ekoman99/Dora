@@ -218,10 +218,11 @@ namespace Dora
 
             // Create an example series (you can modify this to fit your data)
             var series = new LineSeries();
-            series.Points.Add(new DataPoint(0, 0));
-            series.Points.Add(new DataPoint(1, 1));
-            series.Points.Add(new DataPoint(2, 0));
-            series.Points.Add(new DataPoint(3, 2));
+
+            for (int i = 0; i < inputList.Count; i++)
+            {
+                series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), (double)inputList[i].RSRP));
+            }
 
             // Add the series to the model
             model.Series.Add(series);
