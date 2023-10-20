@@ -239,7 +239,7 @@ namespace Dora
             {
                 Position = AxisPosition.Bottom,
                 Title = "Time", // Optional axis title
-                MajorGridlineColor = OxyColor.FromRgb(255, 255, 255), // White gridlines
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
                 MajorGridlineStyle = LineStyle.Solid, // Gridline style
                 AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
                 TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
@@ -251,13 +251,13 @@ namespace Dora
             {
                 Position = AxisPosition.Left,
                 Title = "RSRP",
-                MajorGridlineColor = OxyColor.FromRgb(255, 255, 255),
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
                 MajorGridlineStyle = LineStyle.Solid,
                 AxislineColor = OxyColor.FromRgb(255, 255, 255),
                 TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255),
             };
 
             // Add axes to the model (if needed)
