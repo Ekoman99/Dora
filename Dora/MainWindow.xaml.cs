@@ -63,7 +63,9 @@ namespace Dora
                 }
 
                 List<BaseCsvData> inputDataList = LoadDataFromCsv(FilePath);
-                /* dataListView.ItemsSource = csvDataList; za staru verziju i prikaz liste test */
+
+                status4G = Check4G(inputDataList);
+                status5G = Check5G(inputDataList);
 
                 if (dataLoadedCSV == true)
                 {
@@ -79,6 +81,9 @@ namespace Dora
             }
             
         }
+
+        private bool status4G;
+        private bool status5G;
         
         public List<BaseCsvData> LoadDataFromCsv(string filePath)
         {
@@ -273,6 +278,24 @@ namespace Dora
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
+        }
+
+        private bool Check5G(List<BaseCsvData> list)
+        {
+            if(list.Any(var => var.Tech == "EN-DC"))
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        private bool Check4G(List<BaseCsvData> list)
+        {
+            if (list.Any(var => var.Tech == "LTE CA" || var.Tech == "LTE FDD"))
+            {
+                return true;
+            }
+            else return false;
         }
     }
     
