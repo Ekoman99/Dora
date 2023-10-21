@@ -46,6 +46,8 @@ namespace Dora
         public static readonly DependencyProperty filePathCSVProperty =
             DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
+        List<BaseCsvData> inputDataList;
+
         public void CSV_File_Selection(object sender, RoutedEventArgs e)
         {
             bool dataLoadedCSV = false;
@@ -62,7 +64,7 @@ namespace Dora
                     dataLoadedCSV = true;
                 }
 
-                List<BaseCsvData> inputDataList = LoadDataFromCsv(FilePath);
+                inputDataList = LoadDataFromCsv(FilePath);
 
                 status4G = Check4G(inputDataList);
                 status5G = Check5G(inputDataList);
@@ -297,6 +299,8 @@ namespace Dora
             }
             else return false;
         }
+
+        
     }
     
 }

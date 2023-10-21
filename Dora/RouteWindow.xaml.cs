@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using GMap.NET;
+using System.Drawing;
+using System.Windows.Media.Effects;
 
 namespace Dora
 {
@@ -28,35 +30,53 @@ namespace Dora
         {
             InitializeComponent();
 
-            // Create and configure the GMapControl
+            /*List<(double Latitude, double Longitude)> coordinates = 
+                list.Select(data => (data.Latitude, data.Longitude)).ToList();*/
+
             gmapControl = new GMapControl();
 
-            // Set the dimensions of the GMapControl
-            gmapControl.Width = 800; // Adjust as needed
-            gmapControl.Height = 460; // Adjust as needed
+            gmapControl.Width = 800;
+            gmapControl.Height = 460;
 
-            // Initialize GMapControl
+            // init
             gmapControl.MapProvider = GMapProviders.OpenStreetMap;
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             gmapControl.MinZoom = 1;
             gmapControl.MaxZoom = 18;
-            gmapControl.Zoom = 12;
-            gmapControl.SetPositionByKeywords("Zagreb, Croatia");
-            gmapControl.Position = new PointLatLng(coordinates[0].Latitude, coordinates[0].Longitude);
+            gmapControl.Zoom = 14;
 
-            // Add markers for coordinates
+
+            // markers
             foreach (var (latitude, longitude) in coordinates)
             {
                 GMapMarker marker = new GMapMarker(new PointLatLng(latitude, longitude));
+                marker.Shape = new Ellipse()
+                {
+                    Fill = new SolidColorBrush(Colors.Red),
+                    Width = 4,
+                    Height = 4,
+                    // Without Margin, circles would not be centered.
+                    Margin = new Thickness(-4, -4, 0, 0)
+                };
+
                 gmapControl.Markers.Add(marker);
             }
 
-            // Add the GMapControl to the window's grid
+            // list of points
+            List<PointLatLng> routePoints = coordinates.Select(c => new PointLatLng(c.Latitude, c.Longitude)).ToList();            
+
+            GMapRoute route = new GMapRoute(routePoints);
+            route.Shape = new Path() { Stroke = new SolidColorBrush(Colors.Blue), StrokeThickness = 3 };
+            gmapControl.Markers.Add(route);
+
+            gmapControl.Position = new PointLatLng(coordinates[0].Latitude, coordinates[0].Longitude);
+
+            // add GMapControl to grid
             Grid grid = new Grid();
             grid.Children.Add(gmapControl);
             this.Content = grid;
 
-            // Subscribe to the mouse wheel event for zooming
+            // zooming
             gmapControl.MouseWheel += GmapControl_MouseWheel;
 
             this.Closed += (sender, e) =>
