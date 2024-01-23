@@ -55,7 +55,7 @@ namespace Dora
                     Fill = new SolidColorBrush(Colors.Red),
                     Width = 0, // 0 da se ne vide markeri
                     Height = 4,
-                    // Without Margin, circles would not be centered.
+                    // centering with margin.
                     Margin = new Thickness(-4, -4, 0, 0)
                 };
 
@@ -69,7 +69,7 @@ namespace Dora
             route.Shape = new Path() { Stroke = new SolidColorBrush(Colors.Blue), StrokeThickness = 3 };
             gmapControl.Markers.Add(route);
 
-            gmapControl.Position = new PointLatLng(coordinates[0].Latitude, coordinates[0].Longitude);
+            gmapControl.Position = new PointLatLng(coordinates[0].Latitude, coordinates[0].Longitude); //prva pozicija na ruti
 
             // add GMapControl to grid
             Grid grid = new Grid();
@@ -77,7 +77,7 @@ namespace Dora
             this.Content = grid;
 
             // zooming
-            gmapControl.MouseWheel += GmapControl_MouseWheel;
+            gmapControl.MouseWheel += GmapControlMouseWheel;
 
             this.Closed += (sender, e) =>
             {
@@ -85,18 +85,18 @@ namespace Dora
             };
         }
 
-        private void GmapControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void GmapControlMouseWheel(object sender, MouseWheelEventArgs e)
         {
             e.Handled = true;
 
             if (e.Delta > 0)
             {
-                // Zoom in
+                // zoom in
                 gmapControl.Zoom += 1;
             }
             else if (e.Delta < 0)
             {
-                // Zoom out, with a minimum zoom level
+                // zoom out
                 if (gmapControl.Zoom > 1)
                 {
                     gmapControl.Zoom -= 1;

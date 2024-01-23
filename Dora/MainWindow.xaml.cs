@@ -49,14 +49,17 @@ namespace Dora
         List<BaseCsvData> inputDataList;
         List<(double Latitude, double Longitude)> mainGeoList;
 
-        public void CSV_File_Selection(object sender, RoutedEventArgs e)
+        private bool status4G;
+        private bool status5G;
+
+        public void CSVFileSelect(object sender, RoutedEventArgs e)
         {
             bool dataLoadedCSV = false;
 
             try
             {
                 Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-                dlg.Filter = "CSV Files (*.csv)|*.csv"; //filter za prikaz samo.csv
+                dlg.Filter = "CSV Files (*.csv)|*.csv"; // filter za prikaz samo.csv
                 Nullable<bool> result = dlg.ShowDialog();
 
                 if (result == true)
@@ -65,7 +68,7 @@ namespace Dora
                     dataLoadedCSV = true;
                 }
 
-                inputDataList = LoadDataFromCsv(FilePath);
+                inputDataList = LoadCSV(FilePath);
 
                 status4G = Check4G(inputDataList);
                 status5G = Check5G(inputDataList);
@@ -74,7 +77,7 @@ namespace Dora
 
                 if (dataLoadedCSV == true)
                 {
-                    //initial screen showing RSRP
+                    // incijalno pokazivanje RSRP
                     ShowScreen(inputDataList, "RSRP");
                     InsertGraph(inputDataList, "RSRP");
                 }
@@ -85,19 +88,16 @@ namespace Dora
                 FilePath = string.Empty; // filepath ostaje prazan
             }
             
-        }
+        }        
 
-        private bool status4G;
-        private bool status5G;
-
-        public List<BaseCsvData> LoadDataFromCsv(string filePath)
+        public List<BaseCsvData> LoadCSV(string filePath)
         {
             List<BaseCsvData> dataList = new List<BaseCsvData>();
 
-            // Define the culture settings that use a comma as the decimal separator
+            // definiranje kulture zbog zareza kao separatora
             var commaDecimalCulture = new CultureInfo("hr-HR");
 
-            // csv file reader storing into BaseCsvData object list
+            // pohrana .csv u listu objekata
             var csvConfig = new CsvConfiguration(commaDecimalCulture);
             csvConfig.Delimiter = ";";
             csvConfig.HasHeaderRecord = true; // csv header.
@@ -111,7 +111,7 @@ namespace Dora
             return dataList;
         }
 
-        private void MapShow_Click(object sender, RoutedEventArgs e)
+        private void ShowMap(object sender, RoutedEventArgs e)
         {
 
             /*var coordinates = new List<(double Latitude, double Longitude)>
@@ -275,7 +275,7 @@ namespace Dora
             InsertGraph(inputDataList, "Downlink");
         }
 
-        private double CalculateAverage(List<BaseCsvData> list, string propertyName)
+        private double CalculateAverage(List<BaseCsvData> list, string dataSelection)
         {
             double average = 0;
 
@@ -283,7 +283,7 @@ namespace Dora
             {
                 average = list.Average(item =>
                 {
-                    var propertyInfo = typeof(BaseCsvData).GetProperty(propertyName);
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
                     if (propertyInfo != null)
                     {
                         object propertyValue = propertyInfo.GetValue(item, null);
@@ -299,15 +299,15 @@ namespace Dora
             return average;
         }
 
-        private double CalculateMinimum(List<BaseCsvData> list, string propertyName)
+        private double CalculateMinimum(List<BaseCsvData> list, string dataSelection)
         {
-            double average = 0;
+            double min = 0;
 
             if (list.Count > 0)
             {
-                average = list.Min(item =>
+                min = list.Min(item =>
                 {
-                    var propertyInfo = typeof(BaseCsvData).GetProperty(propertyName);
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
                     if (propertyInfo != null)
                     {
                         object propertyValue = propertyInfo.GetValue(item, null);
@@ -320,18 +320,18 @@ namespace Dora
                 });
             }
 
-            return average;
+            return min;
         }
 
-        private double CalculateMaximum (List<BaseCsvData> list, string propertyName)
+        private double CalculateMaximum(List<BaseCsvData> list, string dataSelection)
         {
-            double average = 0;
+            double max = 0;
 
             if (list.Count > 0)
             {
-                average = list.Max(item =>
+                max = list.Max(item =>
                 {
-                    var propertyInfo = typeof(BaseCsvData).GetProperty(propertyName);
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
                     if (propertyInfo != null)
                     {
                         object propertyValue = propertyInfo.GetValue(item, null);
@@ -344,7 +344,7 @@ namespace Dora
                 });
             }
 
-            return average;
+            return max;
         }
 
         private void ShowScreen(List<BaseCsvData> inputDataList, string dataSelection)
@@ -376,14 +376,14 @@ namespace Dora
 
         private void InsertGraph (List<BaseCsvData> inputList, string dataSelection)
         {
-            // Create a new PlotModel
+            // kreiranje modela za plotanje
             var model = new PlotModel
             {
-                Background = OxyColors.Transparent, // Transparent background
+                Background = OxyColors.Transparent,
                 PlotAreaBorderColor = OxyColors.Transparent,
             };
 
-            // Create series
+            // serija točaka
             var series = new LineSeries
             {
                 Color = OxyColors.White,
@@ -391,16 +391,15 @@ namespace Dora
 
             for (int i = 0; i < inputDataList.Count; i++)
             {
-                // Assuming inputDataList[i] is an object with properties like Time and RSRQ
+                // uzimanje vrijednosti, dataSelection definira koji property 
                 object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
 
                 series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
             }
 
-            // Add the series to the model
             model.Series.Add(series);
 
-            // Create axes (if needed)
+            // definiranje osi
             var xAxis = new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
@@ -426,11 +425,10 @@ namespace Dora
                 TicklineColor = OxyColor.FromRgb(255, 255, 255),
             };
 
-            // Add axes to the model (if needed)
             model.Axes.Add(xAxis);
             model.Axes.Add(yAxis);
 
-            // Replace the chart container with the OxyPlot chart
+            // zamjena plota, ako postoji
             var oxyplotChart = new OxyPlot.Wpf.PlotView
             {
                 Model = model,
@@ -439,13 +437,7 @@ namespace Dora
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
-        }
-
-        private void DeleteGraph()
-        {
-            Model model = null;
-            oxyplotChartContainer.Children.Clear();
-        }
+        }        
 
         private void Logoff(object sender, RoutedEventArgs e)
         {

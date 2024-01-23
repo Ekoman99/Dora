@@ -93,7 +93,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button Click="CSV_File_Selection" Style="{StaticResource menuButton}">
+                <Button Click="CSVFileSelect" Style="{StaticResource menuButton}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="FileCsv" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="Load CSV file" Style="{StaticResource menuButtonText}"/>
@@ -186,7 +186,7 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="1">
-                                <Button Width="120" Height="30" Content="Show map" Click="MapShow_Click"/>
+                                <Button Width="120" Height="30" Content="Show map" Click="ShowMap"/>
                             </StackPanel>
                         </Grid>
                     </Border>

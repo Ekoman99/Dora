@@ -28,7 +28,7 @@
                 <TextBox Name="usernameInput" 
                      Grid.Column="1"
                      Grid.Row="1"
-                     TextChanged="txtUserName_TextChanged"       
+                     TextChanged="UsernameboxChanged"       
                      Style="{StaticResource LoginTextBox}"/>
                 <TextBlock Name="tbUsername"
                      Text="Enter your username"
@@ -45,7 +45,7 @@
                 <PasswordBox Grid.Row="3"
                      Name="passwordInput"
                      Password=""
-                     PasswordChanged="pwbPassword_PasswordChanged"        
+                     PasswordChanged="PasswordboxChanged"        
                      Style="{StaticResource LoginPasswordBox}"/>
                 <TextBlock Name="tbPassword"
                      Text="Enter your password"
