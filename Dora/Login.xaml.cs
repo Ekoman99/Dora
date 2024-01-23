@@ -31,8 +31,8 @@ namespace Dora
 
             if (/*user == "admin" && pass == "admin"*/true)
             {
-                MainWindow mWin = new MainWindow();
-                mWin.Show();
+                MainWindow mainWin = new MainWindow();
+                mainWin.Show();
                 this.Close();
             }
             else { MessageBox.Show("Pogrešni podaci"); this.Close(); }

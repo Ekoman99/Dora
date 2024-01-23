@@ -51,31 +51,45 @@
                 <Separator Height="0.8" Margin="20 30" Background="#46558a"/>
                 
                 <!--menu-->
-                <Button Style="{StaticResource menuButtonActive}">
+                <Button Style="{StaticResource menuButtonActive}" Click="ClickRSRP">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="ArrowDown" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="RSRP" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}">
+                <Button Style="{StaticResource menuButton}" Click="ClickRSRQ">
                     <StackPanel Orientation="Horizontal">
                         <!--<fa:IconImage Icon="Home"/>-->
                         <TextBlock Text="RSRQ" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}">
+                <Button Style="{StaticResource menuButton}" Click="ClickSINR">
                     <StackPanel Orientation="Horizontal">
                         <!--<fa:IconImage Icon="Home"/>-->
                         <TextBlock Text="SINR" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}">
+                <Button Style="{StaticResource menuButton}" Click="ClickCQI">
                     <StackPanel Orientation="Horizontal">
                         <!--<fa:IconImage Icon="Home"/>-->
-                        <TextBlock Text="RSRP" Style="{StaticResource menuButtonText}"/>
+                        <TextBlock Text="CQI" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource menuButton}" Click="ClickPing">
+                    <StackPanel Orientation="Horizontal">
+                        <!--<fa:IconImage Icon="Home"/>-->
+                        <TextBlock Text="Ping" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource menuButton}" Click="ClickThroughput">
+                    <StackPanel Orientation="Horizontal">
+                        <!--<fa:IconImage Icon="Home"/>-->
+                        <TextBlock Text="Throughput" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
@@ -86,7 +100,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}">
+                <Button Style="{StaticResource menuButton}" Click="Logoff">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="PowerOff" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="Log off" Style="{StaticResource menuButtonText}"/>

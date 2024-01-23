@@ -199,6 +199,7 @@
     <Compile Include="BaseCsvData.cs" />
     <Compile Include="DataIngestion.cs" />
     <Compile Include="DataTransformation.cs" />
+    <Compile Include="GeoData.cs" />
     <Compile Include="RouteWindow.xaml.cs">
       <DependentUpon>RouteWindow.xaml</DependentUpon>
     </Compile>

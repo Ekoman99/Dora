@@ -53,7 +53,7 @@ namespace Dora
                 marker.Shape = new Ellipse()
                 {
                     Fill = new SolidColorBrush(Colors.Red),
-                    Width = 4,
+                    Width = 0, // 0 da se ne vide markeri
                     Height = 4,
                     // Without Margin, circles would not be centered.
                     Margin = new Thickness(-4, -4, 0, 0)
