@@ -51,6 +51,7 @@ namespace Dora
 
         private bool status4G;
         private bool status5G;
+        private bool loadComplete = false;
 
         public void CSVFileSelect(object sender, RoutedEventArgs e)
         {
@@ -66,6 +67,7 @@ namespace Dora
                 {
                     FilePath = dlg.FileName;
                     dataLoadedCSV = true;
+                    loadComplete = true;
                 }
 
                 inputDataList = LoadCSV(FilePath);
@@ -121,8 +123,16 @@ namespace Dora
                 // Add more coordinates as needed
             };*/
 
-            var mapWindow = new RouteWindow(mainGeoList);
-            mapWindow.Show();
+            if (loadComplete == false)
+            {
+                MessageBox.Show("Nije učitano");
+            }
+            else
+            {
+                var mapWindow = new RouteWindow(mainGeoList);
+                mapWindow.Show();
+            }
+            
         }
 
         private void ClickRSRP(object sender, RoutedEventArgs e)
