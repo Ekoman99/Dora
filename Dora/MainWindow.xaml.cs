@@ -125,7 +125,8 @@ namespace Dora
 
             if (loadComplete == false)
             {
-                MessageBox.Show("Nije učitano");
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
             }
             else
             {

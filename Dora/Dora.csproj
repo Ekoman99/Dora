@@ -206,6 +206,9 @@
     <Compile Include="UI\InfoCard.xaml.cs">
       <DependentUpon>InfoCard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UnloadedWarning.xaml.cs">
+      <DependentUpon>UnloadedWarning.xaml</DependentUpon>
+    </Compile>
     <Page Include="Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -250,6 +253,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\InfoCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UnloadedWarning.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
