@@ -167,13 +167,15 @@ namespace Dora
         private void ClickRSRP(object sender, RoutedEventArgs e)
         {
             string dataSelection = "RSRP";
+            string unit = "dBm";
+            chartTitle.Text = dataSelection;
 
             double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = minimumValue.ToString() + "dBm";
+            rsrpMax.Number = minimumValue.ToString() + unit;
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + "dBm";
+            rsrpMin.Number = maximumValue.ToString() + unit;
             double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = averageValue.ToString("n2") + "dBm";
+            rsrpAverage.Number = averageValue.ToString("n2") + unit;
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
             List<DateTime> listTime = new List<DateTime>();
@@ -192,13 +194,15 @@ namespace Dora
         private void ClickRSRQ(object sender, RoutedEventArgs e)
         {
             string dataSelection = "RSRQ";
+            string unit = "dB";
+            chartTitle.Text = dataSelection;
 
             double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpMax.Number = minimumValue.ToString() + "dB";
+            rsrpMax.Number = minimumValue.ToString() + unit;
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + "dB";
+            rsrpMin.Number = maximumValue.ToString() + unit;
             double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpAverage.Number = averageValue.ToString("n2") + "dB";
+            rsrpAverage.Number = averageValue.ToString("n2") + unit;
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
             List<DateTime> listTime = new List<DateTime>();
@@ -217,13 +221,15 @@ namespace Dora
         private void ClickSINR(object sender, RoutedEventArgs e)
         {
             string dataSelection = "SINR";
+            string unit = "dB";
+            chartTitle.Text = dataSelection;
 
             double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpMax.Number = minimumValue.ToString() + "dB";
+            rsrpMax.Number = minimumValue.ToString() + unit;
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + "dB";
+            rsrpMin.Number = maximumValue.ToString() + unit;
             double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpAverage.Number = averageValue.ToString("n2") + "dB";
+            rsrpAverage.Number = averageValue.ToString("n2") + unit;
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
             List<DateTime> listTime = new List<DateTime>();
@@ -242,13 +248,14 @@ namespace Dora
         private void ClickCQI(object sender, RoutedEventArgs e)
         {
             string dataSelection = "CQI";
+            chartTitle.Text = dataSelection;
 
             double minimumValue = CalculateMaximum(inputDataList, dataSelection);
             rsrpMax.Number = minimumValue.ToString() + "";
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
             rsrpMin.Number = maximumValue.ToString() + "";
-            double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = averageValue.ToString("n2") + "";
+            double averageValue = Math.Floor(CalculateAverage(inputDataList, dataSelection)); // CQI je cjelobrojna vrijednost
+            rsrpAverage.Number = averageValue.ToString("n0") + "";
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
             List<DateTime> listTime = new List<DateTime>();
@@ -267,13 +274,15 @@ namespace Dora
         private void ClickPing(object sender, RoutedEventArgs e)
         {
             string dataSelection = "Ping";
+            string unit = "ms";
+            chartTitle.Text = dataSelection;
 
             double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = minimumValue.ToString() + "ms";
+            rsrpMax.Number = minimumValue.ToString() + unit;
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + "ms";
+            rsrpMin.Number = maximumValue.ToString() + unit;
             double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = averageValue.ToString("n2") + "ms";
+            rsrpAverage.Number = averageValue.ToString("n2") + unit;
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
             List<DateTime> listTime = new List<DateTime>();
@@ -292,13 +301,15 @@ namespace Dora
         private void ClickThroughput(object sender, RoutedEventArgs e)
         {
             string dataSelection = "Downlink";
+            string unit = "Mbps";
+            chartTitle.Text = dataSelection;
 
             double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = (minimumValue*8).ToString("n2") + "Mbps";
+            rsrpMax.Number = (minimumValue*8).ToString("n2") + unit;
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = (maximumValue*8).ToString("n2") + "Mbps";
+            rsrpMin.Number = (maximumValue*8).ToString("n2") + unit;
             double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = (averageValue*8).ToString("n2") + "Mbps";
+            rsrpAverage.Number = (averageValue*8).ToString("n2") + unit;
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
             List<DateTime> listTime = new List<DateTime>();
@@ -495,7 +506,15 @@ namespace Dora
                 // uzimanje vrijednosti, dataSelection definira koji property 
                 object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
 
-                series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                if (dataValue != null)
+                {
+                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                }
+                else
+                {
+                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); //convert bi null pretvorio u 0.0, ovime to izbjegavamo
+                }
+                
             }
 
             model.Series.Add(series);

@@ -165,7 +165,7 @@
 
                             <StackPanel Orientation="Horizontal" Margin="0 0 0 25">
                                 <fa:IconImage Icon="Circle" Style="{StaticResource titleIcon}"/>
-                                <TextBlock Text="Chart" Style="{StaticResource titleText}"/>
+                                <TextBlock x:Name="chartTitle" Text="Chart" Style="{StaticResource titleText}"/>
                             </StackPanel>
 
                             <!-- graph-->
