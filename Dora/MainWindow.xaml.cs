@@ -216,11 +216,11 @@ namespace Dora
         {
             string dataSelection = "SINR";
 
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+            double minimumValue = CalculateMaximum(inputDataList, dataSelection, true, 50000);
             rsrpMax.Number = minimumValue.ToString() + "dB";
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
             rsrpMin.Number = maximumValue.ToString() + "dB";
-            double averageValue = CalculateAverage(inputDataList, dataSelection);
+            double averageValue = CalculateAverage(inputDataList, dataSelection, true, 50000);
             rsrpAverage.Number = averageValue.ToString("n2") + "dB";
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
@@ -337,6 +337,34 @@ namespace Dora
             return count > 0 ? sum / count : 0; // div0
         }
 
+        private double CalculateAverage(List<BaseCsvData> list, string dataSelection, bool peakNormalization, int peakLimit)
+        {
+            double sum = 0;
+            int count = 0;
+
+            if (list.Count > 0)
+            {
+                foreach (var item in list)
+                {
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+                    if (propertyInfo != null)
+                    {
+                        object propertyValue = propertyInfo.GetValue(item, null);
+                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
+                        {
+                            if (Convert.ToInt32(propertyValue) < peakLimit && peakNormalization == true)
+                            {
+                                sum += Convert.ToDouble(propertyValue);
+                                count++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return count > 0 ? sum / count : 0; // div0
+        }
+
         private double CalculateMinimum(List<BaseCsvData> list, string dataSelection)
         {
             double min = double.MaxValue;
@@ -382,6 +410,33 @@ namespace Dora
                         if (propertyValue is double || propertyValue is int || propertyValue is float)
                         {
                             return Convert.ToDouble(propertyValue);
+                        }
+                    }
+                    return 0;
+                });
+            }
+
+            return max;
+        }
+
+        private double CalculateMaximum(List<BaseCsvData> list, string dataSelection, bool peakNormalization, int peakLimit)
+        {
+            double max = 0;
+
+            if (list.Count > 0)
+            {
+                max = list.Max(item =>
+                {
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+                    if (propertyInfo != null)
+                    {
+                        object propertyValue = propertyInfo.GetValue(item, null);
+                        if (propertyValue is double || propertyValue is int || propertyValue is float)
+                        {                          
+                            if (Convert.ToInt32(propertyValue) < peakLimit && peakNormalization == true)
+                            {
+                                return Convert.ToDouble(propertyValue);
+                            }
                         }
                     }
                     return 0;
