@@ -55,10 +55,12 @@ namespace Dora
         private bool status4G;
         private bool status5G;
         private bool loadComplete = false;
+        bool peakSmooth = true;
+        int peakUpperLimit = 50000;
 
         public void CSVFileSelect(object sender, RoutedEventArgs e)
         {
-            bool dataLoadedCSV = false;
+            bool dataLoadedCSV = false;            
 
             try
             {
@@ -191,11 +193,11 @@ namespace Dora
         {
             string dataSelection = "RSRQ";
 
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+            double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
             rsrpMax.Number = minimumValue.ToString() + "dB";
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
             rsrpMin.Number = maximumValue.ToString() + "dB";
-            double averageValue = CalculateAverage(inputDataList, dataSelection);
+            double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
             rsrpAverage.Number = averageValue.ToString("n2") + "dB";
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
@@ -216,11 +218,11 @@ namespace Dora
         {
             string dataSelection = "SINR";
 
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection, true, 50000);
+            double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
             rsrpMax.Number = minimumValue.ToString() + "dB";
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
             rsrpMin.Number = maximumValue.ToString() + "dB";
-            double averageValue = CalculateAverage(inputDataList, dataSelection, true, 50000);
+            double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
             rsrpAverage.Number = averageValue.ToString("n2") + "dB";
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
