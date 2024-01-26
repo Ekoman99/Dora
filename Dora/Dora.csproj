@@ -53,7 +53,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>dorica2.ico</ApplicationIcon>
+    <ApplicationIcon>Icons\dorica2.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BruTile, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -196,10 +196,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BaseCsvData.cs" />
-    <Compile Include="DataIngestion.cs" />
-    <Compile Include="DataTransformation.cs" />
-    <Compile Include="GeoData.cs" />
+    <Compile Include="Data\BaseCsvData.cs" />
+    <Compile Include="Data\GeoData.cs" />
     <Compile Include="RouteWindow.xaml.cs">
       <DependentUpon>RouteWindow.xaml</DependentUpon>
     </Compile>
@@ -289,7 +287,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="dorica.ico" />
+    <Resource Include="Icons\dorica.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
@@ -304,7 +302,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="dorica2.ico" />
+    <Resource Include="Icons\dorica2.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

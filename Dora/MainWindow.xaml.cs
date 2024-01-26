@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using CsvHelper;
 using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
+using CsvHelper.Expressions;
+using CsvHelper.Delegates;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -83,6 +86,8 @@ namespace Dora
                     ShowScreen(inputDataList, "RSRP");
                     InsertGraph(inputDataList, "RSRP");
                 }
+
+                Console.WriteLine(inputDataList.Count);
             }
             catch (Exception ex)
             {
@@ -102,15 +107,36 @@ namespace Dora
             // pohrana .csv u listu objekata
             var csvConfig = new CsvConfiguration(commaDecimalCulture);
             csvConfig.Delimiter = ";";
-            csvConfig.HasHeaderRecord = true; // csv header.
+            csvConfig.HasHeaderRecord = true; // csv header
 
             using (var reader = new StreamReader(filePath))
             using (var csv = new CsvReader(reader, csvConfig))
             {
+                csv.Context.TypeConverterCache.AddConverter<int?>(new NullableIntTypeConverter());
                 dataList = csv.GetRecords<BaseCsvData>().ToList();
             }
 
             return dataList;
+        }
+
+        public class NullableIntTypeConverter : DefaultTypeConverter
+        {
+            public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+            {
+                if (string.IsNullOrWhiteSpace(text) || text.Equals("N/A", StringComparison.OrdinalIgnoreCase))
+                {
+                    return null; // Return null for "N/A" or empty values
+                }
+
+                if (int.TryParse(text, out int result))
+                {
+                    return result; // Return the parsed integer value
+                }
+                else
+                {
+                    throw new Exception ("errror");
+                }
+            }
         }
 
         private void ShowMap(object sender, RoutedEventArgs e)
@@ -288,46 +314,53 @@ namespace Dora
 
         private double CalculateAverage(List<BaseCsvData> list, string dataSelection)
         {
-            double average = 0;
+            double sum = 0;
+            int count = 0;
 
-            if(list.Count > 0)
+            if (list.Count > 0)
             {
-                average = list.Average(item =>
+                foreach (var item in list)
                 {
                     var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
                     if (propertyInfo != null)
                     {
                         object propertyValue = propertyInfo.GetValue(item, null);
-                        if (propertyValue is double || propertyValue is int || propertyValue is float)
+                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
                         {
-                            return Convert.ToDouble(propertyValue);
+                            sum += Convert.ToDouble(propertyValue);
+                            count++;
                         }
                     }
-                    return 0;
-                });
+                }
             }
 
-            return average;
+            return count > 0 ? sum / count : 0; // div0
         }
 
         private double CalculateMinimum(List<BaseCsvData> list, string dataSelection)
         {
-            double min = 0;
+            double min = double.MaxValue;
 
             if (list.Count > 0)
             {
-                min = list.Min(item =>
+                min = list.Where(item =>
                 {
                     var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
                     if (propertyInfo != null)
                     {
                         object propertyValue = propertyInfo.GetValue(item, null);
-                        if (propertyValue is double || propertyValue is int || propertyValue is float)
+                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
                         {
-                            return Convert.ToDouble(propertyValue);
+                            return true; // samo numeričke vrijednosti
                         }
                     }
-                    return 0;
+                    return false;
+                })
+                .Min(item =>
+                {
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+                    object propertyValue = propertyInfo.GetValue(item, null);
+                    return Convert.ToDouble(propertyValue);
                 });
             }
 
