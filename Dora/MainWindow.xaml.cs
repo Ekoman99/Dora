@@ -225,7 +225,7 @@ namespace Dora
                     listRSRP.Add((float)inputDataList[i].RSRQ);
                 }
 
-                InsertGraph(inputDataList, "RSRQ");
+                InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
             }
             else
             {
@@ -260,7 +260,7 @@ namespace Dora
                     listRSRP.Add((float)inputDataList[i].RSRQ);
                 }
 
-                InsertGraph(inputDataList, "SINR");
+                InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
             }
             else
             {
@@ -534,7 +534,7 @@ namespace Dora
             };*/
         }
 
-        private void InsertGraph (List<BaseCsvData> inputList, string dataSelection)
+        private void InsertGraph(List<BaseCsvData> inputList, string dataSelection)
         {
             // kreiranje modela za plotanje
             var model = new PlotModel
@@ -605,7 +605,87 @@ namespace Dora
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
-        }        
+        }
+
+        private void InsertGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        {
+            // kreiranje modela za plotanje
+            var model = new PlotModel
+            {
+                Background = OxyColors.Transparent,
+                PlotAreaBorderColor = OxyColors.Transparent,
+            };
+
+            // serija točaka
+            var series = new LineSeries
+            {
+                Color = OxyColors.White,
+            };
+
+            for (int i = 0; i < inputDataList.Count; i++)
+            {
+                // uzimanje vrijednosti, dataSelection definira koji property 
+                object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                if (dataValue != null)
+                {
+                    if (peakNormalization == true && (int)dataValue < peakLimit)
+                    {
+                        series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                    }
+                    else
+                    {
+                        series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN));
+                    }
+                }
+                else
+                {
+                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); //convert bi null pretvorio u 0.0, ovime to izbjegavamo
+                }
+
+            }
+
+            model.Series.Add(series);
+
+            // definiranje osi
+            var xAxis = new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Time", // Optional axis title
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
+                MajorGridlineStyle = LineStyle.Solid, // Gridline style
+                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
+                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
+                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+            };
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = dataSelection,
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255),
+            };
+
+            model.Axes.Add(xAxis);
+            model.Axes.Add(yAxis);
+
+            // zamjena plota, ako postoji
+            var oxyplotChart = new OxyPlot.Wpf.PlotView
+            {
+                Model = model,
+                Background = Brushes.Transparent
+            };
+
+            oxyplotChartContainer.Children.Clear();
+            oxyplotChartContainer.Children.Add(oxyplotChart);
+        }
 
         private void Logoff(object sender, RoutedEventArgs e)
         {
