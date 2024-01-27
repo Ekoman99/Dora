@@ -535,7 +535,7 @@ namespace Dora
             };*/
         }
 
-        public PlotModel model;
+        public PlotModel model; //model mora biti dostupan zbog interakcije grafa i exportera
 
         public void InsertGraph(List<BaseCsvData> inputList, string dataSelection)
         {
@@ -692,20 +692,31 @@ namespace Dora
 
         public void ExportGraph(object sender, RoutedEventArgs e)
         {
-            // dialog window
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "PNG Image (*.png)|*.png";
-            saveFileDialog.Title = "Export Chart as PNG";
-            saveFileDialog.ShowDialog();
-
-            // kad se zada ime, exportaj
-            if (!string.IsNullOrWhiteSpace(saveFileDialog.FileName))
+            if(loadComplete == true)
             {
-                using (var stream = File.Create(saveFileDialog.FileName))
+                // dialog window
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "PNG Image (*.png)|*.png";
+                saveFileDialog.Title = "Export Chart as PNG";
+                saveFileDialog.ShowDialog();
+
+                // kad se zada ime, exportaj
+                if (!string.IsNullOrWhiteSpace(saveFileDialog.FileName))
                 {
-                    var exporter = new OxyPlot.Wpf.PngExporter { Width = 800, Height = 600 };
-                    exporter.Export(model, stream);
+                    using (var stream = File.Create(saveFileDialog.FileName))
+                    {
+                        /*model.Background = OxyColors.LightGray; // Set background color
+                        ((LineSeries)model.Series[0]).Color = OxyColors.Red; // Change line color* --> test za promjenu izgleda grafa */
+
+                        var exporter = new OxyPlot.Wpf.PngExporter { Width = 800, Height = 600 };
+                        exporter.Export(model, stream);
+                    }
                 }
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
             }
         }
 
