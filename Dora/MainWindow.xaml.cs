@@ -535,7 +535,7 @@ namespace Dora
             };*/
         }
 
-        public PlotModel model; //model mora biti dostupan zbog interakcije grafa i exportera
+        private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
 
         public void InsertGraph(List<BaseCsvData> inputList, string dataSelection)
         {
@@ -547,28 +547,52 @@ namespace Dora
             };
 
             // serija točaka
-            var series = new LineSeries
+            var seriesBlue = new LineSeries
             {
-                Color = OxyColors.White,
+                Color = OxyColors.Blue,
             };
 
-            for (int i = 0; i < inputDataList.Count; i++)
+            var seriesRed = new LineSeries
             {
-                // uzimanje vrijednosti, dataSelection definira koji property 
-                object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+                Color = OxyColors.Red,
+            };
 
-                if (dataValue != null)
+            for (int i = 0; i < inputDataList.Count; i++) // ---> test za dualno pokazivanje grafa
+            {
+                if (inputDataList[i].Tech == "EN-DC")
                 {
-                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                    // uzimanje vrijednosti, dataSelection definira koji property 
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G, upisujem
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 4G upisujem nullove
+                    }
+                    else
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 5G vrijednosti                        
+                    }
                 }
-                else
+                else if (inputDataList[i].Tech == "LTE FDD" || inputDataList[i].Tech == "LTE CA")
                 {
-                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); //convert bi null pretvorio u 0.0, ovime to izbjegavamo
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G, upisujem
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 5G upisujem nullove
+                    }
+                    else
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 4G vrijednosti
+                    }
                 }
-                
+
             }
 
-            model.Series.Add(series);
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
 
             // definiranje osi
             var xAxis = new DateTimeAxis
@@ -620,9 +644,14 @@ namespace Dora
             };
 
             // serija točaka
-            var series = new LineSeries
+            var seriesBlue = new LineSeries // 4G
             {
-                Color = OxyColors.White,
+                Color = OxyColors.Blue,
+            };
+
+            var seriesRed = new LineSeries // 5G
+            {
+                Color = OxyColors.Red,
             };
 
             for (int i = 0; i < inputDataList.Count; i++)
@@ -630,25 +659,49 @@ namespace Dora
                 // uzimanje vrijednosti, dataSelection definira koji property 
                 object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
 
-                if (dataValue != null)
+                if (inputDataList[i].Tech == "EN-DC")
                 {
-                    if (peakNormalization == true && (int)dataValue < peakLimit)
+                    if (dataValue != null)
                     {
-                        series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                        if (peakNormalization == true && (int)dataValue < peakLimit)
+                        {
+                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G i zadovoljava uvjete
+                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 4G upisujem nullove
+                        }
+                        else
+                        {
+                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // 5G vrijednost ne zadovoljava uvjete
+                        }
                     }
                     else
                     {
-                        series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN));
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 5G vrijednosti
                     }
                 }
                 else
                 {
-                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); //convert bi null pretvorio u 0.0, ovime to izbjegavamo
+                    if (dataValue != null)
+                    {
+                        if (peakNormalization == true && (int)dataValue < peakLimit)
+                        {
+                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G i zadovoljava uvjete
+                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 5G upisujem nullove
+                        }
+                        else
+                        {
+                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // 4G vrijednost ne zadovoljava uvjete
+                        }
+                    }
+                    else
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 4G vrijednosti
+                    }
                 }
 
             }
 
-            model.Series.Add(series);
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
 
             // definiranje osi
             var xAxis = new DateTimeAxis
@@ -758,6 +811,7 @@ namespace Dora
 
             return coordinatesList;
         }
+
 
 
     }
