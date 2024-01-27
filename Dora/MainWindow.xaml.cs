@@ -166,163 +166,211 @@ namespace Dora
 
         private void ClickRSRP(object sender, RoutedEventArgs e)
         {
-            string dataSelection = "RSRP";
-            string unit = "dBm";
-            chartTitle.Text = dataSelection;
-
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = minimumValue.ToString() + unit;
-            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + unit;
-            double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = averageValue.ToString("n2") + unit;
-            /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
+            if (loadComplete == true)
             {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRQ);
-            }
+                string dataSelection = "RSRP";
+                string unit = "dBm";
+                chartTitle.Text = dataSelection;
 
-            InsertGraph(inputDataList, "RSRP");
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                rsrpMax.Number = minimumValue.ToString() + unit;
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                rsrpMin.Number = maximumValue.ToString() + unit;
+                double averageValue = CalculateAverage(inputDataList, dataSelection);
+                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                List<DateTime> listTime = new List<DateTime>();
+                List<float> listRSRP = new List<float>();
+
+
+                for (int i = 0; i < inputDataList.Count; i++)
+                {
+                    listTime.Add(inputDataList[i].Time);
+                    listRSRP.Add((float)inputDataList[i].RSRQ);
+                }
+
+                InsertGraph(inputDataList, "RSRP");
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
         }
 
         private void ClickRSRQ(object sender, RoutedEventArgs e)
         {
-            string dataSelection = "RSRQ";
-            string unit = "dB";
-            chartTitle.Text = dataSelection;
-
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpMax.Number = minimumValue.ToString() + unit;
-            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + unit;
-            double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpAverage.Number = averageValue.ToString("n2") + unit;
-            /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
+            if (loadComplete == true)
             {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRQ);
-            }
+                string dataSelection = "RSRQ";
+                string unit = "dB";
+                chartTitle.Text = dataSelection;
 
-            InsertGraph(inputDataList, "RSRQ");
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
+                rsrpMax.Number = minimumValue.ToString() + unit;
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                rsrpMin.Number = maximumValue.ToString() + unit;
+                double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
+                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                List<DateTime> listTime = new List<DateTime>();
+                List<float> listRSRP = new List<float>();
+
+
+                for (int i = 0; i < inputDataList.Count; i++)
+                {
+                    listTime.Add(inputDataList[i].Time);
+                    listRSRP.Add((float)inputDataList[i].RSRQ);
+                }
+
+                InsertGraph(inputDataList, "RSRQ");
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
         }
 
         private void ClickSINR(object sender, RoutedEventArgs e)
         {
-            string dataSelection = "SINR";
-            string unit = "dB";
-            chartTitle.Text = dataSelection;
-
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpMax.Number = minimumValue.ToString() + unit;
-            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + unit;
-            double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-            rsrpAverage.Number = averageValue.ToString("n2") + unit;
-            /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
+            if (loadComplete == true)
             {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRQ);
-            }
+                string dataSelection = "SINR";
+                string unit = "dB";
+                chartTitle.Text = dataSelection;
 
-            InsertGraph(inputDataList, "SINR");
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
+                rsrpMax.Number = minimumValue.ToString() + unit;
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                rsrpMin.Number = maximumValue.ToString() + unit;
+                double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
+                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                List<DateTime> listTime = new List<DateTime>();
+                List<float> listRSRP = new List<float>();
+
+
+                for (int i = 0; i < inputDataList.Count; i++)
+                {
+                    listTime.Add(inputDataList[i].Time);
+                    listRSRP.Add((float)inputDataList[i].RSRQ);
+                }
+
+                InsertGraph(inputDataList, "SINR");
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
         }
 
         private void ClickCQI(object sender, RoutedEventArgs e)
         {
-            string dataSelection = "CQI";
-            chartTitle.Text = dataSelection;
-
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = minimumValue.ToString() + "";
-            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + "";
-            double averageValue = Math.Floor(CalculateAverage(inputDataList, dataSelection)); // CQI je cjelobrojna vrijednost
-            rsrpAverage.Number = averageValue.ToString("n0") + "";
-            /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
+            if (loadComplete == true)
             {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRQ);
-            }
+                string dataSelection = "CQI";
+                chartTitle.Text = dataSelection;
 
-            InsertGraph(inputDataList, "CQI");
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                rsrpMax.Number = minimumValue.ToString() + "";
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                rsrpMin.Number = maximumValue.ToString() + "";
+                double averageValue = Math.Floor(CalculateAverage(inputDataList, dataSelection)); // CQI je cjelobrojna vrijednost
+                rsrpAverage.Number = averageValue.ToString("n0") + "";
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                List<DateTime> listTime = new List<DateTime>();
+                List<float> listRSRP = new List<float>();
+
+
+                for (int i = 0; i < inputDataList.Count; i++)
+                {
+                    listTime.Add(inputDataList[i].Time);
+                    listRSRP.Add((float)inputDataList[i].RSRQ);
+                }
+
+                InsertGraph(inputDataList, "CQI");
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
         }
 
         private void ClickPing(object sender, RoutedEventArgs e)
         {
-            string dataSelection = "Ping";
-            string unit = "ms";
-            chartTitle.Text = dataSelection;
-
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = minimumValue.ToString() + unit;
-            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + unit;
-            double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = averageValue.ToString("n2") + unit;
-            /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
+            if (loadComplete == true)
             {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRQ);
-            }
+                string dataSelection = "Ping";
+                string unit = "ms";
+                chartTitle.Text = dataSelection;
 
-            InsertGraph(inputDataList, "Ping");
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                rsrpMax.Number = minimumValue.ToString() + unit;
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                rsrpMin.Number = maximumValue.ToString() + unit;
+                double averageValue = CalculateAverage(inputDataList, dataSelection);
+                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                List<DateTime> listTime = new List<DateTime>();
+                List<float> listRSRP = new List<float>();
+
+
+                for (int i = 0; i < inputDataList.Count; i++)
+                {
+                    listTime.Add(inputDataList[i].Time);
+                    listRSRP.Add((float)inputDataList[i].RSRQ);
+                }
+
+                InsertGraph(inputDataList, "Ping");
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
         }
 
         private void ClickThroughput(object sender, RoutedEventArgs e)
         {
-            string dataSelection = "Downlink";
-            string unit = "Mbps";
-            chartTitle.Text = dataSelection;
-
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = (minimumValue*8).ToString("n2") + unit;
-            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = (maximumValue*8).ToString("n2") + unit;
-            double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = (averageValue*8).ToString("n2") + unit;
-            /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
+            if (loadComplete == true)
             {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRQ);
-            }
+                string dataSelection = "Downlink";
+                string unit = "Mbps";
+                chartTitle.Text = dataSelection;
 
-            InsertGraph(inputDataList, "Downlink");
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                rsrpMax.Number = (minimumValue * 8).ToString("n2") + unit;
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                rsrpMin.Number = (maximumValue * 8).ToString("n2") + unit;
+                double averageValue = CalculateAverage(inputDataList, dataSelection);
+                rsrpAverage.Number = (averageValue * 8).ToString("n2") + unit;
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                List<DateTime> listTime = new List<DateTime>();
+                List<float> listRSRP = new List<float>();
+
+
+                for (int i = 0; i < inputDataList.Count; i++)
+                {
+                    listTime.Add(inputDataList[i].Time);
+                    listRSRP.Add((float)inputDataList[i].RSRQ);
+                }
+
+                InsertGraph(inputDataList, "Downlink");
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
         }
 
         private double CalculateAverage(List<BaseCsvData> list, string dataSelection)
