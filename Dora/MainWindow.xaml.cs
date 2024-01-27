@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Win32;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
@@ -534,10 +535,12 @@ namespace Dora
             };*/
         }
 
-        private void InsertGraph(List<BaseCsvData> inputList, string dataSelection)
+        public PlotModel model;
+
+        public void InsertGraph(List<BaseCsvData> inputList, string dataSelection)
         {
             // kreiranje modela za plotanje
-            var model = new PlotModel
+            model = new PlotModel
             {
                 Background = OxyColors.Transparent,
                 PlotAreaBorderColor = OxyColors.Transparent,
@@ -605,12 +608,12 @@ namespace Dora
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
-        }
+        }       
 
-        private void InsertGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        public void InsertGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
         {
             // kreiranje modela za plotanje
-            var model = new PlotModel
+            model = new PlotModel
             {
                 Background = OxyColors.Transparent,
                 PlotAreaBorderColor = OxyColors.Transparent,
@@ -685,6 +688,25 @@ namespace Dora
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
+        } 
+
+        public void ExportGraph(object sender, RoutedEventArgs e)
+        {
+            // dialog window
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "PNG Image (*.png)|*.png";
+            saveFileDialog.Title = "Export Chart as PNG";
+            saveFileDialog.ShowDialog();
+
+            // kad se zada ime, exportaj
+            if (!string.IsNullOrWhiteSpace(saveFileDialog.FileName))
+            {
+                using (var stream = File.Create(saveFileDialog.FileName))
+                {
+                    var exporter = new OxyPlot.Wpf.PngExporter { Width = 800, Height = 600 };
+                    exporter.Export(model, stream);
+                }
+            }
         }
 
         private void Logoff(object sender, RoutedEventArgs e)

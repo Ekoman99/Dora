@@ -179,6 +179,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <StackPanel Orientation="Horizontal" Margin="20 0 0 15">
@@ -187,7 +188,10 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="1">
+                                <Separator Opacity="0" Height="10"/>
                                 <Button Width="120" Height="30" Content="Show map" Click="ShowMap"/>
+                                <Separator Opacity="0" Height="20"/>
+                                <Button Width="120" Height="30" Content="Export graph" Click="ExportGraph"/>
                             </StackPanel>
                         </Grid>
                     </Border>
