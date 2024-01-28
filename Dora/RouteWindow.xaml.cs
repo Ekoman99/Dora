@@ -44,6 +44,7 @@ namespace Dora
             gmapControl.MinZoom = 1;
             gmapControl.MaxZoom = 18;
             gmapControl.Zoom = 14;
+            gmapControl.ShowCenter = false;
 
 
             // markers
