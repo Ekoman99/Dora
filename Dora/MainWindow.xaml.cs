@@ -547,14 +547,14 @@ namespace Dora
             };
 
             // serija točaka
-            var seriesBlue = new LineSeries
+            var seriesBlue = new LineSeries // 4G
             {
-                Color = OxyColors.Blue,
+                Color = OxyColor.Parse("#349DC8"),
             };
 
-            var seriesRed = new LineSeries
+            var seriesRed = new LineSeries // 5G
             {
-                Color = OxyColors.Red,
+                Color = OxyColor.Parse("#C41F1F"),
             };
 
             for (int i = 0; i < inputDataList.Count; i++) // ---> test za dualno pokazivanje grafa
@@ -574,7 +574,7 @@ namespace Dora
                         seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 5G vrijednosti                        
                     }
                 }
-                else if (inputDataList[i].Tech == "LTE FDD" || inputDataList[i].Tech == "LTE CA")
+                else
                 {
                     object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
 
@@ -646,12 +646,12 @@ namespace Dora
             // serija točaka
             var seriesBlue = new LineSeries // 4G
             {
-                Color = OxyColors.Blue,
+                Color = OxyColor.Parse("#349DC8"),
             };
 
             var seriesRed = new LineSeries // 5G
             {
-                Color = OxyColors.Red,
+                Color = OxyColor.Parse("#C41F1F"),
             };
 
             for (int i = 0; i < inputDataList.Count; i++)
