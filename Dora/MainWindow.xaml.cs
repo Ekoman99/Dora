@@ -27,6 +27,7 @@ using Newtonsoft.Json.Linq;
 using OxyPlot.Axes;
 using OxyPlot;
 using OxyPlot.Series;
+using System.Linq.Expressions;
 
 namespace Dora
 {
@@ -58,6 +59,7 @@ namespace Dora
         private bool loadComplete = false;
         bool peakSmooth = true;
         int peakUpperLimit = 50000;
+        string tabSelector = "RSRP";
 
         public void CSVFileSelect(object sender, RoutedEventArgs e)
         {
@@ -159,8 +161,19 @@ namespace Dora
             }
             else
             {
-                var mapWindow = new RouteWindow(mainGeoList);
-                mapWindow.Show();
+                if (tabSelector == "Downlink")
+                {
+                    List<(int Id, string Color)> boje = AssignColors(inputDataList, "Downlink");
+
+                    var mapWindow = new RouteWindow(mainGeoList, boje);
+                    mapWindow.Show();
+                }
+
+                else
+                {
+                    var mapWindow = new RouteWindow(mainGeoList);
+                    mapWindow.Show();
+                }
             }
             
         }
@@ -192,6 +205,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "RSRP");
+                tabSelector = "RSRP";
             }
             else
             {
@@ -227,6 +241,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
+                tabSelector = "RSRQ";
             }
             else
             {
@@ -262,6 +277,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
+                tabSelector = "SINR";
             }
             else
             {
@@ -296,6 +312,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "CQI");
+                tabSelector = "CQI";
             }
             else
             {
@@ -331,6 +348,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "Ping");
+                tabSelector = "Ping";
             }
             else
             {
@@ -366,6 +384,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "Downlink");
+                tabSelector = "Downlink";
             }
             else
             {
@@ -810,6 +829,58 @@ namespace Dora
             }
 
             return coordinatesList;
+        }
+
+        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection)
+        {
+            //trenutno za throughtput
+
+            List<(int Id, string Color)> colorAssignments = new List<(int Id, string Color)>();
+
+            if (list.Count > 0)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var item = list[i];
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+                    if (propertyInfo != null)
+                    {
+                        int id = i;
+                        string color = "Red";
+
+                        object propertyValue = propertyInfo.GetValue(item, null);
+                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
+                        {                            
+                            double value = Convert.ToDouble(propertyValue);
+                            if (value < (4/8))
+                            {
+                                color = "Red";
+                            }
+                            else if (value >= (4/8) && value < (20/8))
+                            {
+                                color = "Yellow";
+                            }
+                            else if (value >= (20/8) && value < (50/8))
+                            {
+                                color = "Blue";
+                            }
+                            else
+                            {
+                                color = "Green";
+                            }
+
+                            colorAssignments.Add((id, color));
+                        }
+
+                        else
+                        {
+                            colorAssignments.Add((id, null));
+                        }
+                    }
+                }
+            }
+
+            return colorAssignments;
         }
 
 
