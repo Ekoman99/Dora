@@ -28,6 +28,7 @@ using OxyPlot.Axes;
 using OxyPlot;
 using OxyPlot.Series;
 using System.Linq.Expressions;
+using Dora.Data;
 
 namespace Dora
 {
@@ -53,13 +54,14 @@ namespace Dora
 
         List<BaseCsvData> inputDataList;
         List<(double Latitude, double Longitude)> mainGeoList;
+        Dictionary<string, List<MapColorIntervals>> dataIntervals;
 
         private bool status4G;
         private bool status5G;
         private bool loadComplete = false;
         bool peakSmooth = true;
         int peakUpperLimit = 50000;
-        string tabSelector = "RSRP";
+        string tabSelector = "RSRP"; //program prvo učita RSRP
 
         public void CSVFileSelect(object sender, RoutedEventArgs e)
         {
@@ -876,6 +878,48 @@ namespace Dora
                         {
                             colorAssignments.Add((id, null));
                         }
+                    }
+                }
+            }
+
+            return colorAssignments;
+        }
+
+        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> dataIntervals)
+        {
+            List<(int Id, string Color)> colorAssignments = new List<(int Id, string Color)>();
+
+            if (list.Count > 0 && dataIntervals.ContainsKey(dataSelection))
+            {
+                var intervals = dataIntervals[dataSelection];
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var item = list[i];
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+
+                    if (propertyInfo != null)
+                    {
+                        int id = i;
+                        string color = null;
+
+                        object propertyValue = propertyInfo.GetValue(item, null);
+
+                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
+                        {
+                            double value = Convert.ToDouble(propertyValue);
+
+                            foreach (var interval in intervals)
+                            {
+                                if (value >= interval.lowerLimit && value < interval.upperLimit)
+                                {
+                                    color = interval.colorLimit;
+                                    break;
+                                }
+                            }
+                        }
+
+                        colorAssignments.Add((id, color));
                     }
                 }
             }

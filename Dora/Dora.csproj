@@ -198,6 +198,7 @@
     </ApplicationDefinition>
     <Compile Include="Data\BaseCsvData.cs" />
     <Compile Include="Data\GeoData.cs" />
+    <Compile Include="Data\MapColorIntervals.cs" />
     <Compile Include="RouteWindow.xaml.cs">
       <DependentUpon>RouteWindow.xaml</DependentUpon>
     </Compile>
@@ -303,6 +304,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\dorica2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Data\IntervalStorage.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
