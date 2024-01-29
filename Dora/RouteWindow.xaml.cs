@@ -132,7 +132,7 @@ namespace Dora
             {
                 GMapRoute routeSegment = new GMapRoute(new List<PointLatLng> { routePoints[i], routePoints[i + 1] });
 
-                int colorIndex = i % boje.Count; // Cycle through colors
+                int colorIndex = i % boje.Count;
                 string colorName;
                 if (boje[colorIndex].Color != null)
                 {
@@ -145,13 +145,13 @@ namespace Dora
 
                 Color selectedColor = (Color)ColorConverter.ConvertFromString(colorName);
 
-                // Set antialiasing options for the route segment shape
+                // antialiasing za ljepšu crtu
                 routeSegment.Shape = new Path()
                 {
                     Stroke = new SolidColorBrush(selectedColor),
                     StrokeThickness = 3,
-                    SnapsToDevicePixels = true, // Ensures alignment with device pixels
-                    UseLayoutRounding = true    // Improves rendering quality by aligning to layout pixels
+                    SnapsToDevicePixels = true,
+                    UseLayoutRounding = true    // improve rendering quality by aligning to layout pixels
                 };
 
                 gmapControl.Markers.Add(routeSegment);

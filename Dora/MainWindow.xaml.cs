@@ -146,6 +146,54 @@ namespace Dora
             }
         }
 
+        private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
+        {
+            string[] lines = File.ReadAllLines(@"C:\Users\Josip\source\repos\Dora\Dora\Data\IntervalStorage.txt");
+
+            string currentKey = null;
+            List<MapColorIntervals> currentList = null;
+
+            foreach (string line in lines)
+            {
+                if (line.StartsWith("["))
+                {
+                    currentKey = line.Trim('[', ']');
+                    currentList = new List<MapColorIntervals>();
+                    dataIntervals.Add(currentKey, currentList);
+                }
+                else if (currentKey != null && currentList != null)
+                {
+                    string[] parts = line.Split(' ');
+                    if (parts.Length == 4)
+                    {
+                        MapColorIntervals intervals = new MapColorIntervals
+                        {
+                            intervalID = int.TryParse(parts[0], out int id) ? id : default,
+                            lowerLimit = int.TryParse(parts[1], out int lower) ? lower : default,
+                            upperLimit = int.TryParse(parts[2], out int upper) ? upper : default,
+                            colorLimit = string.IsNullOrWhiteSpace(parts[3]) ? null : parts[3]
+                        };
+                        currentList.Add(intervals);
+                    }
+                    else if (parts.Length > 0 && parts.Length < 4)
+                    {
+                        // ako nema sva 4 dijela, null
+                        MapColorIntervals intervals = new MapColorIntervals
+                        {
+                            intervalID = default,
+                            lowerLimit = default,
+                            upperLimit = default,
+                            colorLimit = null
+                        };
+                        currentList.Add(intervals);
+                    }
+                    // exception potreban
+                }
+            }
+
+            return dataIntervals;
+        }
+
         private void ShowMap(object sender, RoutedEventArgs e)
         {
 
@@ -927,7 +975,7 @@ namespace Dora
             return colorAssignments;
         }
 
-
+        
 
     }
     
