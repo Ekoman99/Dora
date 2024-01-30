@@ -54,6 +54,7 @@ namespace Dora
 
         List<BaseCsvData> inputDataList;
         List<(double Latitude, double Longitude)> mainGeoList;
+
         Dictionary<string, List<MapColorIntervals>> dataIntervals;
 
         private bool status4G;
@@ -150,6 +151,8 @@ namespace Dora
         {
             string[] lines = File.ReadAllLines(@"C:\Users\Josip\source\repos\Dora\Dora\Data\IntervalStorage.txt");
 
+            Dictionary<string, List<MapColorIntervals>> data2Intervals = new Dictionary<string, List<MapColorIntervals>>();
+
             string currentKey = null;
             List<MapColorIntervals> currentList = null;
 
@@ -159,9 +162,9 @@ namespace Dora
                 {
                     currentKey = line.Trim('[', ']');
                     currentList = new List<MapColorIntervals>();
-                    dataIntervals.Add(currentKey, currentList);
+                    data2Intervals.Add(currentKey, currentList);
                 }
-                else if (currentKey != null && currentList != null)
+                else if (currentKey != null && currentList != null && !line.StartsWith("-"))
                 {
                     string[] parts = line.Split(' ');
                     if (parts.Length == 4)
@@ -177,7 +180,7 @@ namespace Dora
                     }
                     else if (parts.Length > 0 && parts.Length < 4)
                     {
-                        // ako nema sva 4 dijela, null
+                        // default vrijednosti ako je blok neispravan
                         MapColorIntervals intervals = new MapColorIntervals
                         {
                             intervalID = default,
@@ -187,7 +190,6 @@ namespace Dora
                         };
                         currentList.Add(intervals);
                     }
-                    // exception potreban
                 }
             }
 
