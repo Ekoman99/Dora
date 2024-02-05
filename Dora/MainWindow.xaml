@@ -79,6 +79,13 @@
                     </StackPanel>
                 </Button>
 
+                <Button Style="{StaticResource menuButton}" Click="ClickPCI">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="TowerCell" Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="PCI" Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </Button>
+
                 <Button Style="{StaticResource menuButton}" Click="ClickPing">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="ArrowsUpDown" Style="{StaticResource menuButtonIcon}"/>

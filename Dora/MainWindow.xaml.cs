@@ -229,7 +229,7 @@ namespace Dora
             {
                 string dataSelection = "RSRP";
                 string unit = "dBm";
-                chartTitle.Text = dataSelection;
+                chartTitle.Text = dataSelection;                
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + unit;
@@ -251,6 +251,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "RSRP");
                 tabSelector = "RSRP";
+                InfoCardText();
             }
             else
             {
@@ -265,7 +266,7 @@ namespace Dora
             {
                 string dataSelection = "RSRQ";
                 string unit = "dB";
-                chartTitle.Text = dataSelection;
+                chartTitle.Text = dataSelection;                
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 greenCard.Number = minimumValue.ToString() + unit;
@@ -287,6 +288,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
                 tabSelector = "RSRQ";
+                InfoCardText();
             }
             else
             {
@@ -323,6 +325,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
                 tabSelector = "SINR";
+                InfoCardText();
             }
             else
             {
@@ -358,6 +361,42 @@ namespace Dora
 
                 InsertGraph(inputDataList, "CQI");
                 tabSelector = "CQI";
+                InfoCardText();
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
+        }
+
+        private void ClickPCI(object sender, RoutedEventArgs e)
+        {
+            if (loadComplete == true)
+            {
+                string dataSelection = "PCI";
+                chartTitle.Text = dataSelection;
+
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                greenCard.Number = minimumValue.ToString() + "";
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                redCard.Number = maximumValue.ToString() + "";
+                blueCard.Number = "N/A";
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                List<DateTime> listTime = new List<DateTime>();
+                List<float> listRSRP = new List<float>();
+
+
+                for (int i = 0; i < inputDataList.Count; i++)
+                {
+                    listTime.Add(inputDataList[i].Time);
+                    listRSRP.Add((float)inputDataList[i].RSRQ);
+                }
+
+                InsertGraph(inputDataList, "PCI");
+                tabSelector = "PCI";
+                InfoCardText();
             }
             else
             {
@@ -431,6 +470,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "Downlink");
                 tabSelector = "Downlink";
+                InfoCardText();
             }
             else
             {
