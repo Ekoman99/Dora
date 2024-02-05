@@ -198,6 +198,7 @@
     </ApplicationDefinition>
     <Compile Include="Data\BaseCsvData.cs" />
     <Compile Include="Data\GeoData.cs" />
+    <Compile Include="Data\MapColorIntervals.cs" />
     <Compile Include="RouteWindow.xaml.cs">
       <DependentUpon>RouteWindow.xaml</DependentUpon>
     </Compile>
@@ -277,6 +278,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Data\MapIntervals.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

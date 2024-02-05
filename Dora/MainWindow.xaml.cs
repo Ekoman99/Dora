@@ -27,6 +27,9 @@ using Newtonsoft.Json.Linq;
 using OxyPlot.Axes;
 using OxyPlot;
 using OxyPlot.Series;
+using System.Linq.Expressions;
+using Dora.Data;
+using Newtonsoft.Json;
 
 namespace Dora
 {
@@ -39,6 +42,8 @@ namespace Dora
         {
             InitializeComponent();
             this.DataContext = this;
+
+            DataIntervals = InitializeMapIntervals();
         }        
         
         public string FilePath
@@ -53,11 +58,14 @@ namespace Dora
         List<BaseCsvData> inputDataList;
         List<(double Latitude, double Longitude)> mainGeoList;
 
+        Dictionary<string, List<MapColorIntervals>> DataIntervals;
+
         private bool status4G;
         private bool status5G;
         private bool loadComplete = false;
         bool peakSmooth = true;
         int peakUpperLimit = 50000;
+        string tabSelector = "RSRP"; //program prvo učita RSRP
 
         public void CSVFileSelect(object sender, RoutedEventArgs e)
         {
@@ -84,7 +92,7 @@ namespace Dora
                 mainGeoList = GetCoordinates(inputDataList);
 
                 if (dataLoadedCSV == true)
-                {
+                {                    
                     // incijalno pokazivanje RSRP
                     ShowScreen(inputDataList, "RSRP");
                     InsertGraph(inputDataList, "RSRP");
@@ -142,6 +150,16 @@ namespace Dora
             }
         }
 
+        private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
+        {
+            string filePath = @"C:\Users\Josip\source\repos\Dora\Dora\Data\MapIntervals.json";
+            string json = File.ReadAllText(filePath);
+
+            Dictionary<string, List<MapColorIntervals>> dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
+
+            return dataIntervals;
+        }
+
         private void ShowMap(object sender, RoutedEventArgs e)
         {
 
@@ -159,8 +177,19 @@ namespace Dora
             }
             else
             {
-                var mapWindow = new RouteWindow(mainGeoList);
-                mapWindow.Show();
+                if (tabSelector == "Downlink" || tabSelector == "RSRP" || tabSelector == "SINR" || tabSelector == "RSRQ" || tabSelector == "CQI" || tabSelector == "Ping")
+                {
+                    List<(int Id, string Color)> boje = AssignColors(inputDataList, tabSelector, DataIntervals);
+
+                    var mapWindow = new RouteWindow(mainGeoList, boje);
+                    mapWindow.Show();
+                }
+
+                else
+                {
+                    var mapWindow = new RouteWindow(mainGeoList);
+                    mapWindow.Show();
+                }
             }
             
         }
@@ -192,6 +221,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "RSRP");
+                tabSelector = "RSRP";
             }
             else
             {
@@ -227,6 +257,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
+                tabSelector = "RSRQ";
             }
             else
             {
@@ -262,6 +293,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
+                tabSelector = "SINR";
             }
             else
             {
@@ -296,6 +328,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "CQI");
+                tabSelector = "CQI";
             }
             else
             {
@@ -312,9 +345,9 @@ namespace Dora
                 string unit = "ms";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                double minimumValue = CalculateMinimum (inputDataList, dataSelection);
                 rsrpMax.Number = minimumValue.ToString() + unit;
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                double maximumValue = CalculateMaximum(inputDataList, dataSelection);
                 rsrpMin.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
                 rsrpAverage.Number = averageValue.ToString("n2") + unit;
@@ -331,6 +364,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "Ping");
+                tabSelector = "Ping";
             }
             else
             {
@@ -366,6 +400,7 @@ namespace Dora
                 }
 
                 InsertGraph(inputDataList, "Downlink");
+                tabSelector = "Downlink";
             }
             else
             {
@@ -535,7 +570,7 @@ namespace Dora
             };*/
         }
 
-        public PlotModel model; //model mora biti dostupan zbog interakcije grafa i exportera
+        private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
 
         public void InsertGraph(List<BaseCsvData> inputList, string dataSelection)
         {
@@ -547,28 +582,52 @@ namespace Dora
             };
 
             // serija točaka
-            var series = new LineSeries
+            var seriesBlue = new LineSeries // 4G
             {
-                Color = OxyColors.White,
+                Color = OxyColor.Parse("#349DC8"),
             };
 
-            for (int i = 0; i < inputDataList.Count; i++)
+            var seriesRed = new LineSeries // 5G
             {
-                // uzimanje vrijednosti, dataSelection definira koji property 
-                object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+                Color = OxyColor.Parse("#C41F1F"),
+            };
 
-                if (dataValue != null)
+            for (int i = 0; i < inputDataList.Count; i++) // ---> test za dualno pokazivanje grafa
+            {
+                if (inputDataList[i].Tech == "EN-DC")
                 {
-                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                    // uzimanje vrijednosti, dataSelection definira koji property 
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G, upisujem
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 4G upisujem nullove
+                    }
+                    else
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 5G vrijednosti                        
+                    }
                 }
                 else
                 {
-                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); //convert bi null pretvorio u 0.0, ovime to izbjegavamo
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G, upisujem
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 5G upisujem nullove
+                    }
+                    else
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 4G vrijednosti
+                    }
                 }
-                
+
             }
 
-            model.Series.Add(series);
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
 
             // definiranje osi
             var xAxis = new DateTimeAxis
@@ -620,9 +679,14 @@ namespace Dora
             };
 
             // serija točaka
-            var series = new LineSeries
+            var seriesBlue = new LineSeries // 4G
             {
-                Color = OxyColors.White,
+                Color = OxyColor.Parse("#349DC8"),
+            };
+
+            var seriesRed = new LineSeries // 5G
+            {
+                Color = OxyColor.Parse("#C41F1F"),
             };
 
             for (int i = 0; i < inputDataList.Count; i++)
@@ -630,25 +694,49 @@ namespace Dora
                 // uzimanje vrijednosti, dataSelection definira koji property 
                 object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
 
-                if (dataValue != null)
+                if (inputDataList[i].Tech == "EN-DC")
                 {
-                    if (peakNormalization == true && (int)dataValue < peakLimit)
+                    if (dataValue != null)
                     {
-                        series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                        if (peakNormalization == true && (int)dataValue < peakLimit)
+                        {
+                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G i zadovoljava uvjete
+                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 4G upisujem nullove
+                        }
+                        else
+                        {
+                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // 5G vrijednost ne zadovoljava uvjete
+                        }
                     }
                     else
                     {
-                        series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN));
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 5G vrijednosti
                     }
                 }
                 else
                 {
-                    series.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); //convert bi null pretvorio u 0.0, ovime to izbjegavamo
+                    if (dataValue != null)
+                    {
+                        if (peakNormalization == true && (int)dataValue < peakLimit)
+                        {
+                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G i zadovoljava uvjete
+                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 5G upisujem nullove
+                        }
+                        else
+                        {
+                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // 4G vrijednost ne zadovoljava uvjete
+                        }
+                    }
+                    else
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 4G vrijednosti
+                    }
                 }
 
             }
 
-            model.Series.Add(series);
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
 
             // definiranje osi
             var xAxis = new DateTimeAxis
@@ -759,6 +847,101 @@ namespace Dora
             return coordinatesList;
         }
 
+        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection)
+        {
+            //trenutno za throughtput
+
+            List<(int Id, string Color)> colorAssignments = new List<(int Id, string Color)>();
+
+            if (list.Count > 0)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var item = list[i];
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+                    if (propertyInfo != null)
+                    {
+                        int id = i;
+                        string color = "Red";
+
+                        object propertyValue = propertyInfo.GetValue(item, null);
+                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
+                        {                            
+                            double value = Convert.ToDouble(propertyValue);
+                            if (value < (4/8))
+                            {
+                                color = "Red";
+                            }
+                            else if (value >= (4/8) && value < (20/8))
+                            {
+                                color = "Yellow";
+                            }
+                            else if (value >= (20/8) && value < (50/8))
+                            {
+                                color = "Blue";
+                            }
+                            else
+                            {
+                                color = "Green";
+                            }
+
+                            colorAssignments.Add((id, color));
+                        }
+
+                        else
+                        {
+                            colorAssignments.Add((id, null));
+                        }
+                    }
+                }
+            }
+
+            return colorAssignments;
+        }
+
+        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> dataIntervals)
+        {
+            List<(int Id, string Color)> colorAssignments = new List<(int Id, string Color)>();
+
+            if (list.Count > 0 && dataIntervals.ContainsKey(dataSelection))
+            {
+                var intervals = dataIntervals[dataSelection];
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var item = list[i];
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+
+                    if (propertyInfo != null)
+                    {
+                        int id = i;
+                        string color = null;
+
+                        object propertyValue = propertyInfo.GetValue(item, null);
+
+                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
+                        {
+                            double value = Convert.ToDouble(propertyValue);
+
+                            foreach (var interval in intervals)
+                            {
+                                if (value >= interval.LowerLimit && value < interval.UpperLimit)
+                                {
+                                    color = interval.Color;
+                                    break;
+                                }
+                            }
+                        }
+
+                        colorAssignments.Add((id, color));
+                    }
+                }
+            }
+
+            return colorAssignments;
+        }
+
+        
 
     }
     

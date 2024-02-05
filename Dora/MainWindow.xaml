@@ -21,8 +21,8 @@
         <Border CornerRadius="0 0 0 10">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Color="#C1C3E5" Offset="0"/>
-                    <GradientStop Color="#D7D8EC" Offset="1"/>
+                    <GradientStop Color="#005083" Offset="0"/>
+                    <GradientStop Color="#3b699b" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
 
@@ -115,8 +115,8 @@
         <Border Grid.Column="1" CornerRadius="0 00 10 0" >
             <Border.Background>
                 <LinearGradientBrush StartPoint="1,0" EndPoint="0,1">
-                    <GradientStop Color="#C1C3E5" Offset="0"/>
-                    <GradientStop Color="#D7D8EC" Offset="1"/>
+                    <GradientStop Color="#c2c5c8" Offset="0"/>
+                    <GradientStop Color="#d7d6d9" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
 
@@ -156,7 +156,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <!--chart-->
-                    <Border CornerRadius="20" Padding="35 25" Background="#243771" Margin="50 0 10 40">
+                    <Border CornerRadius="20" Padding="35 25" Background="#5B5754" Margin="50 0 10 40">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
@@ -174,7 +174,7 @@
                         </Grid>
                     </Border>
                     <!--sidemenu-->
-                    <Border Grid.Column="1" CornerRadius="20" Padding="0 25" Background="#243771" Margin="15 0 47 40">
+                    <Border Grid.Column="1" CornerRadius="20" Padding="0 25" Background="#5B5754" Margin="15 0 47 40">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
