@@ -143,9 +143,9 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <uc:InfoCard Grid.Column="0" x:Name="rsrpMax" Title="Maximum" Number="No file selected" Icon="PlusCircle" Background1="#5cc459" Background2="#81cc53" EllipseBackground1="#A5E345" EllipseBackground2="#B2EE53"/>
-                    <uc:InfoCard Grid.Column="1" x:Name="rsrpAverage" Title="Average" Number="No file selected" Icon="ArrowsLeftRight" Background1="#3BA5D0" Background2="#349DC8" EllipseBackground1="#52C2DE" EllipseBackground2="#5ED0EC"/>
-                    <uc:InfoCard Grid.Column="2" x:Name="rsrpMin" Title="Minimum" Number="No file selected" Icon="MinusCircle" Background1="#C54848" Background2="#C41F1F" EllipseBackground1="#F75555" EllipseBackground2="#F82727"/>
+                    <uc:InfoCard Grid.Column="0" x:Name="greenCard" Title="Maximum" Number="No file selected" Icon="PlusCircle" Background1="#5cc459" Background2="#81cc53" EllipseBackground1="#A5E345" EllipseBackground2="#B2EE53"/>
+                    <uc:InfoCard Grid.Column="1" x:Name="blueCard" Title="Average" Number="No file selected" Icon="ArrowsLeftRight" Background1="#3BA5D0" Background2="#349DC8" EllipseBackground1="#52C2DE" EllipseBackground2="#5ED0EC"/>
+                    <uc:InfoCard Grid.Column="2" x:Name="redCard" Title="Minimum" Number="No file selected" Icon="MinusCircle" Background1="#C54848" Background2="#C41F1F" EllipseBackground1="#F75555" EllipseBackground2="#F82727"/>
 
                 </Grid>
 

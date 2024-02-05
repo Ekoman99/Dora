@@ -232,11 +232,11 @@ namespace Dora
                 chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-                rsrpMax.Number = minimumValue.ToString() + unit;
+                greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                rsrpMin.Number = maximumValue.ToString() + unit;
+                redCard.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
-                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 List<DateTime> listTime = new List<DateTime>();
@@ -268,11 +268,11 @@ namespace Dora
                 chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                rsrpMax.Number = minimumValue.ToString() + unit;
+                greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                rsrpMin.Number = maximumValue.ToString() + unit;
+                redCard.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 List<DateTime> listTime = new List<DateTime>();
@@ -304,11 +304,11 @@ namespace Dora
                 chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                rsrpMax.Number = minimumValue.ToString() + unit;
+                greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                rsrpMin.Number = maximumValue.ToString() + unit;
+                redCard.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 List<DateTime> listTime = new List<DateTime>();
@@ -339,11 +339,11 @@ namespace Dora
                 chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-                rsrpMax.Number = minimumValue.ToString() + "";
+                greenCard.Number = minimumValue.ToString() + "";
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                rsrpMin.Number = maximumValue.ToString() + "";
+                redCard.Number = maximumValue.ToString() + "";
                 double averageValue = Math.Floor(CalculateAverage(inputDataList, dataSelection)); // CQI je cjelobrojna vrijednost
-                rsrpAverage.Number = averageValue.ToString("n0") + "";
+                blueCard.Number = averageValue.ToString("n0") + "";
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 List<DateTime> listTime = new List<DateTime>();
@@ -375,11 +375,11 @@ namespace Dora
                 chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMinimum (inputDataList, dataSelection);
-                rsrpMax.Number = minimumValue.ToString() + unit;
+                greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMaximum(inputDataList, dataSelection);
-                rsrpMin.Number = maximumValue.ToString() + unit;
+                redCard.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
-                rsrpAverage.Number = averageValue.ToString("n2") + unit;
+                blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 List<DateTime> listTime = new List<DateTime>();
@@ -394,6 +394,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "Ping");
                 tabSelector = "Ping";
+                InfoCardText();
             }
             else
             {
@@ -411,11 +412,11 @@ namespace Dora
                 chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-                rsrpMax.Number = (minimumValue * 8).ToString("n2") + unit;
+                greenCard.Number = (minimumValue * 8).ToString("n2") + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                rsrpMin.Number = (maximumValue * 8).ToString("n2") + unit;
+                redCard.Number = (maximumValue * 8).ToString("n2") + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
-                rsrpAverage.Number = (averageValue * 8).ToString("n2") + unit;
+                blueCard.Number = (averageValue * 8).ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 List<DateTime> listTime = new List<DateTime>();
@@ -575,11 +576,11 @@ namespace Dora
         private void ShowScreen(List<BaseCsvData> inputDataList, string dataSelection)
         {
             double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            rsrpMax.Number = minimumValue.ToString() + "dBm";
+            greenCard.Number = minimumValue.ToString() + "dBm";
             double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            rsrpMin.Number = maximumValue.ToString() + "dBm";
+            redCard.Number = maximumValue.ToString() + "dBm";
             double averageValue = CalculateAverage(inputDataList, dataSelection);
-            rsrpAverage.Number = averageValue.ToString("n2") + "dBm";
+            blueCard.Number = averageValue.ToString("n2") + "dBm";
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
             List<DateTime> listTime = new List<DateTime>();
@@ -1011,6 +1012,19 @@ namespace Dora
             return kmlBuilder.ToString();
         }
 
+        private void InfoCardText()
+        {
+            if(tabSelector == "Ping")
+            {
+                greenCard.Title = "Minimum";
+                redCard.Title = "Maximum";
+            }
+            else
+            {
+                greenCard.Title = "Maximum";
+                redCard.Title = "Minimum";
+            }
+        }
     }
     
 }
