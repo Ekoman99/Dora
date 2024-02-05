@@ -56,7 +56,7 @@ namespace Dora
             DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
         List<BaseCsvData> inputDataList;
-        List<(double Latitude, double Longitude)> mainGeoList;
+        List<(double Latitude, double Longitude)> MainGeoList;
 
         Dictionary<string, List<MapColorIntervals>> DataIntervals;
 
@@ -73,13 +73,13 @@ namespace Dora
 
             try
             {
-                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-                dlg.Filter = "CSV Files (*.csv)|*.csv"; // filter za prikaz samo.csv
-                Nullable<bool> result = dlg.ShowDialog();
+                OpenFileDialog openCSVDialog = new OpenFileDialog();
+                openCSVDialog.Filter = "CSV Files (*.csv)|*.csv"; // filter za prikaz samo.csv
+                Nullable<bool> result = openCSVDialog.ShowDialog();
 
                 if (result == true)
                 {
-                    FilePath = dlg.FileName;
+                    FilePath = openCSVDialog.FileName;
                     dataLoadedCSV = true;
                     loadComplete = true;
                 }
@@ -89,7 +89,7 @@ namespace Dora
                 status4G = Check4G(inputDataList);
                 status5G = Check5G(inputDataList);
 
-                mainGeoList = GetCoordinates(inputDataList);
+                MainGeoList = GetCoordinates(inputDataList);
 
                 if (dataLoadedCSV == true)
                 {                    
@@ -181,13 +181,13 @@ namespace Dora
                 {
                     List<(int Id, string Color)> boje = AssignColors(inputDataList, tabSelector, DataIntervals);
 
-                    var mapWindow = new RouteWindow(mainGeoList, boje);
+                    var mapWindow = new RouteWindow(MainGeoList, boje);
                     mapWindow.Show();
                 }
 
                 else
                 {
-                    var mapWindow = new RouteWindow(mainGeoList);
+                    var mapWindow = new RouteWindow(MainGeoList);
                     mapWindow.Show();
                 }
             }
@@ -196,7 +196,31 @@ namespace Dora
 
         private void ExportKML(object sender, RoutedEventArgs e)
         {
+            string kml = KMLGenerator(inputDataList, tabSelector);
 
+            if (!string.IsNullOrEmpty(kml))
+            {
+                SaveFileDialog saveKMLDialog = new SaveFileDialog();
+                saveKMLDialog.Filter = "KML File (*.kml)|*.kml";
+                if (saveKMLDialog.ShowDialog() == true)
+                {
+                    string fileName = saveKMLDialog.FileName;
+
+                    try
+                    {
+                        File.WriteAllText(fileName, kml);
+                        MessageBox.Show("KML file saved successfully.");
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show("An error occurred while saving the file: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Failed to generate KML.");
+            }
         }
 
         private void ClickRSRP(object sender, RoutedEventArgs e)
@@ -953,9 +977,19 @@ namespace Dora
             kmlBuilder.AppendLine(@"<?xml version=""1.0"" encoding=""UTF-8""?>");
             kmlBuilder.AppendLine(@"<kml xmlns=""http://www.opengis.net/kml/2.2"">");
             kmlBuilder.AppendLine(@"  <Document>");
+
+            kmlBuilder.AppendLine(@"    <Style id=""polyStyle"">");
+            kmlBuilder.AppendLine(@"      <PolyStyle>");
+            kmlBuilder.AppendLine(@"        <color>7fffffff</color>"); // 7f definira 50% opacity
+            kmlBuilder.AppendLine(@"      </PolyStyle>");
+            kmlBuilder.AppendLine(@"    </Style>");
+
             kmlBuilder.AppendLine($"    <Placemark>");
             kmlBuilder.AppendLine($"      <name>{"test"}</name>");
+            kmlBuilder.AppendLine(@"      <styleUrl>#polyStyle</styleUrl>");
             kmlBuilder.AppendLine(@"      <LineString>");
+            kmlBuilder.AppendLine(@"        <altitudeMode>relativeToGround</altitudeMode>");
+            kmlBuilder.AppendLine(@"        <extrude>1</extrude>");
             kmlBuilder.AppendLine(@"        <coordinates>");
 
             for (int i = 0; i < list.Count; i++)
@@ -965,7 +999,7 @@ namespace Dora
                 object propertyValue = propertyInfo.GetValue(item, null);
                 double value = Convert.ToDouble(propertyValue);
 
-                kmlBuilder.AppendLine($"          {list[i].Latitude},{list[i].Latitude},{propertyValue}");
+                kmlBuilder.AppendLine($"          {list[i].Longitude},{list[i].Latitude},{propertyValue}");
             }
 
             kmlBuilder.AppendLine(@"        </coordinates>");
