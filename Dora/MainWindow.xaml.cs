@@ -194,6 +194,11 @@ namespace Dora
             
         }
 
+        private void ExportKML(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void ClickRSRP(object sender, RoutedEventArgs e)
         {
             if (loadComplete == true)
@@ -941,7 +946,36 @@ namespace Dora
             return colorAssignments;
         }
 
-        
+        private string KMLGenerator(List<BaseCsvData> list, string dataSelection)
+        {
+            StringBuilder kmlBuilder = new StringBuilder();
+
+            kmlBuilder.AppendLine(@"<?xml version=""1.0"" encoding=""UTF-8""?>");
+            kmlBuilder.AppendLine(@"<kml xmlns=""http://www.opengis.net/kml/2.2"">");
+            kmlBuilder.AppendLine(@"  <Document>");
+            kmlBuilder.AppendLine($"    <Placemark>");
+            kmlBuilder.AppendLine($"      <name>{"test"}</name>");
+            kmlBuilder.AppendLine(@"      <LineString>");
+            kmlBuilder.AppendLine(@"        <coordinates>");
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var item = list[i];
+                var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+                object propertyValue = propertyInfo.GetValue(item, null);
+                double value = Convert.ToDouble(propertyValue);
+
+                kmlBuilder.AppendLine($"          {list[i].Latitude},{list[i].Latitude},{propertyValue}");
+            }
+
+            kmlBuilder.AppendLine(@"        </coordinates>");
+            kmlBuilder.AppendLine(@"      </LineString>");
+            kmlBuilder.AppendLine(@"    </Placemark>");
+            kmlBuilder.AppendLine(@"  </Document>");
+            kmlBuilder.AppendLine(@"</kml>");
+
+            return kmlBuilder.ToString();
+        }
 
     }
     

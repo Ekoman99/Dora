@@ -192,6 +192,8 @@
                                 <Button Width="120" Height="30" Content="Show map" Click="ShowMap"/>
                                 <Separator Opacity="0" Height="20"/>
                                 <Button Width="120" Height="30" Content="Export graph" Click="ExportGraph"/>
+                                <Separator Opacity="0" Height="20"/>
+                                <Button Width="120" Height="30" Content="Export KML" Click="ExportKML"/>
                             </StackPanel>
                         </Grid>
                     </Border>
