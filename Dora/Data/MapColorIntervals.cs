@@ -8,9 +8,9 @@ namespace Dora.Data
 {
     internal class MapColorIntervals
     {
-        public int intervalID {  get; set; }
-        public int lowerLimit {  get; set; }
-        public int upperLimit { get; set; }
-        public string colorLimit {  get; set; }
+        public int Id {  get; set; }
+        public double LowerLimit {  get; set; }
+        public double UpperLimit { get; set; }
+        public string Color {  get; set; }
     }
 }

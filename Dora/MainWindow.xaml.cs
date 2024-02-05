@@ -29,6 +29,7 @@ using OxyPlot;
 using OxyPlot.Series;
 using System.Linq.Expressions;
 using Dora.Data;
+using Newtonsoft.Json;
 
 namespace Dora
 {
@@ -41,6 +42,8 @@ namespace Dora
         {
             InitializeComponent();
             this.DataContext = this;
+
+            DataIntervals = InitializeMapIntervals();
         }        
         
         public string FilePath
@@ -55,7 +58,7 @@ namespace Dora
         List<BaseCsvData> inputDataList;
         List<(double Latitude, double Longitude)> mainGeoList;
 
-        Dictionary<string, List<MapColorIntervals>> dataIntervals;
+        Dictionary<string, List<MapColorIntervals>> DataIntervals;
 
         private bool status4G;
         private bool status5G;
@@ -89,7 +92,7 @@ namespace Dora
                 mainGeoList = GetCoordinates(inputDataList);
 
                 if (dataLoadedCSV == true)
-                {
+                {                    
                     // incijalno pokazivanje RSRP
                     ShowScreen(inputDataList, "RSRP");
                     InsertGraph(inputDataList, "RSRP");
@@ -149,49 +152,10 @@ namespace Dora
 
         private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
         {
-            string[] lines = File.ReadAllLines(@"C:\Users\Josip\source\repos\Dora\Dora\Data\IntervalStorage.txt");
+            string filePath = @"C:\Users\Josip\source\repos\Dora\Dora\Data\MapIntervals.json";
+            string json = File.ReadAllText(filePath);
 
-            Dictionary<string, List<MapColorIntervals>> data2Intervals = new Dictionary<string, List<MapColorIntervals>>();
-
-            string currentKey = null;
-            List<MapColorIntervals> currentList = null;
-
-            foreach (string line in lines)
-            {
-                if (line.StartsWith("["))
-                {
-                    currentKey = line.Trim('[', ']');
-                    currentList = new List<MapColorIntervals>();
-                    data2Intervals.Add(currentKey, currentList);
-                }
-                else if (currentKey != null && currentList != null && !line.StartsWith("-"))
-                {
-                    string[] parts = line.Split(' ');
-                    if (parts.Length == 4)
-                    {
-                        MapColorIntervals intervals = new MapColorIntervals
-                        {
-                            intervalID = int.TryParse(parts[0], out int id) ? id : default,
-                            lowerLimit = int.TryParse(parts[1], out int lower) ? lower : default,
-                            upperLimit = int.TryParse(parts[2], out int upper) ? upper : default,
-                            colorLimit = string.IsNullOrWhiteSpace(parts[3]) ? null : parts[3]
-                        };
-                        currentList.Add(intervals);
-                    }
-                    else if (parts.Length > 0 && parts.Length < 4)
-                    {
-                        // default vrijednosti ako je blok neispravan
-                        MapColorIntervals intervals = new MapColorIntervals
-                        {
-                            intervalID = default,
-                            lowerLimit = default,
-                            upperLimit = default,
-                            colorLimit = null
-                        };
-                        currentList.Add(intervals);
-                    }
-                }
-            }
+            Dictionary<string, List<MapColorIntervals>> dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
 
             return dataIntervals;
         }
@@ -213,9 +177,9 @@ namespace Dora
             }
             else
             {
-                if (tabSelector == "Downlink")
+                if (tabSelector == "Downlink" || tabSelector == "RSRP" || tabSelector == "SINR" || tabSelector == "RSRQ" || tabSelector == "CQI" || tabSelector == "Ping")
                 {
-                    List<(int Id, string Color)> boje = AssignColors(inputDataList, "Downlink");
+                    List<(int Id, string Color)> boje = AssignColors(inputDataList, tabSelector, DataIntervals);
 
                     var mapWindow = new RouteWindow(mainGeoList, boje);
                     mapWindow.Show();
@@ -381,9 +345,9 @@ namespace Dora
                 string unit = "ms";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                double minimumValue = CalculateMinimum (inputDataList, dataSelection);
                 rsrpMax.Number = minimumValue.ToString() + unit;
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                double maximumValue = CalculateMaximum(inputDataList, dataSelection);
                 rsrpMin.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
                 rsrpAverage.Number = averageValue.ToString("n2") + unit;
@@ -961,9 +925,9 @@ namespace Dora
 
                             foreach (var interval in intervals)
                             {
-                                if (value >= interval.lowerLimit && value < interval.upperLimit)
+                                if (value >= interval.LowerLimit && value < interval.UpperLimit)
                                 {
-                                    color = interval.colorLimit;
+                                    color = interval.Color;
                                     break;
                                 }
                             }

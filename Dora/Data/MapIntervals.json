@@ -1,0 +1,153 @@
+﻿{
+  "RSRP": [
+    {
+      "Id": 1,
+      "LowerLimit": -150,
+      "UpperLimit": -100,
+      "Color": "Red"
+    },
+    {
+      "Id": 2,
+      "LowerLimit": -100,
+      "UpperLimit": -90,
+      "Color": "Yellow"
+    },
+    {
+      "Id": 3,
+      "LowerLimit": -90,
+      "UpperLimit": -80,
+      "Color": "Blue"
+    },
+    {
+      "Id": 4,
+      "LowerLimit": -80,
+      "UpperLimit": 0,
+      "Color": "Green"
+    }
+  ],
+  "RSRQ": [
+    {
+      "Id": 1,
+      "LowerLimit": -100,
+      "UpperLimit": -20,
+      "Color": "Red"
+    },
+    {
+      "Id": 2,
+      "LowerLimit": -20,
+      "UpperLimit": -15,
+      "Color": "Yellow"
+    },
+    {
+      "Id": 3,
+      "LowerLimit": -15,
+      "UpperLimit": -10,
+      "Color": "Blue"
+    },
+    {
+      "Id": 4,
+      "LowerLimit": -10,
+      "UpperLimit": 100,
+      "Color": "Green"
+    }
+  ],
+  "SINR": [
+    {
+      "Id": 1,
+      "LowerLimit": -100,
+      "UpperLimit": 0,
+      "Color": "Red"
+    },
+    {
+      "Id": 2,
+      "LowerLimit": 0,
+      "UpperLimit": 13,
+      "Color": "Yellow"
+    },
+    {
+      "Id": 3,
+      "LowerLimit": 13,
+      "UpperLimit": 20,
+      "Color": "Blue"
+    },
+    {
+      "Id": 4,
+      "LowerLimit": 20,
+      "UpperLimit": 100,
+      "Color": "Green"
+    }
+  ],
+  "CQI": [
+    {
+      "Id": 1,
+      "LowerLimit": 0,
+      "UpperLimit": 6,
+      "Color": "Red"
+    },
+    {
+      "Id": 2,
+      "LowerLimit": 7,
+      "UpperLimit": 9,
+      "Color": "Yellow"
+    },
+    {
+      "Id": 3,
+      "LowerLimit": 10,
+      "UpperLimit": 15,
+      "Color": "Green"
+    }
+  ],
+  "Ping": [
+    {
+      "Id": 1,
+      "LowerLimit": 0,
+      "UpperLimit": 20,
+      "Color": "Green"
+    },
+    {
+      "Id": 2,
+      "LowerLimit": 20,
+      "UpperLimit": 50,
+      "Color": "Blue"
+    },
+    {
+      "Id": 3,
+      "LowerLimit": 50,
+      "UpperLimit": 100,
+      "Color": "Yellow"
+    },
+    {
+      "Id": 4,
+      "LowerLimit": 100,
+      "UpperLimit": 100000,
+      "Color": "Red"
+    }
+  ],
+  "Downlink": [
+    {
+      "Id": 1,
+      "LowerLimit": 0,
+      "UpperLimit": 0.5,
+      "Color": "Red"
+    },
+    {
+      "Id": 2,
+      "LowerLimit": 0.5,
+      "UpperLimit": 1.25,
+      "Color": "Yellow"
+    },
+    {
+      "Id": 3,
+      "LowerLimit": 1.25,
+      "UpperLimit": 6.25,
+      "Color": "Blue"
+    },
+    {
+      "Id": 4,
+      "LowerLimit": 6.25,
+      "UpperLimit": 1000,
+      "Color": "Green"
+    }
+  ]
+
+}

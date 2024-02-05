@@ -97,8 +97,8 @@ namespace Dora
 
             gmapControl = new GMapControl();
 
-            gmapControl.Width = 1280;
-            gmapControl.Height = 800;
+            gmapControl.Width = 1000;
+            gmapControl.Height = 680;
 
             // init
             gmapControl.MapProvider = GMapProviders.OpenStreetMap;
@@ -169,7 +169,9 @@ namespace Dora
 
             this.Closed += (sender, e) =>
             {
-                DisposeMapControl();
+                gmapControl.Markers.Clear();
+                gmapControl.Dispose();                
+                DisposeMapControl();                
             };
         }
 
