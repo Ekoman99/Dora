@@ -552,22 +552,6 @@ namespace Dora
             double averageValue = CalculateAverage(inputDataList, dataSelection);
             blueCard.Number = averageValue.ToString("n2") + "dBm";
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
-            {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRP);
-            }
-
-            /*var chartValues = listRSRP.AsChartValues();
-            var lineSeries = new LineSeries
-            {
-                Values = chartValues
-            };*/
         }
 
         private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
