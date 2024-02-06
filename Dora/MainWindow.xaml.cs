@@ -163,14 +163,6 @@ namespace Dora
 
         private void ShowMap(object sender, RoutedEventArgs e)
         {
-
-            /*var coordinates = new List<(double Latitude, double Longitude)>
-            {
-                (45.772042325977885, 15.98029954968336),
-                (45.77367361725392, 15.975119210105513),
-                // Add more coordinates as needed
-            };*/
-
             if (loadComplete == false)
             {
                 var warningWindow = new UnloadedWarning();
@@ -240,16 +232,6 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "RSRP");
                 tabSelector = "RSRP";
                 ChangeButtonStyle(tabSelector);
@@ -277,16 +259,6 @@ namespace Dora
                 double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
 
                 InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
                 tabSelector = "RSRQ";
@@ -316,16 +288,6 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
                 tabSelector = "SINR";
                 ChangeButtonStyle(tabSelector);
@@ -353,16 +315,6 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n0") + "";
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "CQI");
                 tabSelector = "CQI";
                 ChangeButtonStyle(tabSelector);
@@ -388,16 +340,6 @@ namespace Dora
                 redCard.Number = maximumValue.ToString() + "";
                 blueCard.Number = "N/A";
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
 
                 InsertGraph(inputDataList, "PCI");
                 tabSelector = "PCI";
@@ -427,16 +369,6 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "Ping");
                 tabSelector = "Ping";
                 ChangeButtonStyle(tabSelector);
@@ -464,16 +396,6 @@ namespace Dora
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
                 blueCard.Number = (averageValue * 8).ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
 
                 InsertGraph(inputDataList, "Downlink");
                 tabSelector = "Downlink";
