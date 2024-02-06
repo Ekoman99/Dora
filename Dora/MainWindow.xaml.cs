@@ -31,6 +31,7 @@ using System.Linq.Expressions;
 using Dora.Data;
 using Newtonsoft.Json;
 using Dora.UI;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Dora
 {
@@ -45,6 +46,7 @@ namespace Dora
             this.DataContext = this;
 
             DataIntervals = InitializeMapIntervals();
+            PlaceInfoCards();
         }        
         
         public string FilePath
@@ -60,6 +62,10 @@ namespace Dora
         List<(double Latitude, double Longitude)> MainGeoList;
 
         Dictionary<string, List<MapColorIntervals>> DataIntervals;
+
+        InfoCard greenCard = InfoCard.GreenCardDefault;
+        InfoCard blueCard = InfoCard.BlueCardDefault;
+        InfoCard redCard = InfoCard.RedCardDefault;
 
         private bool status4G;
         private bool status5G;
@@ -159,6 +165,17 @@ namespace Dora
             Dictionary<string, List<MapColorIntervals>> dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
 
             return dataIntervals;
+        }
+
+        private void PlaceInfoCards()
+        {
+            infoCardGrid.Children.Add(greenCard);
+            infoCardGrid.Children.Add(blueCard);
+            infoCardGrid.Children.Add(redCard);
+
+            Grid.SetColumn(greenCard, 0);
+            Grid.SetColumn(blueCard, 1);
+            Grid.SetColumn(redCard, 2);
         }
 
         private void ShowMap(object sender, RoutedEventArgs e)
@@ -541,6 +558,16 @@ namespace Dora
             }
 
             return max;
+        }
+
+        private void FillInfoCards(string dataSelection, string unit)
+        {
+            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+            greenCard.Number = (minimumValue * 8).ToString("n2") + unit;
+            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+            redCard.Number = (maximumValue * 8).ToString("n2") + unit;
+            double averageValue = CalculateAverage(inputDataList, dataSelection);
+            blueCard.Number = (averageValue * 8).ToString("n2") + unit;
         }
 
         private void ShowScreen(List<BaseCsvData> inputDataList, string dataSelection)
