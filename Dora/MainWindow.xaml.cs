@@ -30,6 +30,7 @@ using OxyPlot.Series;
 using System.Linq.Expressions;
 using Dora.Data;
 using Newtonsoft.Json;
+using Dora.UI;
 
 namespace Dora
 {
@@ -251,6 +252,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "RSRP");
                 tabSelector = "RSRP";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -288,6 +290,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
                 tabSelector = "RSRQ";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -325,6 +328,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
                 tabSelector = "SINR";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -361,6 +365,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "CQI");
                 tabSelector = "CQI";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -396,6 +401,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "PCI");
                 tabSelector = "PCI";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -433,6 +439,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "Ping");
                 tabSelector = "Ping";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -470,6 +477,7 @@ namespace Dora
 
                 InsertGraph(inputDataList, "Downlink");
                 tabSelector = "Downlink";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -1063,6 +1071,46 @@ namespace Dora
             {
                 greenCard.Title = "Maximum";
                 redCard.Title = "Minimum";
+            }
+        }
+
+        private void ChangeButtonStyle(string buttonName)
+        {
+            // postavi sve u početni stil
+            rsrpButton.Style = (Style)FindResource("menuButton");
+            rsrqButton.Style = (Style)FindResource("menuButton");
+            sinrButton.Style = (Style)FindResource("menuButton");
+            cqiButton.Style = (Style)FindResource("menuButton");
+            pciButton.Style = (Style)FindResource("menuButton");
+            pingButton.Style = (Style)FindResource("menuButton");
+            downButton.Style = (Style)FindResource("menuButton");
+
+            // postavi stil aktivnog
+            switch (buttonName)
+            {
+                case "RSRP":
+                    rsrpButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "RSRQ":
+                    rsrqButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "SINR":
+                    sinrButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "CQI":
+                    cqiButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "PCI":
+                    pciButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "Ping":
+                    pingButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "Downlink":
+                    downButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                default:                    
+                    break;
             }
         }
     }

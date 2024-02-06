@@ -51,49 +51,49 @@
                 <Separator Height="0.8" Margin="20 30" Background="#46558a"/>
                 
                 <!--menu-->
-                <Button Style="{StaticResource menuButtonActive}" Click="ClickRSRP">
+                <Button x:Name="rsrpButton" Style="{StaticResource menuButton}" Click="ClickRSRP">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="TowerCell" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="RSRP" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}" Click="ClickRSRQ">
+                <Button x:Name="rsrqButton" Style="{StaticResource menuButton}" Click="ClickRSRQ">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="TowerCell" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="RSRQ" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}" Click="ClickSINR">
+                <Button x:Name="sinrButton" Style="{StaticResource menuButton}" Click="ClickSINR">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="TowerCell" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="SINR" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}" Click="ClickCQI">
+                <Button x:Name="cqiButton" Style="{StaticResource menuButton}" Click="ClickCQI">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="TowerCell" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="CQI" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}" Click="ClickPCI">
+                <Button x:Name="pciButton" Style="{StaticResource menuButton}" Click="ClickPCI">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="TowerCell" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="PCI" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}" Click="ClickPing">
+                <Button x:Name="pingButton" Style="{StaticResource menuButton}" Click="ClickPing">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="ArrowsUpDown" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="Ping" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}" Click="ClickThroughput">
+                <Button x:Name="downButton" Style="{StaticResource menuButton}" Click="ClickThroughput">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="ArrowDown" Style="{StaticResource menuButtonIcon}"/>
                         <!--<fa:IconImage Icon="Home"/>-->
@@ -101,14 +101,14 @@
                     </StackPanel>
                 </Button>
 
-                <Button Click="CSVFileSelect" Style="{StaticResource menuButton}">
+                <Button x:Name="csvButton" Click="CSVFileSelect" Style="{StaticResource menuButton}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="FileCsv" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="Load CSV file" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource menuButton}" Click="Logoff">
+                <Button x:Name="logoffButton" Style="{StaticResource menuButton}" Click="Logoff">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="PowerOff" Style="{StaticResource menuButtonIcon}"/>
                         <TextBlock Text="Log off" Style="{StaticResource menuButtonText}"/>
