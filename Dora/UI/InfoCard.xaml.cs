@@ -81,5 +81,56 @@ namespace Dora.UI
 
         public static readonly DependencyProperty EllipseBackground2Property = DependencyProperty.Register("EllipseBackground2", typeof(Color), typeof(InfoCard));
 
+        //defaultne kartice za UI
+        public static InfoCard GreenCardDefault
+        {
+            get
+            {
+                return new InfoCard
+                {
+                    Title = "Maximum",
+                    Number = "No file selected",
+                    Icon = FontAwesome.Sharp.IconChar.PlusCircle,
+                    Background1 = Color.FromArgb(255, 92, 196, 89),
+                    Background2 = Color.FromArgb(255, 129, 204, 83),
+                    EllipseBackground1 = Color.FromArgb(255, 165, 227, 69),
+                    EllipseBackground2 = Color.FromArgb(255, 178, 238, 83)
+                };
+            }
+        }
+
+        public static InfoCard BlueCardDefault
+        {
+            get
+            {
+                return new InfoCard
+                {
+                    Title = "Average",
+                    Number = "No file selected",
+                    Icon = FontAwesome.Sharp.IconChar.ArrowsLeftRight,
+                    Background1 = Color.FromArgb(255, 59, 165, 208),
+                    Background2 = Color.FromArgb(255, 52, 157, 200),
+                    EllipseBackground1 = Color.FromArgb(255, 82, 194, 222),
+                    EllipseBackground2 = Color.FromArgb(255, 94, 208, 236)
+                };
+            }
+        }
+
+        public static InfoCard RedCardDefault
+        {
+            get
+            {
+                return new InfoCard
+                {
+                    Title = "Minimum",
+                    Number = "No file selected",
+                    Icon = FontAwesome.Sharp.IconChar.MinusCircle,
+                    Background1 = Color.FromArgb(255, 197, 72, 72),
+                    Background2 = Color.FromArgb(255, 196, 31, 31),
+                    EllipseBackground1 = Color.FromArgb(255, 247, 85, 85),
+                    EllipseBackground2 = Color.FromArgb(255, 248, 39, 39)
+                };
+            }
+        }
     }
 }

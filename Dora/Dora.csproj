@@ -205,6 +205,9 @@
     <Compile Include="UI\InfoCard.xaml.cs">
       <DependentUpon>InfoCard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\PCICard.xaml.cs">
+      <DependentUpon>PCICard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UnloadedWarning.xaml.cs">
       <DependentUpon>UnloadedWarning.xaml</DependentUpon>
     </Compile>
@@ -252,6 +255,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\InfoCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\PCICard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

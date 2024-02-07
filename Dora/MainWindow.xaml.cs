@@ -30,6 +30,7 @@ using OxyPlot.Series;
 using System.Linq.Expressions;
 using Dora.Data;
 using Newtonsoft.Json;
+using Dora.UI;
 
 namespace Dora
 {
@@ -162,14 +163,6 @@ namespace Dora
 
         private void ShowMap(object sender, RoutedEventArgs e)
         {
-
-            /*var coordinates = new List<(double Latitude, double Longitude)>
-            {
-                (45.772042325977885, 15.98029954968336),
-                (45.77367361725392, 15.975119210105513),
-                // Add more coordinates as needed
-            };*/
-
             if (loadComplete == false)
             {
                 var warningWindow = new UnloadedWarning();
@@ -229,7 +222,7 @@ namespace Dora
             {
                 string dataSelection = "RSRP";
                 string unit = "dBm";
-                chartTitle.Text = dataSelection;
+                chartTitle.Text = dataSelection;                
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + unit;
@@ -239,18 +232,10 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "RSRP");
                 tabSelector = "RSRP";
+                ChangeButtonStyle(tabSelector);
+                InfoCardText();
             }
             else
             {
@@ -265,7 +250,7 @@ namespace Dora
             {
                 string dataSelection = "RSRQ";
                 string unit = "dB";
-                chartTitle.Text = dataSelection;
+                chartTitle.Text = dataSelection;                
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 greenCard.Number = minimumValue.ToString() + unit;
@@ -275,18 +260,10 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
                 tabSelector = "RSRQ";
+                ChangeButtonStyle(tabSelector);
+                InfoCardText();
             }
             else
             {
@@ -311,18 +288,10 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
                 tabSelector = "SINR";
+                ChangeButtonStyle(tabSelector);
+                InfoCardText();
             }
             else
             {
@@ -346,18 +315,36 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n0") + "";
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "CQI");
                 tabSelector = "CQI";
+                ChangeButtonStyle(tabSelector);
+                InfoCardText();
+            }
+            else
+            {
+                var warningWindow = new UnloadedWarning();
+                warningWindow.Show();
+            }
+        }
+
+        private void ClickPCI(object sender, RoutedEventArgs e)
+        {
+            if (loadComplete == true)
+            {
+                string dataSelection = "PCI";
+                chartTitle.Text = dataSelection;
+
+                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                greenCard.Number = minimumValue.ToString() + "";
+                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
+                redCard.Number = maximumValue.ToString() + "";
+                blueCard.Number = "N/A";
+                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+
+                InsertGraph(inputDataList, "PCI");
+                tabSelector = "PCI";
+                ChangeButtonStyle(tabSelector);
+                InfoCardText();
             }
             else
             {
@@ -382,18 +369,9 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "Ping");
                 tabSelector = "Ping";
+                ChangeButtonStyle(tabSelector);
                 InfoCardText();
             }
             else
@@ -419,18 +397,10 @@ namespace Dora
                 blueCard.Number = (averageValue * 8).ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                List<DateTime> listTime = new List<DateTime>();
-                List<float> listRSRP = new List<float>();
-
-
-                for (int i = 0; i < inputDataList.Count; i++)
-                {
-                    listTime.Add(inputDataList[i].Time);
-                    listRSRP.Add((float)inputDataList[i].RSRQ);
-                }
-
                 InsertGraph(inputDataList, "Downlink");
                 tabSelector = "Downlink";
+                ChangeButtonStyle(tabSelector);
+                InfoCardText();
             }
             else
             {
@@ -582,22 +552,6 @@ namespace Dora
             double averageValue = CalculateAverage(inputDataList, dataSelection);
             blueCard.Number = averageValue.ToString("n2") + "dBm";
             /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-            List<DateTime> listTime = new List<DateTime>();
-            List<float> listRSRP = new List<float>();
-
-
-            for (int i = 0; i < inputDataList.Count; i++)
-            {
-                listTime.Add(inputDataList[i].Time);
-                listRSRP.Add((float)inputDataList[i].RSRP);
-            }
-
-            /*var chartValues = listRSRP.AsChartValues();
-            var lineSeries = new LineSeries
-            {
-                Values = chartValues
-            };*/
         }
 
         private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
@@ -1023,6 +977,46 @@ namespace Dora
             {
                 greenCard.Title = "Maximum";
                 redCard.Title = "Minimum";
+            }
+        }
+
+        private void ChangeButtonStyle(string buttonName)
+        {
+            // postavi sve u početni stil
+            rsrpButton.Style = (Style)FindResource("menuButton");
+            rsrqButton.Style = (Style)FindResource("menuButton");
+            sinrButton.Style = (Style)FindResource("menuButton");
+            cqiButton.Style = (Style)FindResource("menuButton");
+            pciButton.Style = (Style)FindResource("menuButton");
+            pingButton.Style = (Style)FindResource("menuButton");
+            downButton.Style = (Style)FindResource("menuButton");
+
+            // postavi stil aktivnog
+            switch (buttonName)
+            {
+                case "RSRP":
+                    rsrpButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "RSRQ":
+                    rsrqButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "SINR":
+                    sinrButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "CQI":
+                    cqiButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "PCI":
+                    pciButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "Ping":
+                    pingButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                case "Downlink":
+                    downButton.Style = (Style)FindResource("menuButtonActive");
+                    break;
+                default:                    
+                    break;
             }
         }
     }
