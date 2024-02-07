@@ -143,17 +143,15 @@
                 <TextBlock Text="Dora" FontSize="26" Foreground="Black" HorizontalAlignment="Left" FontWeight="SemiBold" Margin="50 15 0 20"/>
                 
                 <!--infocards-->
-                <Grid Grid.Row="2" Margin="50 20 15 40">
+                <Grid x:Name="infoCardGrid" Grid.Row="2" Margin="50 20 15 40">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <uc:InfoCard Grid.Column="0" x:Name="greenCard" Title="Maximum" Number="No file selected" Icon="PlusCircle" Background1="#5cc459" Background2="#81cc53" EllipseBackground1="#A5E345" EllipseBackground2="#B2EE53"/>
-                    <uc:InfoCard Grid.Column="1" x:Name="blueCard" Title="Average" Number="No file selected" Icon="ArrowsLeftRight" Background1="#3BA5D0" Background2="#349DC8" EllipseBackground1="#52C2DE" EllipseBackground2="#5ED0EC"/>
-                    <uc:InfoCard Grid.Column="2" x:Name="redCard" Title="Minimum" Number="No file selected" Icon="MinusCircle" Background1="#C54848" Background2="#C41F1F" EllipseBackground1="#F75555" EllipseBackground2="#F82727"/>
-
+                    <!-- main window initializes InfoCards here so they can be used as objects -->
+                    
                 </Grid>
 
                 <Grid Grid.Row="1">
@@ -186,7 +184,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
                             <StackPanel Orientation="Horizontal" Margin="20 0 0 15">
