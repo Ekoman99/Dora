@@ -27,8 +27,9 @@
             </Border.Background>
 
             <StackPanel>
+                <TextBlock Text="Dora" FontSize="26" Foreground="Black" HorizontalAlignment="Center" FontWeight="SemiBold" Margin="20 15 0 20"/>
                 <!--user-->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 35 0 0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30 0 0 0">
                     <Border CornerRadius="10" Width="40" Height="40">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
@@ -48,7 +49,7 @@
                     
                 </StackPanel>
 
-                <Separator Height="0.8" Margin="20 30" Background="#46558a"/>
+                <Separator Height="1" Margin="20 30" Background="#46558a"/>
                 
                 <!--menu-->
                 <Button x:Name="rsrpButton" Style="{StaticResource menuButton}" Click="ClickRSRP">
@@ -134,13 +135,13 @@
                     <RowDefinition Height="200"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 0 20">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 0 30">
                     <!--<Button Content="min" Style="{StaticResource topMenuButton}" Background="#DCC742" Foreground="#ffffff" Click="MinimiseButton_Click"/>
                     <Button Content="close" Style="{StaticResource topMenuButtonRight}" Background="#EC3535" Foreground="#ffffff" Click="CloseButton_Click"/>-->
                 </StackPanel>
                 
                 <!--program name-->
-                <TextBlock Text="Dora" FontSize="26" Foreground="Black" HorizontalAlignment="Left" FontWeight="SemiBold" Margin="50 15 0 20"/>
+                
                 
                 <!--infocards-->
                 <Grid x:Name="infoCardGrid" Grid.Row="2" Margin="50 20 15 40">

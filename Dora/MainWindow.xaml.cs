@@ -47,10 +47,10 @@ namespace Dora
 
             DataIntervals = InitializeMapIntervals();
             PlaceInfoCards();
-        }        
-        
+        }
+
         public string FilePath
-        {           
+        {
             get { return (string)GetValue(filePathCSVProperty); }
             set { SetValue(filePathCSVProperty, value); }
         }
@@ -62,6 +62,7 @@ namespace Dora
         List<(double Latitude, double Longitude)> MainGeoList;
 
         Dictionary<string, List<MapColorIntervals>> DataIntervals;
+        Dictionary<string, string> lastSavedPaths = new Dictionary<string, string>(); //pohrana zadnjeg patha za različite tipove datoteka, implementirano za .csv i .png
 
         InfoCard greenCard = InfoCard.GreenCardDefault;
         InfoCard blueCard = InfoCard.BlueCardDefault;
@@ -76,12 +77,18 @@ namespace Dora
 
         public void CSVFileSelect(object sender, RoutedEventArgs e)
         {
-            bool dataLoadedCSV = false;            
+            bool dataLoadedCSV = false;
 
             try
             {
                 OpenFileDialog openCSVDialog = new OpenFileDialog();
                 openCSVDialog.Filter = "CSV Files (*.csv)|*.csv"; // filter za prikaz samo.csv
+
+                if (lastSavedPaths.ContainsKey(".csv"))
+                {
+                    openCSVDialog.InitialDirectory = lastSavedPaths[".csv"];
+                }
+
                 Nullable<bool> result = openCSVDialog.ShowDialog();
 
                 if (result == true)
@@ -89,6 +96,7 @@ namespace Dora
                     FilePath = openCSVDialog.FileName;
                     dataLoadedCSV = true;
                     loadComplete = true;
+                    lastSavedPaths[".csv"] = System.IO.Path.GetDirectoryName(openCSVDialog.FileName);
                 }
 
                 inputDataList = LoadCSV(FilePath);
@@ -99,10 +107,15 @@ namespace Dora
                 MainGeoList = GetCoordinates(inputDataList);
 
                 if (dataLoadedCSV == true)
-                {                    
+                {
                     // incijalno pokazivanje RSRP
                     ShowScreen(inputDataList, "RSRP");
-                    InsertGraph(inputDataList, "RSRP");
+                    LineGraph(inputDataList, "RSRP");
+
+                    tabSelector = "RSRP";
+
+                    ChangeButtonStyle(tabSelector);
+                    chartTitle.Text = tabSelector;
                 }
 
                 Console.WriteLine(inputDataList.Count);
@@ -112,8 +125,8 @@ namespace Dora
                 MessageBox.Show("Error: " + ex.Message);
                 FilePath = string.Empty; // filepath ostaje prazan
             }
-            
-        }        
+
+        }
 
         public List<BaseCsvData> LoadCSV(string filePath)
         {
@@ -152,7 +165,7 @@ namespace Dora
                 }
                 else
                 {
-                    throw new Exception ("errror");
+                    throw new Exception("errror");
                 }
             }
         }
@@ -201,7 +214,7 @@ namespace Dora
                     mapWindow.Show();
                 }
             }
-            
+
         }
 
         private void ExportKML(object sender, RoutedEventArgs e)
@@ -239,7 +252,7 @@ namespace Dora
             {
                 string dataSelection = "RSRP";
                 string unit = "dBm";
-                chartTitle.Text = dataSelection;                
+                chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + unit;
@@ -249,7 +262,7 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                InsertGraph(inputDataList, "RSRP");
+                StemGraph(inputDataList, dataSelection);
                 tabSelector = "RSRP";
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -267,7 +280,7 @@ namespace Dora
             {
                 string dataSelection = "RSRQ";
                 string unit = "dB";
-                chartTitle.Text = dataSelection;                
+                chartTitle.Text = dataSelection;
 
                 double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 greenCard.Number = minimumValue.ToString() + unit;
@@ -277,7 +290,7 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                InsertGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
+                LineGraph(inputDataList, "RSRQ", peakSmooth, peakUpperLimit);
                 tabSelector = "RSRQ";
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -305,7 +318,7 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                InsertGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
+                LineGraph(inputDataList, "SINR", peakSmooth, peakUpperLimit);
                 tabSelector = "SINR";
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -332,7 +345,7 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n0") + "";
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                InsertGraph(inputDataList, "CQI");
+                LineGraph(inputDataList, "CQI");
                 tabSelector = "CQI";
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -358,7 +371,7 @@ namespace Dora
                 blueCard.Number = "N/A";
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                InsertGraph(inputDataList, "PCI");
+                LineGraph(inputDataList, "PCI");
                 tabSelector = "PCI";
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -378,7 +391,7 @@ namespace Dora
                 string unit = "ms";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMinimum (inputDataList, dataSelection);
+                double minimumValue = CalculateMinimum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMaximum(inputDataList, dataSelection);
                 redCard.Number = maximumValue.ToString() + unit;
@@ -386,7 +399,7 @@ namespace Dora
                 blueCard.Number = averageValue.ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                InsertGraph(inputDataList, "Ping");
+                LineGraph(inputDataList, "Ping");
                 tabSelector = "Ping";
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -414,7 +427,7 @@ namespace Dora
                 blueCard.Number = (averageValue * 8).ToString("n2") + unit;
                 /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
-                InsertGraph(inputDataList, "Downlink");
+                LineGraph(inputDataList, "Downlink");
                 tabSelector = "Downlink";
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -546,7 +559,7 @@ namespace Dora
                     {
                         object propertyValue = propertyInfo.GetValue(item, null);
                         if (propertyValue is double || propertyValue is int || propertyValue is float)
-                        {                          
+                        {
                             if (Convert.ToInt32(propertyValue) < peakLimit && peakNormalization == true)
                             {
                                 return Convert.ToDouble(propertyValue);
@@ -583,7 +596,7 @@ namespace Dora
 
         private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
 
-        public void InsertGraph(List<BaseCsvData> inputList, string dataSelection)
+        public void LineGraph(List<BaseCsvData> inputList, string dataSelection)
         {
             // kreiranje modela za plotanje
             model = new PlotModel
@@ -678,9 +691,9 @@ namespace Dora
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
-        }       
+        }
 
-        public void InsertGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        public void LineGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
         {
             // kreiranje modela za plotanje
             model = new PlotModel
@@ -787,7 +800,257 @@ namespace Dora
 
             oxyplotChartContainer.Children.Clear();
             oxyplotChartContainer.Children.Add(oxyplotChart);
-        } 
+        }
+
+        public void StemGraph(List<BaseCsvData> inputList, string dataSelection) // izgleda kao clustered column, minimalna prilagodba potrebna
+        {
+            // kreiranje modela za plotanje
+            model = new PlotModel
+            {
+                Background = OxyColors.Transparent,
+                PlotAreaBorderColor = OxyColors.Transparent,
+            };
+
+            // serija točaka
+            var seriesBlue = new StemSeries // 4G
+            {
+                Color = OxyColor.Parse("#349DC8"),
+            };
+
+            var seriesRed = new StemSeries // 5G
+            {
+                Color = OxyColor.Parse("#C41F1F"),
+            };
+
+            for (int i = 0; i < inputDataList.Count; i++) // ---> test za dualno pokazivanje grafa
+            {
+                if (inputDataList[i].Tech == "EN-DC")
+                {
+                    // uzimanje vrijednosti, dataSelection definira koji property 
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G, upisujem
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 4G upisujem nullove
+                    }
+                    else
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 5G vrijednosti                        
+                    }
+                }
+                else
+                {
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G, upisujem
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // u 5G upisujem nullove
+                    }
+                    else
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Double.NaN)); // nema 4G vrijednosti
+                    }
+                }
+
+            }
+
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
+
+            // definiranje osi
+            var xAxis = new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Time", // Optional axis title
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
+                MajorGridlineStyle = LineStyle.Solid, // Gridline style
+                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
+                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
+                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+            };
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = dataSelection,
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255),
+            };
+
+            model.Axes.Add(xAxis);
+            model.Axes.Add(yAxis);
+
+            // zamjena plota, ako postoji
+            var oxyplotChart = new OxyPlot.Wpf.PlotView
+            {
+                Model = model,
+                Background = Brushes.Transparent
+            };
+
+            oxyplotChartContainer.Children.Clear();
+            oxyplotChartContainer.Children.Add(oxyplotChart);
+        }
+
+        private void AreaGraph(List<BaseCsvData> inputList, string dataSelection)
+        {
+            // kreiranje modela za plotanje
+            model = new PlotModel
+            {
+                Background = OxyColors.Transparent,
+                PlotAreaBorderColor = OxyColors.Transparent,
+            };
+
+            // serija točaka
+            var seriesBlue = new AreaSeries // 4G network
+            {
+                Color = OxyColor.FromArgb(255, 52, 157, 200), // #349DC8
+                StrokeThickness = 0,
+                Fill = OxyColor.FromArgb(127, 52, 157, 200), // #349DC880
+            };
+
+            var seriesRed = new AreaSeries // 5G network
+            {
+                Color = OxyColor.FromArgb(255, 196, 31, 31), // #C41F1F
+                StrokeThickness = 0,
+                Fill = OxyColor.FromArgb(127, 196, 31, 31), // #C41F1F80
+            };
+
+            for (int i = 0; i < inputDataList.Count - 1; i++)
+            {
+                // Calculate time difference between consecutive points
+                double timeDiff = (inputDataList[i + 1].Time - inputDataList[i].Time).TotalSeconds;
+
+                if (timeDiff > 1.5)
+                {
+                    // Calculate the number of steps to add based on the time difference
+                    int steps = (int)Math.Floor(timeDiff / 1.5);
+
+                    // Add zeros and intermediate timestamps to both series
+                    for (int j = 0; j < steps; j++)
+                    {
+                        DateTime intermediateTime = inputDataList[i].Time.AddSeconds((j + 1) * 1.5);
+
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(intermediateTime), 0));
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(intermediateTime), 0));
+                    }
+                }
+
+                // Add the current data point
+                if (inputDataList[i].Tech == "EN-DC")
+                {
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), 0));
+                    }
+                    else
+                    {
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), 0));
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), 0));
+                    }
+                }
+                else
+                {
+                    object dataValue = inputDataList[i].GetType().GetProperty(dataSelection).GetValue(inputDataList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), Convert.ToDouble(dataValue)));
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), 0));
+                    }
+                    else
+                    {
+                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), 0));
+                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[i].Time), 0));
+                    }
+                }
+            }
+
+            // Add the last data point
+            int lastIndex = inputDataList.Count - 1;
+            if (inputDataList[lastIndex].Tech == "EN-DC")
+            {
+                object dataValue = inputDataList[lastIndex].GetType().GetProperty(dataSelection).GetValue(inputDataList[lastIndex]);
+
+                if (dataValue != null)
+                {
+                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), Convert.ToDouble(dataValue)));
+                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), 0));
+                }
+                else
+                {
+                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), 0));
+                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), 0));
+                }
+            }
+            else
+            {
+                object dataValue = inputDataList[lastIndex].GetType().GetProperty(dataSelection).GetValue(inputDataList[lastIndex]);
+
+                if (dataValue != null)
+                {
+                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), Convert.ToDouble(dataValue)));
+                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), 0));
+                }
+                else
+                {
+                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), 0));
+                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputDataList[lastIndex].Time), 0));
+                }
+            }
+
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
+
+            // definiranje osi
+            var xAxis = new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Time", // Optional axis title
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
+                MajorGridlineStyle = LineStyle.Solid, // Gridline style
+                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
+                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
+                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+            };
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = dataSelection,
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255),
+            };
+
+            model.Axes.Add(xAxis);
+            model.Axes.Add(yAxis);
+
+            // zamjena plota, ako postoji
+            var oxyplotChart = new OxyPlot.Wpf.PlotView
+            {
+                Model = model,
+                Background = Brushes.Transparent
+            };
+
+            oxyplotChartContainer.Children.Clear();
+            oxyplotChartContainer.Children.Add(oxyplotChart);
+        } // potrebna prilagodba, area tip nije najbolji zbog tipa podataka
 
         public void ExportGraph(object sender, RoutedEventArgs e)
         {
@@ -797,6 +1060,12 @@ namespace Dora
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "PNG Image (*.png)|*.png";
                 saveFileDialog.Title = "Export Chart as PNG";
+
+                if (lastSavedPaths.ContainsKey(".png"))
+                {
+                    saveFileDialog.InitialDirectory = lastSavedPaths[".png"];
+                }
+
                 saveFileDialog.ShowDialog();
 
                 // kad se zada ime, exportaj
@@ -810,6 +1079,7 @@ namespace Dora
                         var exporter = new OxyPlot.Wpf.PngExporter { Width = 800, Height = 600 };
                         exporter.Export(model, stream);
                     }
+                    lastSavedPaths[".png"] = System.IO.Path.GetDirectoryName(saveFileDialog.FileName);
                 }
             }
             else
