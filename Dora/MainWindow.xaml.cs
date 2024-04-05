@@ -17,7 +17,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Globalization;
@@ -196,12 +195,25 @@ namespace Dora
 
         private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
         {
-            string filePath = @"C:\Users\Josip\source\repos\Dora\Dora\Data\MapIntervals.json";
+            //string filePath = @"C:\Users\Josip\source\repos\Dora\Dora\Data\MapIntervals.json";
+            string dataPath = FindDataDirectory();
+            string filePath = Path.Combine(dataPath, "Data", "MapIntervals.json");
             string json = File.ReadAllText(filePath);
 
             Dictionary<string, List<MapColorIntervals>> dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
 
             return dataIntervals;
+        }
+
+        private string FindDataDirectory()
+        {
+            DirectoryInfo directoryInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            while (directoryInfo != null && !directoryInfo.GetDirectories().Any(dir => dir.Name == "Data"))
+            {
+                directoryInfo = directoryInfo.Parent;
+            }
+
+            return directoryInfo.FullName;
         }
 
         private void PlaceInfoCards()

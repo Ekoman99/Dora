@@ -11,9 +11,9 @@ using OxyPlot.Wpf;
 
 namespace Dora.Data
 {
-    internal class VisualisationEngine
-    {
-        public PlotView GraphView(PlotModel model)
+    public static class VisualisationEngine
+    { 
+        public static PlotView GraphView(PlotModel model)
         {
             var oxyplotChart = new OxyPlot.Wpf.PlotView
             {
@@ -24,7 +24,17 @@ namespace Dora.Data
             return oxyplotChart;
         }
 
-        public PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection)
+        /*public static PlotView LineGraph()
+        {
+
+        }
+
+        public static PlotView StemGraph()
+        {
+
+        }*/
+
+        public static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection)
         {
             // kreiranje modela za plotanje
             var model = new PlotModel
@@ -112,7 +122,7 @@ namespace Dora.Data
             return model;
         }
 
-        public PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        public static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
         {
             // kreiranje modela za plotanje
             var model = new PlotModel
@@ -212,7 +222,7 @@ namespace Dora.Data
             return model;
         }
 
-        public PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection) // izgleda kao clustered column, minimalna prilagodba potrebna
+        public static PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection) // izgleda kao clustered column, minimalna prilagodba potrebna
         {
             // kreiranje modela za plotanje
             var model = new PlotModel
@@ -300,7 +310,7 @@ namespace Dora.Data
             return model;
         }
 
-        public PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        public static PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
         {
             // kreiranje modela za plotanje
             var model = new PlotModel
@@ -400,7 +410,7 @@ namespace Dora.Data
             return model;
         }
 
-        private PlotModel AreaModel(List<BaseCsvData> inputList, string dataSelection)
+        private static PlotModel AreaModel(List<BaseCsvData> inputList, string dataSelection)
         {
             // kreiranje modela za plotanje
             var model = new PlotModel
