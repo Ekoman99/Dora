@@ -671,16 +671,6 @@ namespace Dora
             return max;
         }
 
-        private void FillInfoCards(string dataSelection, string unit)
-        {
-            double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-            greenCard.Number = (minimumValue * 8).ToString("n2") + unit;
-            double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-            redCard.Number = (maximumValue * 8).ToString("n2") + unit;
-            double averageValue = CalculateAverage(inputDataList, dataSelection);
-            blueCard.Number = (averageValue * 8).ToString("n2") + unit;
-        }
-
         private void CalculateCards(string dataSelection, string unit, bool peakSmooth, int peakUpperLimit)
         {
             greenCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString() + unit;

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dora
+namespace Dora.Data
 {
-    internal class GeoData
+    internal class Charting
     {
-        public double latitude {  get; set; }
-        public double longitude { get; set; }
+
     }
 }
