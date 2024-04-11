@@ -132,10 +132,11 @@ namespace Dora
                 if (dataLoadedCSV == true)
                 {
                     // incijalno pokazivanje RSRP
-                    ShowScreen(inputDataList, "RSRP");
-                    LineGraph(inputDataList, "RSRP");
+                    ShowScreen(inputDataList, "RSRP"); //pokazuje inicijalne izračune
+                    //LineGraph(inputDataList, "RSRP");
 
                     tabSelector = "RSRP";
+                    UpdateGraph();
 
                     ChangeButtonStyle(tabSelector);
                     chartTitle.Text = tabSelector;
@@ -335,15 +336,16 @@ namespace Dora
                 string unit = "dBm";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
                 redCard.Number = maximumValue.ToString() + unit;
-                double averageValue = CalculateAverage(inputDataList, dataSelection);
+                double averageValue = MathEngine.CalculateAverage(inputDataList, dataSelection);
                 blueCard.Number = averageValue.ToString("n2") + unit;
-                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 tabSelector = "RSRP";
+                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -363,15 +365,16 @@ namespace Dora
                 string unit = "dB";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
+                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
                 redCard.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 blueCard.Number = averageValue.ToString("n2") + unit;
-                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 tabSelector = "RSRQ";
+                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -391,15 +394,16 @@ namespace Dora
                 string unit = "dB";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
+                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
                 redCard.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
                 blueCard.Number = averageValue.ToString("n2") + unit;
-                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 tabSelector = "SINR";
+                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -416,17 +420,19 @@ namespace Dora
             if (loadComplete == true)
             {
                 string dataSelection = "CQI";
+                string unit = "";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + "";
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
                 redCard.Number = maximumValue.ToString() + "";
                 double averageValue = Math.Floor(CalculateAverage(inputDataList, dataSelection)); // CQI je cjelobrojna vrijednost
                 blueCard.Number = averageValue.ToString("n0") + "";
-                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 tabSelector = "CQI";
+                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -443,16 +449,18 @@ namespace Dora
             if (loadComplete == true)
             {
                 string dataSelection = "PCI";
+                string unit = "";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + "";
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
                 redCard.Number = maximumValue.ToString() + "";
                 blueCard.Number = "N/A";
-                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 tabSelector = "PCI";
+                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -472,15 +480,16 @@ namespace Dora
                 string unit = "ms";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMinimum(inputDataList, dataSelection);
+                /*double minimumValue = CalculateMinimum(inputDataList, dataSelection);
                 greenCard.Number = minimumValue.ToString() + unit;
                 double maximumValue = CalculateMaximum(inputDataList, dataSelection);
                 redCard.Number = maximumValue.ToString() + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
                 blueCard.Number = averageValue.ToString("n2") + unit;
-                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 tabSelector = "Ping";
+                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -500,15 +509,16 @@ namespace Dora
                 string unit = "Mbps";
                 chartTitle.Text = dataSelection;
 
-                double minimumValue = CalculateMaximum(inputDataList, dataSelection);
+                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
                 greenCard.Number = (minimumValue * 8).ToString("n2") + unit;
                 double maximumValue = CalculateMinimum(inputDataList, dataSelection);
                 redCard.Number = (maximumValue * 8).ToString("n2") + unit;
                 double averageValue = CalculateAverage(inputDataList, dataSelection);
                 blueCard.Number = (averageValue * 8).ToString("n2") + unit;
-                /* MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
+                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
 
                 tabSelector = "Downlink";
+                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
                 InfoCardText();
@@ -671,6 +681,31 @@ namespace Dora
             blueCard.Number = (averageValue * 8).ToString("n2") + unit;
         }
 
+        private void CalculateCards(string dataSelection, string unit, bool peakSmooth, int peakUpperLimit)
+        {
+            greenCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString() + unit;
+            redCard.Number = MathEngine.CalculateMinimum(inputDataList, dataSelection).ToString() + unit;
+            blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
+            switch (dataSelection)
+            {
+                case "CQI":
+                    {
+                        blueCard.Number = Math.Floor(MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit)).ToString("n2") + unit;
+                        break;
+                    }
+                case "PCI":
+                    {
+                        blueCard.Number = "N/A";
+                        break;
+                    }
+                default:
+                    {
+                        blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
+                        break;
+                    }
+            }
+        }
+
         private void ShowScreen(List<BaseCsvData> inputDataList, string dataSelection)
         {
             double minimumValue = CalculateMaximum(inputDataList, dataSelection);
@@ -690,19 +725,27 @@ namespace Dora
             {
                 if (IsOption1Selected && (tabSelector == "RSRQ" || tabSelector == "SINR"))
                 {
-                    LineGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute LineGraph method if toggle button is on
+                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute LineGraph method if toggle button is on
+                    oxyplotChartContainer.Children.Clear();
+                    oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
                 else if (IsOption1Selected && !(tabSelector == "RSRQ" || tabSelector == "SINR"))
                 {
-                    LineGraph(inputDataList, tabSelector);
+                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector);
+                    oxyplotChartContainer.Children.Clear();
+                    oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
                 else if (!IsOption1Selected && (tabSelector == "RSRQ" || tabSelector == "SINR"))
                 {
-                    StemGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute StemGraph method if toggle button is off
+                    var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute StemGraph method if toggle button is off
+                    oxyplotChartContainer.Children.Clear();
+                    oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
                 else
                 {
-                    StemGraph(inputDataList, tabSelector);
+                    var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector);
+                    oxyplotChartContainer.Children.Clear();
+                    oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
             }
             else

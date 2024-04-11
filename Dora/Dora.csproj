@@ -200,6 +200,7 @@
     <Compile Include="Data\BaseCsvData.cs" />
     <Compile Include="Data\GeoData.cs" />
     <Compile Include="Data\MapColorIntervals.cs" />
+    <Compile Include="Data\MathEngine.cs" />
     <Compile Include="Data\VisualisationEngine.cs" />
     <Compile Include="RouteWindow.xaml.cs">
       <DependentUpon>RouteWindow.xaml</DependentUpon>
