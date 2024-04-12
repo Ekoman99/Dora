@@ -197,8 +197,8 @@ namespace Dora
         private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
         {
             //string filePath = @"C:\Users\Josip\source\repos\Dora\Dora\Data\MapIntervals.json";
-            string dataPath = FindDataDirectory();
-            string filePath = Path.Combine(dataPath, "Data", "MapIntervals.json");
+            string dataPath = FindSettingsDirectory();
+            string filePath = Path.Combine(dataPath, "Settings", "MapIntervals.json");
             string json = File.ReadAllText(filePath);
 
             Dictionary<string, List<MapColorIntervals>> dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
@@ -206,10 +206,10 @@ namespace Dora
             return dataIntervals;
         }
 
-        private string FindDataDirectory()
+        private string FindSettingsDirectory()
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            while (directoryInfo != null && !directoryInfo.GetDirectories().Any(dir => dir.Name == "Data"))
+            while (directoryInfo != null && !directoryInfo.GetDirectories().Any(dir => dir.Name == "Settings"))
             {
                 directoryInfo = directoryInfo.Parent;
             }

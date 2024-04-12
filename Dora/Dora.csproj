@@ -201,6 +201,7 @@
     <Compile Include="Data\Charting.cs" />
     <Compile Include="Data\MapColorIntervals.cs" />
     <Compile Include="Data\MathEngine.cs" />
+    <Compile Include="Data\SettingsDefinitions.cs" />
     <Compile Include="Data\VisualisationEngine.cs" />
     <Compile Include="RouteWindow.xaml.cs">
       <DependentUpon>RouteWindow.xaml</DependentUpon>
@@ -288,12 +289,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Data\MapIntervals.json" />
+    <None Include="Settings\MapIntervals.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Settings\Settings.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -316,6 +318,7 @@
   <ItemGroup>
     <Resource Include="Icons\dorica2.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

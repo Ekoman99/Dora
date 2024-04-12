@@ -58,12 +58,12 @@ namespace Dora.Data
             };
 
             // serija točaka
-            var seriesBlue = new LineSeries // 4G
+            var seriesBlue = new LineSeries // LTE
             {
                 Color = OxyColor.Parse("#349DC8"),
             };
 
-            var seriesRed = new LineSeries // 5G
+            var seriesRed = new LineSeries // NR
             {
                 Color = OxyColor.Parse("#C41F1F"),
             };
@@ -141,17 +141,17 @@ namespace Dora.Data
             // kreiranje modela za plotanje
             var model = new PlotModel
             {
-                Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.Transparent,
+                Background = OxyColor.Parse("#00000000"),
+                PlotAreaBorderColor = OxyColor.Parse("#00000000"),
             };
 
             // serija točaka
-            var seriesBlue = new LineSeries // 4G
+            var seriesBlue = new LineSeries // LTE
             {
                 Color = OxyColor.Parse("#349DC8"),
             };
 
-            var seriesRed = new LineSeries // 5G
+            var seriesRed = new LineSeries // NR
             {
                 Color = OxyColor.Parse("#C41F1F"),
             };
@@ -246,12 +246,12 @@ namespace Dora.Data
             };
 
             // serija točaka
-            var seriesBlue = new StemSeries // 4G
+            var seriesBlue = new StemSeries // LTE
             {
                 Color = OxyColor.Parse("#349DC8"),
             };
 
-            var seriesRed = new StemSeries // 5G
+            var seriesRed = new StemSeries // NR
             {
                 Color = OxyColor.Parse("#C41F1F"),
             };
@@ -334,12 +334,12 @@ namespace Dora.Data
             };
 
             // serija točaka
-            var seriesBlue = new StemSeries // 4G
+            var seriesBlue = new StemSeries // LTE
             {
                 Color = OxyColor.Parse("#349DC8"),
             };
 
-            var seriesRed = new StemSeries // 5G
+            var seriesRed = new StemSeries // NR
             {
                 Color = OxyColor.Parse("#C41F1F"),
             };
