@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dora.Data
 {
-    internal class SettingsDefinitions
+    public class SettingsDefinitions
     {
         public string LTEColor { get; set; }
 
@@ -18,6 +18,12 @@ namespace Dora.Data
 
         public int ExportHeight { get; set; }
 
+        public string XAxisTitle { get; set; }
 
+        public string YAxisTitle { get; set; }
+
+        public string TitleColor { get; set; }
+
+        public string AxisColor { get; set; }
     }
 }

@@ -13,6 +13,8 @@ namespace Dora.Data
 {
     public static class VisualisationEngine
     { 
+        //oxyplotchart
+
         public static PlotView GraphView(PlotModel model)
         {
             var oxyplotChart = new PlotView
@@ -23,6 +25,8 @@ namespace Dora.Data
 
             return oxyplotChart;
         }
+
+        //graphs
 
         public static PlotView LineGraph(List<BaseCsvData> inputList, string dataSelection)
         {
@@ -47,6 +51,8 @@ namespace Dora.Data
             var model = StemModel(inputList, dataSelection, peakNormalization, peakLimit);
             return GraphView(model);
         }
+
+        //models
 
         public static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection)
         {

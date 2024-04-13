@@ -199,6 +199,7 @@
     </ApplicationDefinition>
     <Compile Include="Data\BaseCsvData.cs" />
     <Compile Include="Data\Charting.cs" />
+    <Compile Include="Data\Exporter.cs" />
     <Compile Include="Data\MapColorIntervals.cs" />
     <Compile Include="Data\MathEngine.cs" />
     <Compile Include="Data\SettingsDefinitions.cs" />
