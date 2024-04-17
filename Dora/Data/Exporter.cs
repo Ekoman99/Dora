@@ -7,12 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Dora.Data
 {
-    internal class Exporter
+    static class Exporter
     {
-        private string KMLBuilder(List<BaseCsvData> list, string dataSelection)
+        public static string KMLBuilder(List<BaseCsvData> list, string dataSelection, SettingsDefinitions settings)
         {
             StringBuilder kmlBuilder = new StringBuilder();
 
@@ -22,7 +23,7 @@ namespace Dora.Data
 
             kmlBuilder.AppendLine(@"    <Style id=""polyStyle"">");
             kmlBuilder.AppendLine(@"      <PolyStyle>");
-            kmlBuilder.AppendLine(@"        <color>7fffffff</color>"); // 7f definira 50% opacity
+            kmlBuilder.AppendLine($@"        <color>{settings.KMLColor}</color>"); // 7f definira 50% opacity
             kmlBuilder.AppendLine(@"      </PolyStyle>");
             kmlBuilder.AppendLine(@"    </Style>");
 
@@ -53,7 +54,7 @@ namespace Dora.Data
             return kmlBuilder.ToString();
         }
 
-        public void ExportGraph(bool loadComplete, PlotModel exportModel, Dictionary<string, string> lastSavedPaths)
+        public static void ExportGraph(bool loadComplete, PlotModel exportModel, Dictionary<string, string> lastSavedPaths, SettingsDefinitions settings)
         {
             if (loadComplete == true)
             {
@@ -74,10 +75,9 @@ namespace Dora.Data
                 {
                     using (var stream = File.Create(saveFileDialog.FileName))
                     {
-                        /*model.Background = OxyColors.LightGray; // Set background color
-                        ((LineSeries)model.Series[0]).Color = OxyColors.Red; // Change line color* --> test za promjenu izgleda grafa */
+                        exportModel.Background = OxyColor.Parse(settings.GraphBackground); // Set background color from settings
 
-                        var exporter = new OxyPlot.Wpf.PngExporter { Width = 800, Height = 600 };
+                        var exporter = new OxyPlot.Wpf.PngExporter { Width = settings.ExportWidth, Height = settings.ExportHeight };
                         exporter.Export(exportModel, stream);
                     }
                     lastSavedPaths[".png"] = Path.GetDirectoryName(saveFileDialog.FileName);

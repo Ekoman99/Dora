@@ -12,6 +12,8 @@ namespace Dora.Data
 
         public string NRColor { get; set; }
 
+        public string KMLColor { get; set; }
+
         public string GraphBackground { get; set; }
 
         public int ExportWidth { get; set; }

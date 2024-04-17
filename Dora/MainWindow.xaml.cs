@@ -46,7 +46,9 @@ namespace Dora
             InitializeComponent();
             this.DataContext = this;
 
-            DataIntervals = InitializeMapIntervals();
+            InitializeSettings();
+            InitializeMapIntervals();
+
             PlaceInfoCards();
         }
 
@@ -62,6 +64,7 @@ namespace Dora
         List<BaseCsvData> inputDataList;
         List<(double Latitude, double Longitude)> MainGeoList;
 
+        SettingsDefinitions AllSettings;
         Dictionary<string, List<MapColorIntervals>> DataIntervals;
         Dictionary<string, string> lastSavedPaths = new Dictionary<string, string>(); //pohrana zadnjeg patha za različite tipove datoteka, implementirano za .csv i .png
 
@@ -75,6 +78,8 @@ namespace Dora
         bool peakSmooth = true;
         int peakUpperLimit = 50000;
         string tabSelector = "RSRP"; //program prvo učita RSRP
+
+        private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
 
         private bool isOption1Selected;
 
@@ -195,16 +200,34 @@ namespace Dora
             }
         }
 
-        private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
+        /*private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
         {
             //string filePath = @"C:\Users\Josip\source\repos\Dora\Dora\Data\MapIntervals.json";
-            string dataPath = FindSettingsDirectory();
-            string filePath = Path.Combine(dataPath, "Settings", "MapIntervals.json");
+            string folderPath = FindSettingsDirectory();
+            string filePath = Path.Combine(folderPath, "Settings", "MapIntervals.json");
             string json = File.ReadAllText(filePath);
 
             Dictionary<string, List<MapColorIntervals>> dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
 
             return dataIntervals;
+        }*/
+
+        private void InitializeMapIntervals()
+        {
+            string folderPath = FindSettingsDirectory();
+            string filePath = Path.Combine(folderPath, "Settings", "MapIntervals.json");
+            string json = File.ReadAllText(filePath);
+
+            DataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
+        }
+
+        private void InitializeSettings()
+        {
+            string folderPath = FindSettingsDirectory();
+            string filePath = Path.Combine(folderPath, "Settings", "Settings.json");
+            string json = File.ReadAllText(filePath);
+
+            AllSettings = JsonConvert.DeserializeObject<SettingsDefinitions>(json);
         }
 
         private string FindSettingsDirectory()
@@ -257,39 +280,7 @@ namespace Dora
 
         public void ExportGraph(object sender, RoutedEventArgs e)
         {
-            if (loadComplete == true)
-            {
-                // dialog window
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "PNG Image (*.png)|*.png";
-                saveFileDialog.Title = "Export Chart as PNG";
-
-                if (lastSavedPaths.ContainsKey(".png"))
-                {
-                    saveFileDialog.InitialDirectory = lastSavedPaths[".png"];
-                }
-
-                saveFileDialog.ShowDialog();
-
-                // kad se zada ime, exportaj
-                if (!string.IsNullOrWhiteSpace(saveFileDialog.FileName))
-                {
-                    using (var stream = File.Create(saveFileDialog.FileName))
-                    {
-                        /*model.Background = OxyColors.LightGray; // Set background color
-                        ((LineSeries)model.Series[0]).Color = OxyColors.Red; // Change line color* --> test za promjenu izgleda grafa */
-
-                        var exporter = new OxyPlot.Wpf.PngExporter { Width = 800, Height = 600 };
-                        exporter.Export(model, stream);
-                    }
-                    lastSavedPaths[".png"] = System.IO.Path.GetDirectoryName(saveFileDialog.FileName);
-                }
-            }
-            else
-            {
-                var warningWindow = new UnloadedWarning();
-                warningWindow.Show();
-            }
+            Exporter.ExportGraph(loadComplete, model, lastSavedPaths, AllSettings);
         }
 
         private void ExportKML(object sender, RoutedEventArgs e)
@@ -542,7 +533,6 @@ namespace Dora
         {
             greenCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString() + unit;
             redCard.Number = MathEngine.CalculateMinimum(inputDataList, dataSelection).ToString() + unit;
-            blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
             switch (dataSelection)
             {
                 case "CQI":
@@ -563,8 +553,6 @@ namespace Dora
             }
         }
 
-        private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
-
         private void UpdateGraph()
         {
             if(loadComplete == true)
@@ -572,24 +560,28 @@ namespace Dora
                 if (IsOption1Selected && (tabSelector == "RSRQ" || tabSelector == "SINR"))
                 {
                     var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute LineGraph method if toggle button is on
+                    model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
                 else if (IsOption1Selected && !(tabSelector == "RSRQ" || tabSelector == "SINR"))
                 {
                     var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector);
+                    model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
                 else if (!IsOption1Selected && (tabSelector == "RSRQ" || tabSelector == "SINR"))
                 {
                     var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute StemGraph method if toggle button is off
+                    model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
                 else
                 {
                     var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector);
+                    model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }

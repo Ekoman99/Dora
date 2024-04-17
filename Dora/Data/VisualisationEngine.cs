@@ -52,6 +52,26 @@ namespace Dora.Data
             return GraphView(model);
         }
 
+        //model selection
+
+       /* public static PlotModel SelectModel(string tabSelect, bool graphType, List<BaseCsvData> inputList, )
+        {
+            var exportModel = new PlotModel();
+
+            switch (tabSelect)
+            {
+                case "RSRP":
+                    {
+                        if (graphType)
+                        {
+                            exportModel = LineGraph()
+                        }
+                    }
+            }
+
+            
+        }*/
+
         //models
 
         public static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection)

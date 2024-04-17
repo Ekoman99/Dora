@@ -144,6 +144,7 @@ namespace Dora
                 }
 
                 Color selectedColor = (Color)ColorConverter.ConvertFromString(colorName);
+                //Color selectedColor = Color.FromArgb()
 
                 // antialiasing za ljepšu crtu
                 routeSegment.Shape = new Path()
