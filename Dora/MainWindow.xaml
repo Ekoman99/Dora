@@ -202,6 +202,8 @@
                                 <Button Width="120" Height="30" Content="Export KML" Click="ExportKML"/>
                                 <Separator Opacity="0" Height="20"/>
                                 <ToggleButton Content="Line graph" Width="120" Height="30" ToggleButton.Checked="ToggleButton_Checked" ToggleButton.Unchecked="ToggleButton_Unchecked" IsChecked="{Binding IsOption1Selected, Mode=TwoWay}" Style="{StaticResource CustomToggleButtonStyle}"/>
+                                <Separator Opacity="0" Height="20"/>
+                                <Button Width="120" Height="30" Content="Test" Click="testwide"/>
                             </StackPanel>
                         </Grid>
                     </Border>

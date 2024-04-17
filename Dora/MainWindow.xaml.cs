@@ -71,6 +71,7 @@ namespace Dora
         InfoCard greenCard = InfoCard.GreenCardDefault;
         InfoCard blueCard = InfoCard.BlueCardDefault;
         InfoCard redCard = InfoCard.RedCardDefault;
+        WideInfoCard wideCard = WideInfoCard.WideCardDefault;
 
         private bool status4G;
         private bool status5G;
@@ -219,6 +220,16 @@ namespace Dora
             string json = File.ReadAllText(filePath);
 
             DataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
+        }
+
+        private void testwide(object sender, RoutedEventArgs e)
+        {
+            infoCardGrid.Children.Remove(greenCard);
+            infoCardGrid.Children.Remove(blueCard);
+            infoCardGrid.Children.Remove(redCard);
+
+            infoCardGrid.Children.Add(wideCard);
+            Grid.SetColumnSpan(wideCard, 3);
         }
 
         private void InitializeSettings()
