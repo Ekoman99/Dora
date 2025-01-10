@@ -707,7 +707,8 @@ namespace Dora
                 object propertyValue = propertyInfo.GetValue(item, null);
                 double value = Convert.ToDouble(propertyValue);
 
-                kmlBuilder.AppendLine($"          {list[i].Longitude},{list[i].Latitude},{propertyValue}");
+                kmlBuilder.AppendLine($"          {list[i].Longitude.ToString(CultureInfo.InvariantCulture)},{list[i].Latitude.ToString(CultureInfo.InvariantCulture)},{propertyValue}");
+
             }
 
             kmlBuilder.AppendLine(@"        </coordinates>");
