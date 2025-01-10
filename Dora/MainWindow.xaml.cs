@@ -331,23 +331,14 @@ namespace Dora
             }
         }
 
-        private void ClickRSRP(object sender, RoutedEventArgs e)
+        private void ClickHandler(object sender, RoutedEventArgs e, string dataSelection, string unit)
         {
             if (loadComplete == true)
             {
-                string dataSelection = "RSRP";
-                string unit = "dBm";
                 chartTitle.Text = dataSelection;
 
-                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-                greenCard.Number = minimumValue.ToString() + unit;
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                redCard.Number = maximumValue.ToString() + unit;
-                double averageValue = MathEngine.CalculateAverage(inputDataList, dataSelection);
-                blueCard.Number = averageValue.ToString("n2") + unit;
-                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                tabSelector = "RSRP";
+                // You can calculate the cards or other specific actions as needed.
+                tabSelector = dataSelection;
                 CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
                 ChangeButtonStyle(tabSelector);
@@ -358,179 +349,41 @@ namespace Dora
                 var warningWindow = new UnloadedWarning();
                 warningWindow.Show();
             }
+        }
+
+        private void ClickRSRP(object sender, RoutedEventArgs e)
+        {
+            ClickHandler(sender, e, "RSRP", "dBm");
         }
 
         private void ClickRSRQ(object sender, RoutedEventArgs e)
         {
-            if (loadComplete == true)
-            {
-                string dataSelection = "RSRQ";
-                string unit = "dB";
-                chartTitle.Text = dataSelection;
-
-                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                greenCard.Number = minimumValue.ToString() + unit;
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                redCard.Number = maximumValue.ToString() + unit;
-                double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                blueCard.Number = averageValue.ToString("n2") + unit;
-                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                tabSelector = "RSRQ";
-                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
-                UpdateGraph();
-                ChangeButtonStyle(tabSelector);
-                InfoCardText();
-            }
-            else
-            {
-                var warningWindow = new UnloadedWarning();
-                warningWindow.Show();
-            }
+            ClickHandler(sender, e, "RSRQ", "dB");
         }
 
         private void ClickSINR(object sender, RoutedEventArgs e)
         {
-            if (loadComplete == true)
-            {
-                string dataSelection = "SINR";
-                string unit = "dB";
-                chartTitle.Text = dataSelection;
-
-                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                greenCard.Number = minimumValue.ToString() + unit;
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                redCard.Number = maximumValue.ToString() + unit;
-                double averageValue = CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit);
-                blueCard.Number = averageValue.ToString("n2") + unit;
-                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                tabSelector = "SINR";
-                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
-                UpdateGraph();
-                ChangeButtonStyle(tabSelector);
-                InfoCardText();
-            }
-            else
-            {
-                var warningWindow = new UnloadedWarning();
-                warningWindow.Show();
-            }
+            ClickHandler(sender, e, "SINR", "dB");
         }
 
         private void ClickCQI(object sender, RoutedEventArgs e)
         {
-            if (loadComplete == true)
-            {
-                string dataSelection = "CQI";
-                string unit = "";
-                chartTitle.Text = dataSelection;
-
-                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-                greenCard.Number = minimumValue.ToString() + "";
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                redCard.Number = maximumValue.ToString() + "";
-                double averageValue = Math.Floor(CalculateAverage(inputDataList, dataSelection)); // CQI je cjelobrojna vrijednost
-                blueCard.Number = averageValue.ToString("n0") + "";
-                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                tabSelector = "CQI";
-                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
-                UpdateGraph();
-                ChangeButtonStyle(tabSelector);
-                InfoCardText();
-            }
-            else
-            {
-                var warningWindow = new UnloadedWarning();
-                warningWindow.Show();
-            }
+            ClickHandler(sender, e, "CQI", "");
         }
 
         private void ClickPCI(object sender, RoutedEventArgs e)
         {
-            if (loadComplete == true)
-            {
-                string dataSelection = "PCI";
-                string unit = "";
-                chartTitle.Text = dataSelection;
-
-                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-                greenCard.Number = minimumValue.ToString() + "";
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                redCard.Number = maximumValue.ToString() + "";
-                blueCard.Number = "N/A";
-                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                tabSelector = "PCI";
-                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
-                UpdateGraph();
-                ChangeButtonStyle(tabSelector);
-                InfoCardText();
-            }
-            else
-            {
-                var warningWindow = new UnloadedWarning();
-                warningWindow.Show();
-            }
+            ClickHandler(sender, e, "PCI", "");
         }
 
         private void ClickPing(object sender, RoutedEventArgs e)
         {
-            if (loadComplete == true)
-            {
-                string dataSelection = "Ping";
-                string unit = "ms";
-                chartTitle.Text = dataSelection;
-
-                /*double minimumValue = CalculateMinimum(inputDataList, dataSelection);
-                greenCard.Number = minimumValue.ToString() + unit;
-                double maximumValue = CalculateMaximum(inputDataList, dataSelection);
-                redCard.Number = maximumValue.ToString() + unit;
-                double averageValue = CalculateAverage(inputDataList, dataSelection);
-                blueCard.Number = averageValue.ToString("n2") + unit;
-                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                tabSelector = "Ping";
-                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
-                UpdateGraph();
-                ChangeButtonStyle(tabSelector);
-                InfoCardText();
-            }
-            else
-            {
-                var warningWindow = new UnloadedWarning();
-                warningWindow.Show();
-            }
+            ClickHandler(sender, e, "Ping", "ms");
         }
 
         private void ClickThroughput(object sender, RoutedEventArgs e)
         {
-            if (loadComplete == true)
-            {
-                string dataSelection = "Downlink";
-                string unit = "Mbps";
-                chartTitle.Text = dataSelection;
-
-                /*double minimumValue = CalculateMaximum(inputDataList, dataSelection);
-                greenCard.Number = (minimumValue * 8).ToString("n2") + unit;
-                double maximumValue = CalculateMinimum(inputDataList, dataSelection);
-                redCard.Number = (maximumValue * 8).ToString("n2") + unit;
-                double averageValue = CalculateAverage(inputDataList, dataSelection);
-                blueCard.Number = (averageValue * 8).ToString("n2") + unit;
-                 MessageBox.Show("min:" + minimumValue + "\nmax:" + maximumValue + "\navg:" + averageValue); --> samo za test podataka */
-
-                tabSelector = "Downlink";
-                CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
-                UpdateGraph();
-                ChangeButtonStyle(tabSelector);
-                InfoCardText();
-            }
-            else
-            {
-                var warningWindow = new UnloadedWarning();
-                warningWindow.Show();
-            }
+            ClickHandler(sender, e, "Downlink", "Mbps");
         }
 
         private void Logoff(object sender, RoutedEventArgs e)
