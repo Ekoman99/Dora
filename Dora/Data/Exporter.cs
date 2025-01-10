@@ -2,6 +2,7 @@
 using OxyPlot;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,45 +14,116 @@ namespace Dora.Data
 {
     static class Exporter
     {
-        public static string KMLBuilder(List<BaseCsvData> list, string dataSelection, SettingsDefinitions settings)
+        public static void ExportKmlFile(List<BaseCsvData> dataList, SettingsDefinitions settings)
         {
-            StringBuilder kmlBuilder = new StringBuilder();
+            string kml = GenerateKml(dataList, settings);
 
-            kmlBuilder.AppendLine(@"<?xml version=""1.0"" encoding=""UTF-8""?>");
-            kmlBuilder.AppendLine(@"<kml xmlns=""http://www.opengis.net/kml/2.2"">");
-            kmlBuilder.AppendLine(@"  <Document>");
-
-            kmlBuilder.AppendLine(@"    <Style id=""polyStyle"">");
-            kmlBuilder.AppendLine(@"      <PolyStyle>");
-            kmlBuilder.AppendLine($@"        <color>{settings.KMLColor}</color>"); // 7f definira 50% opacity
-            kmlBuilder.AppendLine(@"      </PolyStyle>");
-            kmlBuilder.AppendLine(@"    </Style>");
-
-            kmlBuilder.AppendLine($"    <Placemark>");
-            kmlBuilder.AppendLine($"      <name>{"test"}</name>");
-            kmlBuilder.AppendLine(@"      <styleUrl>#polyStyle</styleUrl>");
-            kmlBuilder.AppendLine(@"      <LineString>");
-            kmlBuilder.AppendLine(@"        <altitudeMode>relativeToGround</altitudeMode>");
-            kmlBuilder.AppendLine(@"        <extrude>1</extrude>");
-            kmlBuilder.AppendLine(@"        <coordinates>");
-
-            for (int i = 0; i < list.Count; i++)
+            if (!string.IsNullOrEmpty(kml))
             {
-                var item = list[i];
-                var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
-                object propertyValue = propertyInfo.GetValue(item, null);
-                double value = Convert.ToDouble(propertyValue);
+                var saveDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    Filter = "KML File (*.kml)|*.kml"
+                };
 
-                kmlBuilder.AppendLine($"          {list[i].Longitude},{list[i].Latitude},{propertyValue}");
+                if (saveDialog.ShowDialog() == true)
+                {
+                    try
+                    {
+                        File.WriteAllText(saveDialog.FileName, kml);
+                        MessageBox.Show("KML file saved successfully.");
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show($"An error occurred while saving the file: {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Failed to generate KML.");
+            }
+        }
+
+        private static string GenerateKml(List<BaseCsvData> dataList, SettingsDefinitions settings)
+        {
+            if (dataList == null || dataList.Count == 0)
+            {
+                return string.Empty;
             }
 
-            kmlBuilder.AppendLine(@"        </coordinates>");
-            kmlBuilder.AppendLine(@"      </LineString>");
-            kmlBuilder.AppendLine(@"    </Placemark>");
-            kmlBuilder.AppendLine(@"  </Document>");
-            kmlBuilder.AppendLine(@"</kml>");
+            StringBuilder kmlBuilder = new StringBuilder();
+
+            kmlBuilder.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            kmlBuilder.AppendLine("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
+            kmlBuilder.AppendLine("  <Document>");
+
+            // Define a common style for all placemarks
+            kmlBuilder.AppendLine("    <Style id=\"polyStyle\">");
+            kmlBuilder.AppendLine("      <PolyStyle>");
+            kmlBuilder.AppendLine("        <color>7fffffff</color>"); // 7f defines 50% opacity
+            kmlBuilder.AppendLine("      </PolyStyle>");
+            kmlBuilder.AppendLine("    </Style>");
+
+            // List of property names to generate multiple placemarks for each variable
+            var properties = new[] { "PCI", "RSRP", "RSRQ", "SINR", "CQI", "Ping" };
+
+            foreach (var property in properties)
+            {
+                // Calculate min and max values for the property
+                var propertyValues = dataList.Select(item =>
+                {
+                    var value = item.GetType().GetProperty(property)?.GetValue(item, null);
+                    if (value is int intValue && intValue == int.MaxValue) return 0; // Treat 2,147,483,647 as zero
+                    return Convert.ToDouble(value);
+                }).Where(v => v != null).Cast<double>().ToList();
+
+                if (!propertyValues.Any())
+                    continue;
+
+                double minValue = propertyValues.Min();
+                double maxValue = propertyValues.Max();
+                double maxHeight = settings.MaxRelativeHeight; // User-defined max height
+
+                kmlBuilder.AppendLine("    <Placemark>");
+                kmlBuilder.AppendLine($"      <name>{property}</name>");
+                kmlBuilder.AppendLine("      <styleUrl>#polyStyle</styleUrl>");
+                kmlBuilder.AppendLine("      <LineString>");
+                kmlBuilder.AppendLine("        <altitudeMode>relativeToGround</altitudeMode>");
+                kmlBuilder.AppendLine("        <extrude>1</extrude>");
+                kmlBuilder.AppendLine("        <coordinates>");
+
+                foreach (var item in dataList)
+                {
+                    var propertyValue = item.GetType().GetProperty(property)?.GetValue(item, null);
+                    if (propertyValue != null)
+                    {
+                        double value = Convert.ToDouble(propertyValue);
+                        if (value == int.MaxValue) value = 0; // Treat 2,147,483,647 as zero
+
+                        double relativeValue = NormalizeValue(value, minValue, maxValue, maxHeight);
+                        kmlBuilder.AppendLine($"{item.Longitude.ToString(CultureInfo.InvariantCulture)},{item.Latitude.ToString(CultureInfo.InvariantCulture)},{relativeValue.ToString(CultureInfo.InvariantCulture)}");
+                    }
+                }
+
+                kmlBuilder.AppendLine("        </coordinates>");
+                kmlBuilder.AppendLine("      </LineString>");
+                kmlBuilder.AppendLine("    </Placemark>");
+            }
+
+            kmlBuilder.AppendLine("  </Document>");
+            kmlBuilder.AppendLine("</kml>");
 
             return kmlBuilder.ToString();
+        }
+
+        private static double NormalizeValue(double value, double minValue, double maxValue, double maxHeight)
+        {
+            if (maxValue == minValue)
+            {
+                return 0; // Avoid division by zero
+            }
+
+            return ((value - minValue) / (maxValue - minValue)) * maxHeight;
         }
 
         public static void ExportGraph(bool loadComplete, PlotModel exportModel, Dictionary<string, string> lastSavedPaths, SettingsDefinitions settings)

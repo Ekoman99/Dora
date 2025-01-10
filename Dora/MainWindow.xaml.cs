@@ -33,6 +33,7 @@ using Dora.UI;
 using System.Runtime.InteropServices.ComTypes;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using OxyPlot.Wpf;
 
 namespace Dora
 {
@@ -296,33 +297,9 @@ namespace Dora
 
         private void ExportKML(object sender, RoutedEventArgs e)
         {
-            if(loadComplete == true)
+            if (loadComplete)
             {
-                string kml = KMLGenerator(inputDataList, tabSelector);
-
-                if (!string.IsNullOrEmpty(kml))
-                {
-                    SaveFileDialog saveKMLDialog = new SaveFileDialog();
-                    saveKMLDialog.Filter = "KML File (*.kml)|*.kml";
-                    if (saveKMLDialog.ShowDialog() == true)
-                    {
-                        string fileName = saveKMLDialog.FileName;
-
-                        try
-                        {
-                            File.WriteAllText(fileName, kml);
-                            MessageBox.Show("KML file saved successfully.");
-                        }
-                        catch (IOException ex)
-                        {
-                            MessageBox.Show("An error occurred while saving the file: " + ex.Message);
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Failed to generate KML.");
-                }
+                Exporter.ExportKmlFile(inputDataList, AllSettings);
             }
             else
             {
@@ -350,6 +327,8 @@ namespace Dora
                 warningWindow.Show();
             }
         }
+
+        #region button click methods
 
         private void ClickRSRP(object sender, RoutedEventArgs e)
         {
@@ -392,6 +371,8 @@ namespace Dora
             login.Show();
             this.Close();
         }
+
+        #endregion
 
         private void CalculateCards(string dataSelection, string unit, bool peakSmooth, int peakUpperLimit)
         {

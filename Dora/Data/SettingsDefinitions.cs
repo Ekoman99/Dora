@@ -27,5 +27,7 @@ namespace Dora.Data
         public string TitleColor { get; set; }
 
         public string AxisColor { get; set; }
+
+        public double MaxRelativeHeight { get; set; } // New setting for maximum relative height
     }
 }
