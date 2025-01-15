@@ -126,10 +126,11 @@ namespace Dora
                     FilePath = openCSVDialog.FileName;
                     dataLoadedCSV = true;
                     loadComplete = true;
-                    lastSavedPaths[".csv"] = System.IO.Path.GetDirectoryName(openCSVDialog.FileName);
+                    lastSavedPaths[".csv"] = Path.GetDirectoryName(openCSVDialog.FileName);
                 }
-
-                inputDataList = LoadCSV(FilePath);
+                
+                CSVHandler csvHandler = new CSVHandler();
+                inputDataList = csvHandler.LoadCSV(FilePath);
 
                 status4G = Check4G(inputDataList);
                 status5G = Check5G(inputDataList);
@@ -158,28 +159,6 @@ namespace Dora
                 FilePath = string.Empty; // filepath ostaje prazan
             }
 
-        }
-
-        public List<BaseCsvData> LoadCSV(string filePath)
-        {
-            List<BaseCsvData> dataList = new List<BaseCsvData>();
-
-            // definiranje kulture zbog zareza kao separatora
-            var commaDecimalCulture = new CultureInfo("hr-HR");
-
-            // pohrana .csv u listu objekata
-            var csvConfig = new CsvConfiguration(commaDecimalCulture);
-            csvConfig.Delimiter = ";";
-            csvConfig.HasHeaderRecord = true; // csv header
-
-            using (var reader = new StreamReader(filePath))
-            using (var csv = new CsvReader(reader, csvConfig))
-            {
-                csv.Context.TypeConverterCache.AddConverter<int?>(new NullableIntTypeConverter());
-                dataList = csv.GetRecords<BaseCsvData>().ToList();
-            }
-
-            return dataList;
         }
 
         public class NullableIntTypeConverter : DefaultTypeConverter
@@ -376,26 +355,53 @@ namespace Dora
 
         private void CalculateCards(string dataSelection, string unit, bool peakSmooth, int peakUpperLimit)
         {
-            greenCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString() + unit;
-            redCard.Number = MathEngine.CalculateMinimum(inputDataList, dataSelection).ToString() + unit;
-            switch (dataSelection)
+            if(dataSelection == "Ping")
             {
-                case "CQI":
-                    {
-                        blueCard.Number = Math.Floor(MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit)).ToString("n2") + unit;
-                        break;
-                    }
-                case "PCI":
-                    {
-                        blueCard.Number = "N/A";
-                        break;
-                    }
-                default:
-                    {
-                        blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
-                        break;
-                    }
+                greenCard.Number = MathEngine.CalculateMinimum(inputDataList, dataSelection).ToString() + unit;
+                redCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection).ToString() + unit;
+                switch (dataSelection)
+                {
+                    case "CQI":
+                        {
+                            blueCard.Number = Math.Floor(MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit)).ToString("n2") + unit;
+                            break;
+                        }
+                    case "PCI":
+                        {
+                            blueCard.Number = "N/A";
+                            break;
+                        }
+                    default:
+                        {
+                            blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
+                            break;
+                        }
+                }
             }
+            else
+            {
+                greenCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
+                redCard.Number = MathEngine.CalculateMinimum(inputDataList, dataSelection).ToString("n2") + unit;
+                switch (dataSelection)
+                {
+                    case "CQI":
+                        {
+                            blueCard.Number = Math.Floor(MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit)).ToString("n2") + unit;
+                            break;
+                        }
+                    case "PCI":
+                        {
+                            blueCard.Number = "N/A";
+                            break;
+                        }
+                    default:
+                        {
+                            blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
+                            break;
+                        }
+                }
+            }
+            
         }
 
         private void UpdateGraph()
@@ -510,48 +516,6 @@ namespace Dora
             }
 
             return colorAssignments;
-        }
-
-        private string KMLGenerator(List<BaseCsvData> list, string dataSelection)
-        {
-            StringBuilder kmlBuilder = new StringBuilder();
-
-            kmlBuilder.AppendLine(@"<?xml version=""1.0"" encoding=""UTF-8""?>");
-            kmlBuilder.AppendLine(@"<kml xmlns=""http://www.opengis.net/kml/2.2"">");
-            kmlBuilder.AppendLine(@"  <Document>");
-
-            kmlBuilder.AppendLine(@"    <Style id=""polyStyle"">");
-            kmlBuilder.AppendLine(@"      <PolyStyle>");
-            kmlBuilder.AppendLine(@"        <color>7fffffff</color>"); // 7f definira 50% opacity
-            kmlBuilder.AppendLine(@"      </PolyStyle>");
-            kmlBuilder.AppendLine(@"    </Style>");
-
-            kmlBuilder.AppendLine($"    <Placemark>");
-            kmlBuilder.AppendLine($"      <name>{"test"}</name>");
-            kmlBuilder.AppendLine(@"      <styleUrl>#polyStyle</styleUrl>");
-            kmlBuilder.AppendLine(@"      <LineString>");
-            kmlBuilder.AppendLine(@"        <altitudeMode>relativeToGround</altitudeMode>");
-            kmlBuilder.AppendLine(@"        <extrude>1</extrude>");
-            kmlBuilder.AppendLine(@"        <coordinates>");
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                var item = list[i];
-                var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
-                object propertyValue = propertyInfo.GetValue(item, null);
-                double value = Convert.ToDouble(propertyValue);
-
-                kmlBuilder.AppendLine($"          {list[i].Longitude.ToString(CultureInfo.InvariantCulture)},{list[i].Latitude.ToString(CultureInfo.InvariantCulture)},{propertyValue}");
-
-            }
-
-            kmlBuilder.AppendLine(@"        </coordinates>");
-            kmlBuilder.AppendLine(@"      </LineString>");
-            kmlBuilder.AppendLine(@"    </Placemark>");
-            kmlBuilder.AppendLine(@"  </Document>");
-            kmlBuilder.AppendLine(@"</kml>");
-
-            return kmlBuilder.ToString();
         }
 
         private void InfoCardText()

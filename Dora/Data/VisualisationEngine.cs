@@ -52,25 +52,38 @@ namespace Dora.Data
             return GraphView(model);
         }
 
+        public static PlotView ColumnGraph(List<BaseCsvData> inputList, string dataSelection)
+        {
+            var model = ColumnModel(inputList, dataSelection);
+            return GraphView(model);
+        }
+
+        public static PlotView ColumnGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        {
+            var model = ColumnModel(inputList, dataSelection, peakNormalization, peakLimit);
+            return GraphView(model);
+        }
+
+
         //model selection
 
-       /* public static PlotModel SelectModel(string tabSelect, bool graphType, List<BaseCsvData> inputList, )
-        {
-            var exportModel = new PlotModel();
+        /* public static PlotModel SelectModel(string tabSelect, bool graphType, List<BaseCsvData> inputList, )
+         {
+             var exportModel = new PlotModel();
 
-            switch (tabSelect)
-            {
-                case "RSRP":
-                    {
-                        if (graphType)
-                        {
-                            exportModel = LineGraph()
-                        }
-                    }
-            }
+             switch (tabSelect)
+             {
+                 case "RSRP":
+                     {
+                         if (graphType)
+                         {
+                             exportModel = LineGraph()
+                         }
+                     }
+             }
 
-            
-        }*/
+
+         }*/
 
         //models
 
@@ -446,6 +459,210 @@ namespace Dora.Data
 
             model.Axes.Add(xAxis);
             model.Axes.Add(yAxis);
+
+            return model;
+        }
+
+        private static PlotModel ColumnModel(List<BaseCsvData> inputList, string dataSelection)
+        {
+            var model = new PlotModel
+            {
+                Background = OxyColors.Transparent,
+                PlotAreaBorderColor = OxyColors.Transparent,
+            };
+
+            // Create series for both technologies
+            var seriesBlue = new BarSeries // LTE
+            {
+                Title = "LTE",
+                FillColor = OxyColor.Parse("#349DC8"),
+                StrokeColor = OxyColor.Parse("#349DC8"),
+                StrokeThickness = 1,
+                XAxisKey = "Value",
+                YAxisKey = "Category",
+                BarWidth = 0.8
+            };
+
+            var seriesRed = new BarSeries // NR
+            {
+                Title = "NR",
+                FillColor = OxyColor.Parse("#C41F1F"),
+                StrokeColor = OxyColor.Parse("#C41F1F"),
+                StrokeThickness = 1,
+                XAxisKey = "Value",
+                YAxisKey = "Category",
+                BarWidth = 0.8
+            };
+
+            // Create category axis with time labels
+            var categoryAxis = new CategoryAxis
+            {
+                Position = AxisPosition.Bottom,
+                Key = "Category",
+                Title = "Time",
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255)
+            };
+
+            // Add data points and time labels
+            for (int i = 0; i < inputList.Count; i++)
+            {
+                categoryAxis.Labels.Add(inputList[i].Time.ToString("HH:mm:ss"));
+
+                if (inputList[i].Tech == "EN-DC")
+                {
+                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesRed.Items.Add(new BarItem { Value = Convert.ToDouble(dataValue) });
+                        seriesBlue.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                    else
+                    {
+                        seriesRed.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                }
+                else
+                {
+                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
+
+                    if (dataValue != null)
+                    {
+                        seriesBlue.Items.Add(new BarItem { Value = Convert.ToDouble(dataValue) });
+                        seriesRed.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                    else
+                    {
+                        seriesBlue.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                }
+            }
+
+            // Add value axis
+            var valueAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Key = "Value",
+                Title = dataSelection,
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255)
+            };
+
+            model.Axes.Add(categoryAxis);
+            model.Axes.Add(valueAxis);
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
+
+            return model;
+        }
+
+        private static PlotModel ColumnModel(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        {
+            var model = new PlotModel
+            {
+                Background = OxyColors.Transparent,
+                PlotAreaBorderColor = OxyColors.Transparent,
+            };
+
+            var seriesBlue = new BarSeries // LTE
+            {
+                Title = "LTE",
+                FillColor = OxyColor.Parse("#349DC8"),
+                StrokeColor = OxyColor.Parse("#349DC8"),
+                StrokeThickness = 1,
+                XAxisKey = "Value",
+                YAxisKey = "Category",
+                BarWidth = 0.8
+            };
+
+            var seriesRed = new BarSeries // NR
+            {
+                Title = "NR",
+                FillColor = OxyColor.Parse("#C41F1F"),
+                StrokeColor = OxyColor.Parse("#C41F1F"),
+                StrokeThickness = 1,
+                XAxisKey = "Value",
+                YAxisKey = "Category",
+                BarWidth = 0.8
+            };
+
+            var categoryAxis = new CategoryAxis
+            {
+                Position = AxisPosition.Bottom,
+                Key = "Category",
+                Title = "Time",
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255)
+            };
+
+            for (int i = 0; i < inputList.Count; i++)
+            {
+                categoryAxis.Labels.Add(inputList[i].Time.ToString("HH:mm:ss"));
+
+                if (inputList[i].Tech == "EN-DC")
+                {
+                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
+
+                    if (dataValue != null && peakNormalization && (int)dataValue < peakLimit)
+                    {
+                        seriesRed.Items.Add(new BarItem { Value = Convert.ToDouble(dataValue) });
+                        seriesBlue.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                    else
+                    {
+                        seriesRed.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                }
+                else
+                {
+                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
+
+                    if (dataValue != null && peakNormalization && (int)dataValue < peakLimit)
+                    {
+                        seriesBlue.Items.Add(new BarItem { Value = Convert.ToDouble(dataValue) });
+                        seriesRed.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                    else
+                    {
+                        seriesBlue.Items.Add(new BarItem { Value = double.NaN });
+                    }
+                }
+            }
+
+            var valueAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Key = "Value",
+                Title = dataSelection,
+                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = OxyColor.FromRgb(255, 255, 255),
+                TitleColor = OxyColor.FromRgb(255, 255, 255),
+                TextColor = OxyColor.FromRgb(255, 255, 255),
+                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
+                TicklineColor = OxyColor.FromRgb(255, 255, 255)
+            };
+
+            model.Axes.Add(categoryAxis);
+            model.Axes.Add(valueAxis);
+            model.Series.Add(seriesBlue);
+            model.Series.Add(seriesRed);
 
             return model;
         }

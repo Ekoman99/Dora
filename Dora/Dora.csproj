@@ -197,10 +197,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\BaseCsvData.cs" />
+    <Compile Include="Data\CSVHandler.cs" />
+    <Compile Include="Models\BaseCsvData.cs" />
     <Compile Include="Data\Charting.cs" />
     <Compile Include="Data\Exporter.cs" />
-    <Compile Include="Data\MapColorIntervals.cs" />
+    <Compile Include="Models\MapColorIntervals.cs" />
     <Compile Include="Data\MathEngine.cs" />
     <Compile Include="Data\SettingsDefinitions.cs" />
     <Compile Include="Data\VisualisationEngine.cs" />
