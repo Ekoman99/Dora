@@ -55,6 +55,65 @@
         </Setter>
     </Style>
 
+    <Style x:Key="IntervalButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="200"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Content" Value="Okay"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <!-- Background -->
+                        <Rectangle x:Name="Background" Fill="Gray" RadiusX="16" RadiusY="16"/>
+                        <!-- Text -->
+                        <TextBlock x:Name="TextBlock" Text="{TemplateBinding Content}" 
+                               Foreground="Black" 
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Mouse over state -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Background" Property="Fill" Value="#3b699b"/>
+                            <Setter TargetName="TextBlock" Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="InfoButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="200"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Content" Value="Close"/>
+        <Setter Property="Background" Value="Gray"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="LoginBorder" Background="{TemplateBinding Background}"
+                                    CornerRadius="16">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="AliceBlue" TargetName="LoginBorder"  />
+                            <Setter Property="TextBlock.Foreground" Value="Black"  TargetName="LoginBorder" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="menuButton" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="#707db2"/>
@@ -106,6 +165,7 @@
 
     <Style x:Key="menuButtonText" TargetType="TextBlock">
         <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Foreground" Value="{Binding Path=Foreground,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
     </Style>
@@ -193,30 +253,49 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Grid>
                         <!-- Gray background -->
-                        <Rectangle x:Name="Background" Fill="Gray" RadiusX="10" RadiusY="10"/>
-                        <!-- Pink highlight -->
-                        <Rectangle x:Name="Highlight" Fill="Transparent" RadiusX="10" RadiusY="10"/>
+                        <Rectangle x:Name="Background" Fill="LightGray" RadiusX="10" RadiusY="10"/>
                         <!-- Circle -->
-                        <Ellipse x:Name="Circle" Fill="Transparent" Stroke="Pink" StrokeThickness="2" HorizontalAlignment="Left" Margin="5"/>
+                        <Ellipse x:Name="Circle" Fill="Transparent" Stroke="Transparent" StrokeThickness="2" HorizontalAlignment="Left" Margin="5"/>
                         <!-- Text -->
-                        <TextBlock x:Name="TextBlock" Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TextBlock" Text="{TemplateBinding Content}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!-- Toggle Button Checked state -->
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Background" Property="Fill" Value="Pink"/>
-                            <Setter TargetName="Highlight" Property="Fill" Value="Pink"/>
+                            <Setter TargetName="Background" Property="Fill" Value="#3b699b"/>
                             <Setter TargetName="Circle" Property="HorizontalAlignment" Value="Right"/>
                         </Trigger>
                         <!-- Mouse over state -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Background" Property="Fill" Value="LightGray"/>
+                            <Setter TargetName="Background" Property="Fill" Value="#3b699b"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="sideMenuButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <!-- Background -->
+                        <Rectangle x:Name="Background" Fill="LightGray" RadiusX="10" RadiusY="10"/>
+                        <!-- Text -->
+                        <TextBlock x:Name="TextBlock" Text="{TemplateBinding Content}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Mouse over state -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Background" Property="Fill" Value="#3b699b"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
 
 </ResourceDictionary>

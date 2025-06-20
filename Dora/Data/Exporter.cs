@@ -57,14 +57,14 @@ namespace Dora.Data
             kmlBuilder.AppendLine("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
             kmlBuilder.AppendLine("  <Document>");
 
-            // Define a common style for all placemarks
+            // stil za sve
             kmlBuilder.AppendLine("    <Style id=\"polyStyle\">");
             kmlBuilder.AppendLine("      <PolyStyle>");
             kmlBuilder.AppendLine("        <color>7fffffff</color>"); // 7f defines 50% opacity
             kmlBuilder.AppendLine("      </PolyStyle>");
             kmlBuilder.AppendLine("    </Style>");
 
-            // List of property names to generate multiple placemarks for each variable
+            // lista properties koje treba generirati u KML datoteci
             var properties = new[] { "PCI", "RSRP", "RSRQ", "SINR", "CQI", "Ping" };
 
             foreach (var property in properties)
@@ -73,7 +73,7 @@ namespace Dora.Data
                 var propertyValues = dataList.Select(item =>
                 {
                     var value = item.GetType().GetProperty(property)?.GetValue(item, null);
-                    if (value is int intValue && intValue == int.MaxValue) return 0; // Treat 2,147,483,647 as zero
+                    if (value is int intValue && intValue == int.MaxValue) return 0; // registar kao nula
                     return Convert.ToDouble(value);
                 }).Where(v => v != null).Cast<double>().ToList();
 
@@ -82,7 +82,7 @@ namespace Dora.Data
 
                 double minValue = propertyValues.Min();
                 double maxValue = propertyValues.Max();
-                double maxHeight = settings.MaxRelativeHeight; // User-defined max height
+                double maxHeight = settings.MaxRelativeHeight; // relativna visina definirana u postavkama
 
                 kmlBuilder.AppendLine("    <Placemark>");
                 kmlBuilder.AppendLine($"      <name>{property}</name>");
@@ -98,7 +98,7 @@ namespace Dora.Data
                     if (propertyValue != null)
                     {
                         double value = Convert.ToDouble(propertyValue);
-                        if (value == int.MaxValue) value = 0; // Treat 2,147,483,647 as zero
+                        if (value == int.MaxValue) value = 0; // da bi se 2,147,483,647 prikazvalo kao 0
 
                         double relativeValue = NormalizeValue(value, minValue, maxValue, maxHeight);
                         kmlBuilder.AppendLine($"{item.Longitude.ToString(CultureInfo.InvariantCulture)},{item.Latitude.ToString(CultureInfo.InvariantCulture)},{relativeValue.ToString(CultureInfo.InvariantCulture)}");
@@ -120,7 +120,7 @@ namespace Dora.Data
         {
             if (maxValue == minValue)
             {
-                return 0; // Avoid division by zero
+                return 0; // izbjegavanje dijeljenja s nulom u formuli
             }
 
             return ((value - minValue) / (maxValue - minValue)) * maxHeight;
@@ -142,7 +142,7 @@ namespace Dora.Data
 
                 saveFileDialog.ShowDialog();
 
-                // kad se zada ime, exportaj
+                // kad se zada ime, export
                 if (!string.IsNullOrWhiteSpace(saveFileDialog.FileName))
                 {
                     using (var stream = File.Create(saveFileDialog.FileName))

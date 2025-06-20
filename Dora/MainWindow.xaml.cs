@@ -34,6 +34,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using OxyPlot.Wpf;
+using Dora.Models;
 
 namespace Dora
 {
@@ -65,6 +66,8 @@ namespace Dora
         List<BaseCsvData> inputDataList;
         List<(double Latitude, double Longitude)> MainGeoList;
 
+        GraphConfig graphConfig = new GraphConfig();
+
         SettingsDefinitions AllSettings;
         Dictionary<string, List<MapColorIntervals>> DataIntervals;
         Dictionary<string, string> lastSavedPaths = new Dictionary<string, string>(); //pohrana zadnjeg patha za različite tipove datoteka, implementirano za .csv i .png
@@ -84,6 +87,8 @@ namespace Dora
         private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
 
         private bool isOption1Selected;
+        private bool isInterpolationEnabled;
+        private int interpolationValue;
 
         public bool IsOption1Selected
         {
@@ -94,6 +99,34 @@ namespace Dora
                 {
                     isOption1Selected = value;
                     OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsInterpolationEnabled
+        {
+            get { return isInterpolationEnabled; }
+            set
+            {
+                if (isInterpolationEnabled != value)
+                {
+                    isInterpolationEnabled = value;
+                    OnPropertyChanged();
+                    UpdateGraph();
+                }
+            }
+        }
+
+        public int InterpolationValue
+        {
+            get { return interpolationValue; }
+            set
+            {
+                if (interpolationValue != value)
+                {
+                    interpolationValue = value;
+                    OnPropertyChanged();
+                    UpdateGraph();
                 }
             }
         }
@@ -128,7 +161,7 @@ namespace Dora
                     loadComplete = true;
                     lastSavedPaths[".csv"] = Path.GetDirectoryName(openCSVDialog.FileName);
                 }
-                
+
                 CSVHandler csvHandler = new CSVHandler();
                 inputDataList = csvHandler.LoadCSV(FilePath);
 
@@ -202,14 +235,10 @@ namespace Dora
             DataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
         }
 
-        private void testwide(object sender, RoutedEventArgs e)
+        private void showInfo(object sender, RoutedEventArgs e)
         {
-            infoCardGrid.Children.Remove(greenCard);
-            infoCardGrid.Children.Remove(blueCard);
-            infoCardGrid.Children.Remove(redCard);
-
-            infoCardGrid.Children.Add(wideCard);
-            Grid.SetColumnSpan(wideCard, 3);
+            var infoWindow = new InfoWindow();
+            infoWindow.Show();
         }
 
         private void InitializeSettings()
@@ -219,6 +248,15 @@ namespace Dora
             string json = File.ReadAllText(filePath);
 
             AllSettings = JsonConvert.DeserializeObject<SettingsDefinitions>(json);
+            FillGraphConfig();
+        }
+
+        private void FillGraphConfig()
+        {
+            graphConfig.PeakLimit = peakUpperLimit;
+            graphConfig.PeakNormalization = peakSmooth;
+            graphConfig.NRcolor = AllSettings.NRColor;
+            graphConfig.LTEcolor = AllSettings.LTEColor;
         }
 
         private string FindSettingsDirectory()
@@ -287,13 +325,24 @@ namespace Dora
             }
         }
 
+        private void StartIntervalEditor(object sender, RoutedEventArgs e)
+        {
+            string folderPath = FindSettingsDirectory();
+            string settingsPath = Path.Combine(folderPath, "Settings", "MapIntervals.json");
+
+            var editorWindow = new SettingsWindow(DataIntervals, settingsPath);
+            editorWindow.ShowDialog();
+
+            // reload
+            InitializeMapIntervals();
+        }
+
         private void ClickHandler(object sender, RoutedEventArgs e, string dataSelection, string unit)
         {
             if (loadComplete == true)
             {
                 chartTitle.Text = dataSelection;
 
-                // You can calculate the cards or other specific actions as needed.
                 tabSelector = dataSelection;
                 CalculateCards(dataSelection, unit, peakSmooth, peakUpperLimit);
                 UpdateGraph();
@@ -355,88 +404,39 @@ namespace Dora
 
         private void CalculateCards(string dataSelection, string unit, bool peakSmooth, int peakUpperLimit)
         {
-            if(dataSelection == "Ping")
-            {
-                greenCard.Number = MathEngine.CalculateMinimum(inputDataList, dataSelection).ToString() + unit;
-                redCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection).ToString() + unit;
-                switch (dataSelection)
-                {
-                    case "CQI":
-                        {
-                            blueCard.Number = Math.Floor(MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit)).ToString("n2") + unit;
-                            break;
-                        }
-                    case "PCI":
-                        {
-                            blueCard.Number = "N/A";
-                            break;
-                        }
-                    default:
-                        {
-                            blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
-                            break;
-                        }
-                }
-            }
-            else
-            {
-                greenCard.Number = MathEngine.CalculateMaximum(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
-                redCard.Number = MathEngine.CalculateMinimum(inputDataList, dataSelection).ToString("n2") + unit;
-                switch (dataSelection)
-                {
-                    case "CQI":
-                        {
-                            blueCard.Number = Math.Floor(MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit)).ToString("n2") + unit;
-                            break;
-                        }
-                    case "PCI":
-                        {
-                            blueCard.Number = "N/A";
-                            break;
-                        }
-                    default:
-                        {
-                            blueCard.Number = MathEngine.CalculateAverage(inputDataList, dataSelection, peakSmooth, peakUpperLimit).ToString("n2") + unit;
-                            break;
-                        }
-                }
-            }
-            
+            var (greenValue, redValue, blueValue) = MathEngine.CalculateCardValues(
+                inputDataList,
+                dataSelection,
+                unit,
+                peakSmooth,
+                peakUpperLimit);
+
+            greenCard.Number = greenValue;
+            redCard.Number = redValue;
+            blueCard.Number = blueValue;
         }
 
         private void UpdateGraph()
         {
-            if(loadComplete == true)
+            if (loadComplete == true)
             {
-                if (IsOption1Selected && (tabSelector == "RSRQ" || tabSelector == "SINR"))
+                if(!isOption1Selected)
                 {
-                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute LineGraph method if toggle button is on
+                    var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector, graphConfig, interpolationValue, isInterpolationEnabled); // Execute StemGraph method if toggle button is off
                     model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
-                else if (IsOption1Selected && !(tabSelector == "RSRQ" || tabSelector == "SINR"))
+                else if (isOption1Selected)
                 {
-                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector);
+                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute StemGraph method if toggle button is off
                     model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
-                else if (!IsOption1Selected && (tabSelector == "RSRQ" || tabSelector == "SINR"))
-                {
-                    var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute StemGraph method if toggle button is off
-                    model = oxyplotChart.Model;
-                    oxyplotChartContainer.Children.Clear();
-                    oxyplotChartContainer.Children.Add(oxyplotChart);
-                }
-                else
-                {
-                    var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector);
-                    model = oxyplotChart.Model;
-                    oxyplotChartContainer.Children.Clear();
-                    oxyplotChartContainer.Children.Add(oxyplotChart);
-                }
+                
             }
+
             else
             {
                 var warningWindow = new UnloadedWarning();

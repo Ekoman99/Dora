@@ -1,0 +1,73 @@
+﻿<Window x:Class="Dora.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Dora"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d"
+        Title="Interval Editor" Height="500" Width="600">
+
+    <Window.Resources>
+        <local:HexToColorConverter x:Key="HexToColorConverter"/>
+    </Window.Resources>
+    
+    <Border CornerRadius="10">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="#c2c5c8" Offset="0"/>
+                <GradientStop Color="#d7d6d9" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Parameter Selection -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Select Parameter:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox x:Name="ParameterComboBox" Width="150" SelectionChanged="ParameterComboBox_SelectionChanged"/>
+            </StackPanel>
+
+            <!-- Intervals Grid -->
+            <DataGrid x:Name="IntervalsGrid" Grid.Row="1" AutoGenerateColumns="False" 
+                      CanUserAddRows="True" CanUserDeleteRows="True" Margin="0,10">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                    <DataGridTextColumn Header="Lower Limit" Binding="{Binding LowerLimit}" Width="*"/>
+                    <DataGridTextColumn Header="Upper Limit" Binding="{Binding UpperLimit}" Width="*"/>
+                    <DataGridTemplateColumn Header="Color">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Rectangle Width="50" Height="20" Margin="2">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{Binding Color, Converter={StaticResource HexToColorConverter}}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Change Color">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Pick Color" Click="ColorPicker_Click" 
+                    Tag="{Binding}" Margin="2" Padding="5,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button x:Name="SaveButton" Content="Save Changes" Width="100" 
+                        Click="SaveButtonClick" Style="{StaticResource IntervalButtonStyle}" Margin="0,0,10,0"/>
+                <Button x:Name="CancelButton" Content="Cancel" Width="100" 
+                        Click="CancelButtonClick" Style="{StaticResource IntervalButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

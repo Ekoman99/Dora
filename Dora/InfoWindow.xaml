@@ -1,0 +1,63 @@
+﻿<Window x:Class="Dora.InfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Dora"
+        mc:Ignorable="d"
+        Title="InfoWindow" Height="600" Width="900">
+    <Border CornerRadius="10">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="#c2c5c8" Offset="0"/>
+                <GradientStop Color="#d7d6d9" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Main Message -->
+                <RowDefinition Height="Auto"/>
+                <!-- Additional Information -->
+                <RowDefinition Height="*"/>
+                <!-- Expanding space to push button down -->
+                <RowDefinition Height="Auto"/>
+                <!-- Close Button -->
+            </Grid.RowDefinitions>
+
+            <!-- Main Message -->
+            <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontWeight="DemiBold" 
+               FontSize="24" TextWrapping="Wrap" 
+               VerticalAlignment="Center" Foreground="Black" 
+               Text="Dobrodošli"/>
+
+            <!-- Additional Information -->
+            <TextBlock Grid.Row="1" Margin="10,20,10,10" FontSize="14" TextWrapping="Wrap" 
+               Foreground="Black" Width="750">
+        <Run Text="Za početak korištenja aplikacije potrebno je učitati datoteku koristeći tipku 'Load CSV File' te odabrati datoteku pomoću dijaloškog okvira."/><LineBreak/>
+        <Run Text="Aplikacija je kompatibilna za rad sa mjerenjima snimljenim pomoću Android aplikacije Mobilko Mrežić TVZić."/><LineBreak/><LineBreak/>
+        <Run Text="Pomoću izbornika sa lijeve strane moguće je odabrati željeni parametar mjerenja za prikaz."/><LineBreak/><LineBreak/>
+        <Run Text="Izbornik 'Settings' s desne strane omogućava dodatne funkcije:"/><LineBreak/>
+        <Run Text="• 'Show map' omogućava kartografski prikaz trenutno odabranog parametra."/><LineBreak/>
+        <Run Text="• 'Export graph' omogućava izvoz trenutno prikazanog grafa kao slikovne datoteke."/><LineBreak/>
+        <Run Text="• 'Export KML' omogućava izvoz KML datoteke za 3D vizualizaciju."/><LineBreak/>
+        <Run Text="• 'Graph type' mijenja izgled prikazanog grafa."/><LineBreak/><LineBreak/>
+        <Run Text="Za bolju orijentaciju na grafu:"/><LineBreak/>
+        <Run Text="• Lijevi klik prikazuje trenutne vrijednosti i vremena."/><LineBreak/>
+        <Run Text="• Desni klik pomiče graf u prostoru."/><LineBreak/>
+        <Run Text="• Kotačić miša omogućava približavanje i udaljavanje."/><LineBreak/>
+        <Run Text="• Dvostruki klik kotačićem vraća graf na početni prikaz."/><LineBreak/><LineBreak/>
+        <Run Text="Ukoliko rezolucija grafa nije zadovoljavajuća, moguće je koristiti mogućnost interpolacije kako bi se postigla veća gustoća uzoraka za prikaz. Ovo ne utječe na same podatke već nakon jedne točke ponavlja njezine kopije."></Run>        
+            </TextBlock>
+
+            <!-- Spacer to push button down -->
+            <Grid Grid.Row="2"/>
+
+            <!-- Close Button at the Bottom -->
+            <Button x:Name="closeInfo" Click="closeInfoClick"
+            Style="{StaticResource InfoButtonStyle}" Grid.Row="3" 
+            HorizontalAlignment="Center" VerticalAlignment="Bottom"
+            Margin="0,20,0,10"/>
+        </Grid>
+    </Border>
+</Window>

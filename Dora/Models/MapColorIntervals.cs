@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dora.Data
 {
-    internal class MapColorIntervals
+    public class MapColorIntervals
     {
         public int Id {  get; set; }
         public double LowerLimit {  get; set; }

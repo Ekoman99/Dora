@@ -27,9 +27,9 @@
             </Border.Background>
 
             <StackPanel>
-                <TextBlock Text="Dora" FontSize="26" Foreground="Black" HorizontalAlignment="Center" FontWeight="SemiBold" Margin="20 15 0 20"/>
+                <TextBlock Text="Dora" FontSize="26" Foreground="Black" HorizontalAlignment="Center" FontWeight="SemiBold" Margin="0 50 0 20"/>
                 <!--user-->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30 0 0 0">
+                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30 0 0 0">
                     <Border CornerRadius="10" Width="40" Height="40">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
@@ -47,7 +47,7 @@
                         <TextBlock Text="Version" FontSize="11" Foreground="#7788bf"/>
                     </StackPanel>
                     
-                </StackPanel>
+                </StackPanel>-->
 
                 <Separator Height="1" Margin="20 30" Background="#46558a"/>
                 
@@ -193,18 +193,49 @@
                                 <TextBlock Text="Settings" Style="{StaticResource titleText}"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="1">
-                                <Separator Opacity="0" Height="10"/>
-                                <Button Width="120" Height="30" Content="Show map" Click="ShowMap"/>
-                                <Separator Opacity="0" Height="20"/>
-                                <Button Width="120" Height="30" Content="Export graph" Click="ExportGraph"/>
-                                <Separator Opacity="0" Height="20"/>
-                                <Button Width="120" Height="30" Content="Export KML" Click="ExportKML"/>
-                                <Separator Opacity="0" Height="20"/>
-                                <ToggleButton Content="Line graph" Width="120" Height="30" ToggleButton.Checked="ToggleButton_Checked" ToggleButton.Unchecked="ToggleButton_Unchecked" IsChecked="{Binding IsOption1Selected, Mode=TwoWay}" Style="{StaticResource CustomToggleButtonStyle}"/>
-                                <Separator Opacity="0" Height="20"/>
-                                <Button Width="120" Height="30" Content="Test" Click="testwide"/>
-                            </StackPanel>
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel>
+                                    <Separator Opacity="0" Height="10"/>
+                                    <Button Width="120" Height="30" Content="Show map" Click="ShowMap" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Separator Opacity="0" Height="20"/>
+                                    <Button Width="120" Height="30" Content="Export graph" Click="ExportGraph" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Separator Opacity="0" Height="20"/>
+                                    <Button Width="120" Height="30" Content="Export KML" Click="ExportKML" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Separator Opacity="0" Height="20"/>
+                                    <ToggleButton Content="Line graph" Width="120" Height="30" ToggleButton.Checked="ToggleButton_Checked" ToggleButton.Unchecked="ToggleButton_Unchecked" IsChecked="{Binding IsOption1Selected, Mode=TwoWay}" Style="{StaticResource CustomToggleButtonStyle}"/>
+                                    <Separator Opacity="0" Height="20"/>
+                                    <Button Width="120" Height="30" Content="Modify intervals" Click="StartIntervalEditor" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Separator Opacity="0" Height="20"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBox Width="50" Height="30" Text="{Binding InterpolationValue, UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                    <Setter Property="FontSize" Value="16"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="TextBox">
+                                                                <Border CornerRadius="5" Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                                    <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                        <Separator Width="20" Opacity="0"/>
+                                        <ToggleButton Width="120" Height="30" Content="Datapoint duplication" IsChecked="{Binding IsInterpolationEnabled, Mode=TwoWay}" Style="{StaticResource CustomToggleButtonStyle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Button Grid.Row="1" Width="120" Height="30" Content="Help" Click="showInfo" Style="{StaticResource sideMenuButtonStyle}"/>
+                            </Grid>
                         </Grid>
                     </Border>
                 </Grid>

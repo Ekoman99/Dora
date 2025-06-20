@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="RouteWindow" Height="500" Width="800" WindowStartupLocation="CenterScreen">
-    <Grid>
+        Title="RouteWindow" Height="700" Width="1100" WindowStartupLocation="CenterScreen">
+
+    <Grid x:Name="MainGrid">
         
     </Grid>
 </Window>

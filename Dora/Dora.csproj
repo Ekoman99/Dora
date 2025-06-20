@@ -198,15 +198,22 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Data\CSVHandler.cs" />
+    <Compile Include="InfoWindow.xaml.cs">
+      <DependentUpon>InfoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\BaseCsvData.cs" />
     <Compile Include="Data\Charting.cs" />
     <Compile Include="Data\Exporter.cs" />
+    <Compile Include="Models\GraphConfig.cs" />
     <Compile Include="Models\MapColorIntervals.cs" />
     <Compile Include="Data\MathEngine.cs" />
     <Compile Include="Data\SettingsDefinitions.cs" />
     <Compile Include="Data\VisualisationEngine.cs" />
     <Compile Include="RouteWindow.xaml.cs">
       <DependentUpon>RouteWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\InfoCard.xaml.cs">
       <DependentUpon>InfoCard.xaml</DependentUpon>
@@ -217,6 +224,10 @@
     <Compile Include="UnloadedWarning.xaml.cs">
       <DependentUpon>UnloadedWarning.xaml</DependentUpon>
     </Compile>
+    <Page Include="InfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -237,6 +248,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="RouteWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
