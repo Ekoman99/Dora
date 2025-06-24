@@ -29,33 +29,15 @@ namespace Dora.Data
 
         //graphs
 
-        public static PlotView LineGraph(List<BaseCsvData> inputList, string dataSelection)
+        public static PlotView LineGraph(List<BaseCsvData> inputList, string dataSelection, GraphConfig graphConfig)
         {
-            var model = LineModel(inputList, dataSelection);
-            return GraphView(model);
-        }
-
-        public static PlotView StemGraph(List<BaseCsvData> inputList, string dataSelection)
-        {
-            var model = StemModel(inputList, dataSelection);
-            return GraphView(model);
-        }
-
-        public static PlotView LineGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
-        {
-            var model = LineModel(inputList, dataSelection, peakNormalization, peakLimit);
+            var model = LineModel(inputList, dataSelection, graphConfig);
             return GraphView(model);
         }
 
         public static PlotView StemGraph(List<BaseCsvData> inputList, string dataSelection, GraphConfig graphConfig, int interpolationValue, bool interpolationState)
         {
             var model = StemModel(inputList, dataSelection, graphConfig, interpolationValue, interpolationState);
-            return GraphView(model);
-        }
-
-        public static PlotView LineGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit, int interpolationValue, bool interpolationState)
-        {
-            var model = LineModel(inputList, dataSelection, peakLimit, interpolationValue, peakNormalization, interpolationState);
             return GraphView(model);
         }
 
@@ -182,24 +164,24 @@ namespace Dora.Data
             return model;
         }
 
-        private static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
+        private static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection, GraphConfig graphConfig)
         {
             // kreiranje modela za plotanje
             var model = new PlotModel
             {
-                Background = OxyColor.Parse("#00000000"),
+                Background = OxyColor.Parse(graphConfig.GraphBackground),
                 PlotAreaBorderColor = OxyColor.Parse("#00000000"),
             };
 
             // serija točaka
             var seriesBlue = new LineSeries // LTE
             {
-                Color = OxyColor.Parse("#349DC8"),
+                Color = OxyColor.Parse(graphConfig.LTEcolor),
             };
 
             var seriesRed = new LineSeries // NR
             {
-                Color = OxyColor.Parse("#C41F1F"),
+                Color = OxyColor.Parse(graphConfig.NRcolor),
             };
 
             for (int i = 0; i < inputList.Count; i++)
@@ -211,7 +193,7 @@ namespace Dora.Data
                 {
                     if (dataValue != null)
                     {
-                        if (peakNormalization == true && (int)dataValue < peakLimit)
+                        if (graphConfig.PeakNormalization == true && Convert.ToInt32(dataValue) < graphConfig.PeakLimit)
                         {
                             seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G i zadovoljava uvjete
                             seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 4G upisujem nullove
@@ -230,7 +212,7 @@ namespace Dora.Data
                 {
                     if (dataValue != null)
                     {
-                        if (peakNormalization == true && (int)dataValue < peakLimit)
+                        if (graphConfig.PeakNormalization == true && Convert.ToInt32(dataValue) < graphConfig.PeakLimit)
                         {
                             seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G i zadovoljava uvjete
                             seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 5G upisujem nullove
@@ -251,29 +233,36 @@ namespace Dora.Data
             model.Series.Add(seriesRed);
 
             // definiranje osi
+            // Parse hex color from graphConfig.GraphElements
+            var parsedColor = OxyColor.Parse(graphConfig.GraphElements);
+
+            // Create base color for gridlines with 50 opacity
+            var gridlineColor = OxyColor.FromAColor(50, parsedColor);
+
             var xAxis = new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
                 Title = "Time", // Optional axis title
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
+                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
                 MajorGridlineStyle = LineStyle.Solid, // Gridline style
-                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
-                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
-                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
+                AxislineColor = parsedColor, // Parsed color for axis line
+                TitleColor = parsedColor, // Parsed color for axis title
+                TextColor = parsedColor, // Parsed color for axis labels
+                MinorTicklineColor = parsedColor, // Parsed color for tick marks
+                TicklineColor = parsedColor, // Parsed color for tick marks
             };
+
             var yAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
                 Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
                 MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
+                AxislineColor = parsedColor, // Parsed color for axis line
+                TitleColor = parsedColor, // Parsed color for axis title
+                TextColor = parsedColor, // Parsed color for axis labels
+                MinorTicklineColor = parsedColor, // Parsed color for tick marks
+                TicklineColor = parsedColor, // Parsed color for tick marks
             };
 
             model.Axes.Add(xAxis);
@@ -474,7 +463,7 @@ namespace Dora.Data
         {
             var model = new PlotModel
             {
-                Background = OxyColors.Transparent,
+                Background = OxyColor.Parse(graphConfig.GraphBackground),
                 PlotAreaBorderColor = OxyColors.Transparent,
             };
 
@@ -483,8 +472,8 @@ namespace Dora.Data
                 interpolationFactor = 1;
             }
 
-            var seriesBlue = new StemSeries { Color = OxyColor.Parse("#349DC8") }; // LTE
-            var seriesRed = new StemSeries { Color = OxyColor.Parse("#C41F1F") };  // NR
+            var seriesBlue = new StemSeries { Color = OxyColor.Parse(graphConfig.LTEcolor) }; // LTE
+            var seriesRed = new StemSeries { Color = OxyColor.Parse(graphConfig.NRcolor) };  // NR
 
             // Create a list of all points with their technology type
             var allPointsWithTech = new List<(DateTime time, double value, string tech)>();
@@ -583,161 +572,37 @@ namespace Dora.Data
             model.Series.Add(seriesBlue);
             model.Series.Add(seriesRed);
 
-            // Axes configuration
+            // definiranje osi
+            // Parse hex color from graphConfig.GraphElements
+            var parsedColor = OxyColor.Parse(graphConfig.GraphElements);
+
+            // Create base color for gridlines with 50 opacity
+            var gridlineColor = OxyColor.FromAColor(50, parsedColor);
+
             var xAxis = new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                Title = "Time",
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
+                Title = "Time", // Optional axis title
+                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
+                MajorGridlineStyle = LineStyle.Solid, // Gridline style
+                AxislineColor = parsedColor, // Parsed color for axis line
+                TitleColor = parsedColor, // Parsed color for axis title
+                TextColor = parsedColor, // Parsed color for axis labels
+                MinorTicklineColor = parsedColor, // Parsed color for tick marks
+                TicklineColor = parsedColor, // Parsed color for tick marks
             };
 
             var yAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
                 Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
+                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
                 MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
-            };
-
-            model.Axes.Add(xAxis);
-            model.Axes.Add(yAxis);
-
-            return model;
-        }
-
-        private static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection, int peakLimit, int interpolationFactor = 1, bool peakNormalization = false, bool interpolationState = false)
-        {
-            var model = new PlotModel
-            {
-                Background = OxyColor.Parse("#00000000"),
-                PlotAreaBorderColor = OxyColor.Parse("#00000000"),
-            };
-
-            if (!interpolationState)
-            {
-                interpolationFactor = 1;
-            }
-
-            var seriesBlue = new LineSeries { Color = OxyColor.Parse("#349DC8") }; // LTE
-            var seriesRed = new LineSeries { Color = OxyColor.Parse("#C41F1F") };  // NR
-
-            // List of all points
-            var bluePoints = new List<(DateTime time, double value)>();
-            var redPoints = new List<(DateTime time, double value)>();
-
-            for (int i = 0; i < inputList.Count; i++)
-            {
-                object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-                var time = inputList[i].Time;
-
-                if (inputList[i].Tech == "EN-DC")
-                {
-                    if (dataValue != null && peakNormalization && Convert.ToInt32(dataValue) < peakLimit)
-                    {
-                        redPoints.Add((time, Convert.ToDouble(dataValue)));
-                    }
-                }
-                else
-                {
-                    if (dataValue != null && peakNormalization && Convert.ToInt32(dataValue) < peakLimit)
-                    {
-                        bluePoints.Add((time, Convert.ToDouble(dataValue)));
-                    }
-                }
-            }
-
-            // Interpolation function
-            List<(DateTime time, double value)> InterpolatePoints(List<(DateTime time, double value)> points)
-            {
-                if (points.Count < 2 || interpolationFactor <= 1) return points;
-
-                var interpolatedPoints = new List<(DateTime time, double value)>();
-
-                for (int i = 0; i < points.Count - 1; i++)
-                {
-                    var start = points[i];
-                    var end = points[i + 1];
-
-                    for (int j = 0; j < interpolationFactor; j++)
-                    {
-                        var fraction = (double)j / interpolationFactor;
-                        var interpolatedTime = start.time.AddTicks((long)(fraction * (end.time - start.time).Ticks));
-
-                        interpolatedPoints.Add((interpolatedTime, start.value)); // repeat the value
-                    }
-                }
-
-                // Add the last point
-                if (points.Count > 0)
-                {
-                    interpolatedPoints.Add(points[points.Count - 1]);
-                }
-
-                return interpolatedPoints;
-            }
-
-            // Call interpolation function
-            var interpolatedBluePoints = InterpolatePoints(bluePoints);
-            var interpolatedRedPoints = InterpolatePoints(redPoints);
-
-            // Sort times
-            var allTimes = new HashSet<DateTime>();
-            interpolatedBluePoints.ForEach(p => allTimes.Add(p.time));
-            interpolatedRedPoints.ForEach(p => allTimes.Add(p.time));
-            var sortedTimes = allTimes.OrderBy(t => t).ToList();
-
-            // Add points, handling missing values
-            foreach (var time in sortedTimes)
-            {
-                var blueValue = interpolatedBluePoints.FirstOrDefault(p => p.time == time).value;
-                var redValue = interpolatedRedPoints.FirstOrDefault(p => p.time == time).value;
-
-                seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time),
-                    interpolatedBluePoints.Any(p => p.time == time) ? blueValue : double.NaN));
-
-                seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time),
-                    interpolatedRedPoints.Any(p => p.time == time) ? redValue : double.NaN));
-            }
-
-            model.Series.Add(seriesBlue);
-            model.Series.Add(seriesRed);
-
-            // Axes
-            var xAxis = new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "Time",
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
-            };
-
-            var yAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
+                AxislineColor = parsedColor, // Parsed color for axis line
+                TitleColor = parsedColor, // Parsed color for axis title
+                TextColor = parsedColor, // Parsed color for axis labels
+                MinorTicklineColor = parsedColor, // Parsed color for tick marks
+                TicklineColor = parsedColor, // Parsed color for tick marks
             };
 
             model.Axes.Add(xAxis);
@@ -960,152 +825,7 @@ namespace Dora.Data
             model.Series.Add(seriesRed);
 
             return model;
-        }
-
-        private static PlotModel AreaModel(List<BaseCsvData> inputList, string dataSelection)
-        {
-            // kreiranje modela za plotanje
-            var model = new PlotModel
-            {
-                Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.Transparent,
-            };
-
-            // serija točaka
-            var seriesBlue = new AreaSeries // 4G network
-            {
-                Color = OxyColor.FromArgb(255, 52, 157, 200), // #349DC8
-                StrokeThickness = 0,
-                Fill = OxyColor.FromArgb(127, 52, 157, 200), // #349DC880
-            };
-
-            var seriesRed = new AreaSeries // 5G network
-            {
-                Color = OxyColor.FromArgb(255, 196, 31, 31), // #C41F1F
-                StrokeThickness = 0,
-                Fill = OxyColor.FromArgb(127, 196, 31, 31), // #C41F1F80
-            };
-
-            for (int i = 0; i < inputList.Count - 1; i++)
-            {
-                // Calculate time difference between consecutive points
-                double timeDiff = (inputList[i + 1].Time - inputList[i].Time).TotalSeconds;
-
-                if (timeDiff > 1.5)
-                {
-                    // Calculate the number of steps to add based on the time difference
-                    int steps = (int)Math.Floor(timeDiff / 1.5);
-
-                    // Add zeros and intermediate timestamps to both series
-                    for (int j = 0; j < steps; j++)
-                    {
-                        DateTime intermediateTime = inputList[i].Time.AddSeconds((j + 1) * 1.5);
-
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(intermediateTime), 0));
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(intermediateTime), 0));
-                    }
-                }
-
-                // Add the current data point
-                if (inputList[i].Tech == "EN-DC")
-                {
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue)));
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), 0));
-                    }
-                    else
-                    {
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), 0));
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), 0));
-                    }
-                }
-                else
-                {
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue)));
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), 0));
-                    }
-                    else
-                    {
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), 0));
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), 0));
-                    }
-                }
-            }
-
-            // Add the last data point
-            int lastIndex = inputList.Count - 1;
-            if (inputList[lastIndex].Tech == "EN-DC")
-            {
-                object dataValue = inputList[lastIndex].GetType().GetProperty(dataSelection).GetValue(inputList[lastIndex]);
-
-                if (dataValue != null)
-                {
-                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), Convert.ToDouble(dataValue)));
-                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), 0));
-                }
-                else
-                {
-                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), 0));
-                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), 0));
-                }
-            }
-            else
-            {
-                object dataValue = inputList[lastIndex].GetType().GetProperty(dataSelection).GetValue(inputList[lastIndex]);
-
-                if (dataValue != null)
-                {
-                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), Convert.ToDouble(dataValue)));
-                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), 0));
-                }
-                else
-                {
-                    seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), 0));
-                    seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[lastIndex].Time), 0));
-                }
-            }
-
-            model.Series.Add(seriesBlue);
-            model.Series.Add(seriesRed);
-
-            // definiranje osi
-            var xAxis = new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "Time", // Optional axis title
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
-                MajorGridlineStyle = LineStyle.Solid, // Gridline style
-                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
-                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
-                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-            };
-            var yAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
-            };
-
-            model.Axes.Add(xAxis);
-            model.Axes.Add(yAxis);
-
-            return model;
-        } // potrebna prilagodba, area tip nije najbolji zbog tipa podataka        
+        }    
 
     }
 }

@@ -8,25 +8,9 @@ using Microsoft.Win32;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
-using CsvHelper.Expressions;
-using CsvHelper.Delegates;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Globalization;
-using CsvHelper.Configuration.Attributes;
-using System.Collections;
-using Newtonsoft.Json.Linq;
-using OxyPlot.Axes;
 using OxyPlot;
-using OxyPlot.Series;
-using System.Linq.Expressions;
 using Dora.Data;
 using Newtonsoft.Json;
 using Dora.UI;
@@ -54,31 +38,21 @@ namespace Dora
             PlaceInfoCards();
         }
 
-        public string FilePath
-        {
-            get { return (string)GetValue(filePathCSVProperty); }
-            set { SetValue(filePathCSVProperty, value); }
-        }
-
-        public static readonly DependencyProperty filePathCSVProperty =
-            DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
+        public string filePath;
 
         List<BaseCsvData> inputDataList;
-        List<(double Latitude, double Longitude)> MainGeoList;
+        List<(double Latitude, double Longitude)> mainGeoList;
 
         GraphConfig graphConfig = new GraphConfig();
 
-        SettingsDefinitions AllSettings;
-        Dictionary<string, List<MapColorIntervals>> DataIntervals;
-        Dictionary<string, string> lastSavedPaths = new Dictionary<string, string>(); //pohrana zadnjeg patha za različite tipove datoteka, implementirano za .csv i .png
+        SettingsDefinitions allSettings;
+        Dictionary<string, List<MapColorIntervals>> dataIntervals;
+        Dictionary<string, string> lastSavedPaths = new Dictionary<string, string>(); // pohrana zadnjeg patha za različite tipove datoteka, implementirano za .csv i .png
 
         InfoCard greenCard = InfoCard.GreenCardDefault;
         InfoCard blueCard = InfoCard.BlueCardDefault;
         InfoCard redCard = InfoCard.RedCardDefault;
-        WideInfoCard wideCard = WideInfoCard.WideCardDefault;
 
-        private bool status4G;
-        private bool status5G;
         private bool loadComplete = false;
         bool peakSmooth = true;
         int peakUpperLimit = 50000;
@@ -86,18 +60,18 @@ namespace Dora
 
         private PlotModel model; //model mora biti dostupan klasi zbog interakcije metoda grafa i exportera
 
-        private bool isOption1Selected;
+        private bool isLineOptionSelected;
         private bool isInterpolationEnabled;
-        private int interpolationValue;
+        private int interpolationValue = 1;
 
-        public bool IsOption1Selected
+        public bool IsLineOptionSelected
         {
-            get { return isOption1Selected; }
+            get { return isLineOptionSelected; }
             set
             {
-                if (isOption1Selected != value)
+                if (isLineOptionSelected != value)
                 {
-                    isOption1Selected = value;
+                    isLineOptionSelected = value;
                     OnPropertyChanged();
                 }
             }
@@ -156,26 +130,19 @@ namespace Dora
 
                 if (result == true)
                 {
-                    FilePath = openCSVDialog.FileName;
+                    filePath = openCSVDialog.FileName;
                     dataLoadedCSV = true;
                     loadComplete = true;
                     lastSavedPaths[".csv"] = Path.GetDirectoryName(openCSVDialog.FileName);
                 }
 
                 CSVHandler csvHandler = new CSVHandler();
-                inputDataList = csvHandler.LoadCSV(FilePath);
+                inputDataList = csvHandler.LoadCSV(filePath);
 
-                status4G = Check4G(inputDataList);
-                status5G = Check5G(inputDataList);
-
-                MainGeoList = GetCoordinates(inputDataList);
+                mainGeoList = GetCoordinates(inputDataList);
 
                 if (dataLoadedCSV == true)
                 {
-                    // incijalno pokazivanje RSRP
-                    //ShowScreen(inputDataList, "RSRP"); //pokazuje inicijalne izračune
-                    //LineGraph(inputDataList, "RSRP");
-
                     tabSelector = "RSRP";
                     CalculateCards(tabSelector, "dBm", peakSmooth, peakUpperLimit);
                     UpdateGraph();
@@ -189,7 +156,7 @@ namespace Dora
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
-                FilePath = string.Empty; // filepath ostaje prazan
+                filePath = string.Empty; // filepath ostaje prazan
             }
 
         }
@@ -214,25 +181,13 @@ namespace Dora
             }
         }
 
-        /*private Dictionary<string, List<MapColorIntervals>> InitializeMapIntervals()
-        {
-            //string filePath = @"C:\Users\Josip\source\repos\Dora\Dora\Data\MapIntervals.json";
-            string folderPath = FindSettingsDirectory();
-            string filePath = Path.Combine(folderPath, "Settings", "MapIntervals.json");
-            string json = File.ReadAllText(filePath);
-
-            Dictionary<string, List<MapColorIntervals>> dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
-
-            return dataIntervals;
-        }*/
-
         private void InitializeMapIntervals()
         {
             string folderPath = FindSettingsDirectory();
             string filePath = Path.Combine(folderPath, "Settings", "MapIntervals.json");
             string json = File.ReadAllText(filePath);
 
-            DataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
+            dataIntervals = JsonConvert.DeserializeObject<Dictionary<string, List<MapColorIntervals>>>(json);
         }
 
         private void showInfo(object sender, RoutedEventArgs e)
@@ -247,7 +202,7 @@ namespace Dora
             string filePath = Path.Combine(folderPath, "Settings", "Settings.json");
             string json = File.ReadAllText(filePath);
 
-            AllSettings = JsonConvert.DeserializeObject<SettingsDefinitions>(json);
+            allSettings = JsonConvert.DeserializeObject<SettingsDefinitions>(json);
             FillGraphConfig();
         }
 
@@ -255,8 +210,10 @@ namespace Dora
         {
             graphConfig.PeakLimit = peakUpperLimit;
             graphConfig.PeakNormalization = peakSmooth;
-            graphConfig.NRcolor = AllSettings.NRColor;
-            graphConfig.LTEcolor = AllSettings.LTEColor;
+            graphConfig.NRcolor = allSettings.NRColor;
+            graphConfig.LTEcolor = allSettings.LTEColor;
+            graphConfig.GraphBackground = allSettings.GraphBackground;
+            graphConfig.GraphElements = allSettings.GraphElements;
         }
 
         private string FindSettingsDirectory()
@@ -292,15 +249,15 @@ namespace Dora
             {
                 if (tabSelector == "Downlink" || tabSelector == "RSRP" || tabSelector == "SINR" || tabSelector == "RSRQ" || tabSelector == "CQI" || tabSelector == "Ping")
                 {
-                    List<(int Id, string Color)> boje = AssignColors(inputDataList, tabSelector, DataIntervals);
+                    List<(int Id, string Color)> boje = AssignColors(inputDataList, tabSelector, dataIntervals);
 
-                    var mapWindow = new RouteWindow(MainGeoList, boje);
+                    var mapWindow = new RouteWindow(mainGeoList, boje);
                     mapWindow.Show();
                 }
 
                 else
                 {
-                    var mapWindow = new RouteWindow(MainGeoList);
+                    var mapWindow = new RouteWindow(mainGeoList);
                     mapWindow.Show();
                 }
             }
@@ -309,14 +266,14 @@ namespace Dora
 
         public void ExportGraph(object sender, RoutedEventArgs e)
         {
-            Exporter.ExportGraph(loadComplete, model, lastSavedPaths, AllSettings);
+            Exporter.ExportGraph(loadComplete, model, lastSavedPaths, allSettings);
         }
 
         private void ExportKML(object sender, RoutedEventArgs e)
         {
             if (loadComplete)
             {
-                Exporter.ExportKmlFile(inputDataList, AllSettings);
+                Exporter.ExportKmlFile(inputDataList, allSettings);
             }
             else
             {
@@ -325,19 +282,37 @@ namespace Dora
             }
         }
 
-        private void StartIntervalEditor(object sender, RoutedEventArgs e)
+        private void MapIntervalEditor(object sender, RoutedEventArgs e)
         {
             string folderPath = FindSettingsDirectory();
             string settingsPath = Path.Combine(folderPath, "Settings", "MapIntervals.json");
 
-            var editorWindow = new SettingsWindow(DataIntervals, settingsPath);
+            var editorWindow = new SettingsWindow(dataIntervals, settingsPath);
             editorWindow.ShowDialog();
 
-            // reload
+            // reload mape
             InitializeMapIntervals();
         }
 
-        private void ClickHandler(object sender, RoutedEventArgs e, string dataSelection, string unit)
+        private void OpenColorSettings(object sender, RoutedEventArgs e)
+        {
+            string folderPath = FindSettingsDirectory();
+            string settingsPath = Path.Combine(folderPath, "Settings", "Settings.json");
+
+            var colorWindow = new ColorSettingsWindow(allSettings, settingsPath);
+            colorWindow.ShowDialog();
+
+            // reload settings after window closes
+            InitializeSettings();
+
+            // Update the graph with new colors if data is loaded
+            if (loadComplete)
+            {
+                UpdateGraph();
+            }
+        }
+
+        private void UniversalClick(object sender, RoutedEventArgs e, string dataSelection, string unit)
         {
             if (loadComplete == true)
             {
@@ -360,43 +335,41 @@ namespace Dora
 
         private void ClickRSRP(object sender, RoutedEventArgs e)
         {
-            ClickHandler(sender, e, "RSRP", "dBm");
+            UniversalClick(sender, e, "RSRP", "dBm");
         }
 
         private void ClickRSRQ(object sender, RoutedEventArgs e)
         {
-            ClickHandler(sender, e, "RSRQ", "dB");
+            UniversalClick(sender, e, "RSRQ", "dB");
         }
 
         private void ClickSINR(object sender, RoutedEventArgs e)
         {
-            ClickHandler(sender, e, "SINR", "dB");
+            UniversalClick(sender, e, "SINR", "dB");
         }
 
         private void ClickCQI(object sender, RoutedEventArgs e)
         {
-            ClickHandler(sender, e, "CQI", "");
+            UniversalClick(sender, e, "CQI", "");
         }
 
         private void ClickPCI(object sender, RoutedEventArgs e)
         {
-            ClickHandler(sender, e, "PCI", "");
+            UniversalClick(sender, e, "PCI", "");
         }
 
         private void ClickPing(object sender, RoutedEventArgs e)
         {
-            ClickHandler(sender, e, "Ping", "ms");
+            UniversalClick(sender, e, "Ping", "ms");
         }
 
         private void ClickThroughput(object sender, RoutedEventArgs e)
         {
-            ClickHandler(sender, e, "Downlink", "Mbps");
+            UniversalClick(sender, e, "Downlink", "MBps");
         }
 
         private void Logoff(object sender, RoutedEventArgs e)
         {
-            var login = new Login();
-            login.Show();
             this.Close();
         }
 
@@ -420,16 +393,16 @@ namespace Dora
         {
             if (loadComplete == true)
             {
-                if(!isOption1Selected)
+                if(!isLineOptionSelected)
                 {
                     var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector, graphConfig, interpolationValue, isInterpolationEnabled); // Execute StemGraph method if toggle button is off
                     model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
-                else if (isOption1Selected)
+                else if (isLineOptionSelected)
                 {
-                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, peakSmooth, peakUpperLimit); // Execute StemGraph method if toggle button is off
+                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, graphConfig); // Execute StemGraph method if toggle button is off
                     model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
@@ -443,24 +416,6 @@ namespace Dora
                 warningWindow.Show();
             }
         }  
-
-        private bool Check5G(List<BaseCsvData> list)
-        {
-            if(list.Any(var => var.Tech == "EN-DC"))
-            {
-                return true;
-            }
-            else return false;
-        }
-
-        private bool Check4G(List<BaseCsvData> list)
-        {
-            if (list.Any(var => var.Tech == "LTE CA" || var.Tech == "LTE FDD"))
-            {
-                return true;
-            }
-            else return false;
-        }
 
         private List<(double Latitude, double Longitude)> GetCoordinates(List<BaseCsvData> list)
         {
@@ -476,29 +431,30 @@ namespace Dora
             return coordinatesList;
         }
 
-        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> dataIntervals)
+        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> colorIntervals)
         {
-            List<(int Id, string Color)> colorAssignments = new List<(int Id, string Color)>();
+            List<(int Id, string Color)> colorList = new List<(int Id, string Color)>();
 
-            if (list.Count > 0 && dataIntervals.ContainsKey(dataSelection))
+            // ako lista podataka nije prazna i intervali boja sadrže odrabranu tehnologiju, kopiraj potrebne intervale i dodijeli boje
+            if (list.Count > 0 && colorIntervals.ContainsKey(dataSelection))
             {
-                var intervals = dataIntervals[dataSelection];
+                var intervals = colorIntervals[dataSelection];
 
                 for (int i = 0; i < list.Count; i++)
                 {
                     var item = list[i];
-                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection); // provjera sadrži li BaseCsvData traženi property
 
                     if (propertyInfo != null)
                     {
                         int id = i;
                         string color = null;
 
-                        object propertyValue = propertyInfo.GetValue(item, null);
+                        object dataSelectionValue = propertyInfo.GetValue(item, null); // kopirati vrijednost traženog property-a iz liste
 
-                        if (propertyValue != null && (propertyValue is double || propertyValue is int || propertyValue is float))
+                        if (dataSelectionValue != null && (dataSelectionValue is double || dataSelectionValue is int || dataSelectionValue is float))
                         {
-                            double value = Convert.ToDouble(propertyValue);
+                            double value = Convert.ToDouble(dataSelectionValue);
 
                             foreach (var interval in intervals)
                             {
@@ -510,12 +466,12 @@ namespace Dora
                             }
                         }
 
-                        colorAssignments.Add((id, color));
+                        colorList.Add((id, color));
                     }
                 }
             }
 
-            return colorAssignments;
+            return colorList;
         }
 
         private void InfoCardText()

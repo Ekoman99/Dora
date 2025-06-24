@@ -2,12 +2,13 @@
   "LTEColor": "#349DC8",
   "NRColor": "#C41F1F",
   "KMLColor": "7FFFFFFF",
-  "GraphBackground": "#403E3E",
+  "GraphBackground": "#00FFFFFF",
+  "GraphElements": "#FFFFFF",
   "ExportWidth": 1920,
   "ExportHeight": 1080,
   "XAxisTitle": "",
   "YAxisTitle": "",
   "TitleColor": "",
   "AxisColor": "",
-  "MaxRelativeHeight": 25
+  "MaxRelativeHeight": 25.0
 }

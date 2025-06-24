@@ -12,6 +12,9 @@ namespace Dora.Models
         public int PeakLimit { get; set; }
         public string LTEcolor { get; set; }
         public string NRcolor { get; set; }
+        public string GraphBackground { get; set; }
+        public string GraphElements { get; set; }
+
 
     }
 }

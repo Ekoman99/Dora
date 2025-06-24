@@ -16,6 +16,8 @@ namespace Dora.Data
 
         public string GraphBackground { get; set; }
 
+        public string GraphElements { get; set; }
+
         public int ExportWidth { get; set; }
 
         public int ExportHeight { get; set; }

@@ -42,7 +42,7 @@
       "Id": 3,
       "LowerLimit": -15.0,
       "UpperLimit": -10.0,
-      "Color": "Blue"
+      "Color": "#3263E2"
     },
     {
       "Id": 4,

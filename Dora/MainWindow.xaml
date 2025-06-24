@@ -206,9 +206,11 @@
                                     <Separator Opacity="0" Height="20"/>
                                     <Button Width="120" Height="30" Content="Export KML" Click="ExportKML" Style="{StaticResource sideMenuButtonStyle}"/>
                                     <Separator Opacity="0" Height="20"/>
-                                    <ToggleButton Content="Line graph" Width="120" Height="30" ToggleButton.Checked="ToggleButton_Checked" ToggleButton.Unchecked="ToggleButton_Unchecked" IsChecked="{Binding IsOption1Selected, Mode=TwoWay}" Style="{StaticResource CustomToggleButtonStyle}"/>
+                                    <ToggleButton Content="Line graph" Width="120" Height="30" ToggleButton.Checked="ToggleButton_Checked" ToggleButton.Unchecked="ToggleButton_Unchecked" IsChecked="{Binding IsLineOptionSelected, Mode=TwoWay}" Style="{StaticResource CustomToggleButtonStyle}"/>
                                     <Separator Opacity="0" Height="20"/>
-                                    <Button Width="120" Height="30" Content="Modify intervals" Click="StartIntervalEditor" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Button Width="120" Height="30" Content="Modify intervals" Click="MapIntervalEditor" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Separator Opacity="0" Height="20"/>
+                                    <Button Width="120" Height="30" Content="Color settings" Click="OpenColorSettings" Style="{StaticResource sideMenuButtonStyle}"/>
                                     <Separator Opacity="0" Height="20"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <TextBox Width="50" Height="30" Text="{Binding InterpolationValue, UpdateSourceTrigger=PropertyChanged}">

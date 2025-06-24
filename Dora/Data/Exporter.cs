@@ -147,7 +147,8 @@ namespace Dora.Data
                 {
                     using (var stream = File.Create(saveFileDialog.FileName))
                     {
-                        exportModel.Background = OxyColor.Parse(settings.GraphBackground); // Set background color from settings
+                        exportModel.Background = OxyColor.Parse(settings.GraphBackground); // boja pozadine iz postavki
+                        
 
                         var exporter = new OxyPlot.Wpf.PngExporter { Width = settings.ExportWidth, Height = settings.ExportHeight };
                         exporter.Export(exportModel, stream);
