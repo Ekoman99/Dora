@@ -20,7 +20,7 @@ namespace Dora.Data
 
             if (!string.IsNullOrEmpty(kml))
             {
-                var saveDialog = new Microsoft.Win32.SaveFileDialog
+                var saveDialog = new SaveFileDialog
                 {
                     Filter = "KML File (*.kml)|*.kml"
                 };
@@ -60,20 +60,20 @@ namespace Dora.Data
             // stil za sve
             kmlBuilder.AppendLine("    <Style id=\"polyStyle\">");
             kmlBuilder.AppendLine("      <PolyStyle>");
-            kmlBuilder.AppendLine("        <color>7fffffff</color>"); // 7f defines 50% opacity
+            kmlBuilder.AppendLine("        <color>7fffffff</color>"); // 7f - 50% white opacity
             kmlBuilder.AppendLine("      </PolyStyle>");
             kmlBuilder.AppendLine("    </Style>");
 
-            // lista properties koje treba generirati u KML datoteci
-            var properties = new[] { "PCI", "RSRP", "RSRQ", "SINR", "CQI", "Ping" };
+            // sve što se generira za KML
+            var properties = new[] { "PCI", "RSRP", "RSRQ", "SINR", "CQI", "Ping", "Downlink" };
 
             foreach (var property in properties)
             {
-                // Calculate min and max values for the property
+                // min i max
                 var propertyValues = dataList.Select(item =>
                 {
                     var value = item.GetType().GetProperty(property)?.GetValue(item, null);
-                    if (value is int intValue && intValue == int.MaxValue) return 0; // registar kao nula
+                    if (value is int intValue && intValue == int.MaxValue) return 0;
                     return Convert.ToDouble(value);
                 }).Where(v => v != null).Cast<double>().ToList();
 
@@ -130,10 +130,9 @@ namespace Dora.Data
         {
             if (loadComplete == true)
             {
-                // dialog window
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "PNG Image (*.png)|*.png";
-                saveFileDialog.Title = "Export Chart as PNG";
+                saveFileDialog.Title = "Export";
 
                 if (lastSavedPaths.ContainsKey(".png"))
                 {
@@ -142,7 +141,6 @@ namespace Dora.Data
 
                 saveFileDialog.ShowDialog();
 
-                // kad se zada ime, export
                 if (!string.IsNullOrWhiteSpace(saveFileDialog.FileName))
                 {
                     using (var stream = File.Create(saveFileDialog.FileName))

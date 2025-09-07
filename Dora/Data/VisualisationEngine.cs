@@ -14,7 +14,7 @@ namespace Dora.Data
 {
     public static class VisualisationEngine
     { 
-        //oxyplotchart
+        // pretvorba PlotModela u oxyplotchart
 
         public static PlotView GraphView(PlotModel model)
         {
@@ -27,7 +27,7 @@ namespace Dora.Data
             return oxyplotChart;
         }
 
-        //graphs
+        // funkcije za poziv modela
 
         public static PlotView LineGraph(List<BaseCsvData> inputList, string dataSelection, GraphConfig graphConfig)
         {
@@ -41,139 +41,22 @@ namespace Dora.Data
             return GraphView(model);
         }
 
-        public static PlotView ColumnGraph(List<BaseCsvData> inputList, string dataSelection)
-        {
-            var model = ColumnModel(inputList, dataSelection);
-            return GraphView(model);
-        }
-
         public static PlotView ColumnGraph(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
         {
             var model = ColumnModel(inputList, dataSelection, peakNormalization, peakLimit);
             return GraphView(model);
         }
 
-
-        //model selection
-
-        /* public static PlotModel SelectModel(string tabSelect, bool graphType, List<BaseCsvData> inputList, )
-         {
-             var exportModel = new PlotModel();
-
-             switch (tabSelect)
-             {
-                 case "RSRP":
-                     {
-                         if (graphType)
-                         {
-                             exportModel = LineGraph()
-                         }
-                     }
-             }
-
-
-         }*/
-
-        //models
-
-        public static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection)
-        {
-            // kreiranje modela za plotanje
-            var model = new PlotModel
-            {
-                Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.Transparent,
-            };
-
-            // serija točaka
-            var seriesBlue = new LineSeries // LTE
-            {
-                Color = OxyColor.Parse("#349DC8"),
-            };
-
-            var seriesRed = new LineSeries // NR
-            {
-                Color = OxyColor.Parse("#C41F1F"),
-            };
-
-            for (int i = 0; i < inputList.Count; i++) // ---> test za dualno pokazivanje grafa
-            {
-                if (inputList[i].Tech == "EN-DC")
-                {
-                    // uzimanje vrijednosti, dataSelection definira koji property 
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G, upisujem
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 4G upisujem nullove
-                    }
-                    else
-                    {
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // nema 5G vrijednosti                        
-                    }
-                }
-                else
-                {
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G, upisujem
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 5G upisujem nullove
-                    }
-                    else
-                    {
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // nema 4G vrijednosti
-                    }
-                }
-            }
-
-            model.Series.Add(seriesBlue);
-            model.Series.Add(seriesRed);
-
-            // definiranje osi
-            var xAxis = new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "Time", // Optional axis title
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
-                MajorGridlineStyle = LineStyle.Solid, // Gridline style
-                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
-                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
-                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-            };
-            var yAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
-            };
-
-            model.Axes.Add(xAxis);
-            model.Axes.Add(yAxis);           
-
-            return model;
-        }
+        // funkcije koje generiraju modele
 
         private static PlotModel LineModel(List<BaseCsvData> inputList, string dataSelection, GraphConfig graphConfig)
         {
-            // kreiranje modela za plotanje
             var model = new PlotModel
             {
                 Background = OxyColor.Parse(graphConfig.GraphBackground),
-                PlotAreaBorderColor = OxyColor.Parse("#00000000"),
+                PlotAreaBorderColor = OxyColors.Transparent,
             };
 
-            // serija točaka
             var seriesBlue = new LineSeries // LTE
             {
                 Color = OxyColor.Parse(graphConfig.LTEcolor),
@@ -186,7 +69,6 @@ namespace Dora.Data
 
             for (int i = 0; i < inputList.Count; i++)
             {
-                // uzimanje vrijednosti, dataSelection definira koji property 
                 object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
 
                 if (inputList[i].Tech == "EN-DC")
@@ -232,37 +114,33 @@ namespace Dora.Data
             model.Series.Add(seriesBlue);
             model.Series.Add(seriesRed);
 
-            // definiranje osi
-            // Parse hex color from graphConfig.GraphElements
             var parsedColor = OxyColor.Parse(graphConfig.GraphElements);
-
-            // Create base color for gridlines with 50 opacity
             var gridlineColor = OxyColor.FromAColor(50, parsedColor);
 
             var xAxis = new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                Title = "Time", // Optional axis title
-                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
-                MajorGridlineStyle = LineStyle.Solid, // Gridline style
-                AxislineColor = parsedColor, // Parsed color for axis line
-                TitleColor = parsedColor, // Parsed color for axis title
-                TextColor = parsedColor, // Parsed color for axis labels
-                MinorTicklineColor = parsedColor, // Parsed color for tick marks
-                TicklineColor = parsedColor, // Parsed color for tick marks
+                Title = "Time",
+                MajorGridlineColor = gridlineColor,
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = parsedColor,
+                TitleColor = parsedColor,
+                TextColor = parsedColor,
+                MinorTicklineColor = parsedColor,
+                TicklineColor = parsedColor,
             };
 
             var yAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
                 Title = dataSelection,
-                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
+                MajorGridlineColor = gridlineColor,
                 MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = parsedColor, // Parsed color for axis line
-                TitleColor = parsedColor, // Parsed color for axis title
-                TextColor = parsedColor, // Parsed color for axis labels
-                MinorTicklineColor = parsedColor, // Parsed color for tick marks
-                TicklineColor = parsedColor, // Parsed color for tick marks
+                AxislineColor = parsedColor,
+                TitleColor = parsedColor,
+                TextColor = parsedColor,
+                MinorTicklineColor = parsedColor,
+                TicklineColor = parsedColor,
             };
 
             model.Axes.Add(xAxis);
@@ -271,195 +149,7 @@ namespace Dora.Data
             return model;
         }
 
-        public static PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection) // izgleda kao clustered column, minimalna prilagodba potrebna
-        {
-            // kreiranje modela za plotanje
-            var model = new PlotModel
-            {
-                Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.Transparent,
-            };
-
-            // serija točaka
-            var seriesBlue = new StemSeries // LTE
-            {
-                Color = OxyColor.Parse("#349DC8"),
-            };
-
-            var seriesRed = new StemSeries // NR
-            {
-                Color = OxyColor.Parse("#C41F1F"),
-            };
-
-            for (int i = 0; i < inputList.Count; i++) // ---> test za dualno pokazivanje grafa
-            {
-                if (inputList[i].Tech == "EN-DC")
-                {
-                    // uzimanje vrijednosti, dataSelection definira koji property 
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G, upisujem
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 4G upisujem nullove
-                    }
-                    else
-                    {
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // nema 5G vrijednosti                        
-                    }
-                }
-                else
-                {
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G, upisujem
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 5G upisujem nullove
-                    }
-                    else
-                    {
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // nema 4G vrijednosti
-                    }
-                }
-            }
-
-            model.Series.Add(seriesBlue);
-            model.Series.Add(seriesRed);
-
-            // definiranje osi
-            var xAxis = new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "Time", // Optional axis title
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
-                MajorGridlineStyle = LineStyle.Solid, // Gridline style
-                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
-                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
-                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-            };
-            var yAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
-            };
-
-            model.Axes.Add(xAxis);
-            model.Axes.Add(yAxis);
-
-            return model;
-        }
-
-        private static PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection, bool peakNormalization, int peakLimit)
-        {
-            // kreiranje modela za plotanje
-            var model = new PlotModel
-            {
-                Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.Transparent,
-            };
-
-            // serija točaka
-            var seriesBlue = new StemSeries // LTE
-            {
-                Color = OxyColor.Parse("#349DC8"),
-            };
-
-            var seriesRed = new StemSeries // NR
-            {
-                Color = OxyColor.Parse("#C41F1F"),
-            };
-
-            for (int i = 0; i < inputList.Count; i++)
-            {
-                // uzimanje vrijednosti, dataSelection definira koji property 
-                object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                if (inputList[i].Tech == "EN-DC")
-                {
-                    if (dataValue != null)
-                    {
-                        if (peakNormalization == true && (int)dataValue < peakLimit)
-                        {
-                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 5G i zadovoljava uvjete
-                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 4G upisujem nullove
-                        }
-                        else
-                        {
-                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // 5G vrijednost ne zadovoljava uvjete
-                        }
-                    }
-                    else
-                    {
-                        seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // nema 5G vrijednosti
-                    }
-                }
-                else
-                {
-                    if (dataValue != null)
-                    {
-                        if (peakNormalization == true && (int)dataValue < peakLimit)
-                        {
-                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), Convert.ToDouble(dataValue))); // vrijednost je 4G i zadovoljava uvjete
-                            seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // u 5G upisujem nullove
-                        }
-                        else
-                        {
-                            seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // 4G vrijednost ne zadovoljava uvjete
-                        }
-                    }
-                    else
-                    {
-                        seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(inputList[i].Time), double.NaN)); // nema 4G vrijednosti
-                    }
-                }
-            }
-
-            model.Series.Add(seriesBlue);
-            model.Series.Add(seriesRed);
-
-            // definiranje osi
-            var xAxis = new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "Time", // Optional axis title
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White), // White gridlines
-                MajorGridlineStyle = LineStyle.Solid, // Gridline style
-                AxislineColor = OxyColor.FromRgb(255, 255, 255), // White axis line
-                TitleColor = OxyColor.FromRgb(255, 255, 255), // Axis title color
-                TextColor = OxyColor.FromRgb(255, 255, 255), // Axis label color
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-                TicklineColor = OxyColor.FromRgb(255, 255, 255), // Tick marks color
-            };
-            var yAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255),
-            };
-
-            model.Axes.Add(xAxis);
-            model.Axes.Add(yAxis);
-
-            return model;
-        }
-
-        private static PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection, GraphConfig graphConfig, int interpolationFactor = 1, bool interpolationState = false)
+        private static PlotModel StemModel(List<BaseCsvData> inputList, string dataSelection, GraphConfig graphConfig, int duplicationFactor = 1, bool interpolationState = false)
         {
             var model = new PlotModel
             {
@@ -469,14 +159,13 @@ namespace Dora.Data
 
             if (!interpolationState)
             {
-                interpolationFactor = 1;
+                duplicationFactor = 1;
             }
 
-            var seriesBlue = new StemSeries { Color = OxyColor.Parse(graphConfig.LTEcolor) }; // LTE
-            var seriesRed = new StemSeries { Color = OxyColor.Parse(graphConfig.NRcolor) };  // NR
+            var seriesLTE = new StemSeries { Color = OxyColor.Parse(graphConfig.LTEcolor) }; // LTE
+            var seriesNR = new StemSeries { Color = OxyColor.Parse(graphConfig.NRcolor) };  // NR
 
-            // Create a list of all points with their technology type
-            var allPointsWithTech = new List<(DateTime time, double value, string tech)>();
+            var points = new List<(DateTime time, double value, string tech)>();
 
             for (int i = 0; i < inputList.Count; i++)
             {
@@ -486,55 +175,50 @@ namespace Dora.Data
 
                 if (dataValue != null && graphConfig.PeakNormalization && Convert.ToInt32(dataValue) < graphConfig.PeakLimit)
                 {
-                    allPointsWithTech.Add((time, Convert.ToDouble(dataValue), tech));
+                    points.Add((time, Convert.ToDouble(dataValue), tech));
                 }
             }
 
-            // Sort by time to ensure proper order
-            allPointsWithTech = allPointsWithTech.OrderBy(p => p.time).ToList();
+            // sortiranje po vremenu (eliminacija potencijalnih grešaka)
+            //points = points.OrderBy(p => p.time).ToList();
 
-            // Function to interpolate points only within continuous technology segments
-            List<(DateTime time, double value, string tech)> InterpolatePointsWithTechBoundaries(List<(DateTime time, double value, string tech)> points)
+            // dodavanje točaka u kontinuiranim segmentima
+            List<(DateTime time, double value, string tech)> DuplicatePoints(List<(DateTime time, double value, string tech)> originalPoints)
             {
-                if (points.Count < 2 || interpolationFactor <= 1) return points;
+                if (originalPoints.Count < 2 || duplicationFactor <= 1) return originalPoints; // ako je u listi jedna točka ili faktor dupliciranja iznosi 1 ili manje vraćaju se originalne točke
 
                 var result = new List<(DateTime time, double value, string tech)>();
 
-                for (int i = 0; i < points.Count - 1; i++)
+                for (int i = 0; i < originalPoints.Count - 1; i++)
                 {
-                    var current = points[i];
-                    var next = points[i + 1];
+                    var current = originalPoints[i];
+                    var next = originalPoints[i + 1];
 
-                    // Add interpolated points only if the technology doesn't change
                     if (current.tech == next.tech)
                     {
-                        for (int j = 0; j < interpolationFactor; j++)
+                        for (int j = 0; j < duplicationFactor; j++)
                         {
-                            var fraction = (double)j / interpolationFactor;
+                            var fraction = (double)j / duplicationFactor;
                             var interpolatedTime = current.time.AddTicks((long)(fraction * (next.time - current.time).Ticks));
                             result.Add((interpolatedTime, current.value, current.tech));
                         }
                     }
                     else
                     {
-                        // Technology changes, just add the current point without interpolation
                         result.Add(current);
                     }
                 }
 
-                // Add the last point
-                if (points.Count > 0)
+                if (originalPoints.Count > 0)
                 {
-                    result.Add(points[points.Count - 1]);
+                    result.Add(originalPoints[originalPoints.Count - 1]);
                 }
 
                 return result;
             }
 
-            // Interpolate all points while respecting technology boundaries
-            var interpolatedPoints = InterpolatePointsWithTechBoundaries(allPointsWithTech);
+            var interpolatedPoints = DuplicatePoints(points);
 
-            // Separate interpolated points by technology
             var bluePoints = new List<(DateTime time, double value)>();
             var redPoints = new List<(DateTime time, double value)>();
 
@@ -550,167 +234,59 @@ namespace Dora.Data
                 }
             }
 
-            // Get all unique times
-            var allTimes = new HashSet<DateTime>();
-            bluePoints.ForEach(p => allTimes.Add(p.time));
-            redPoints.ForEach(p => allTimes.Add(p.time));
-            var sortedTimes = allTimes.OrderBy(t => t).ToList();
+            var allUniqueTimes = new HashSet<DateTime>(); // hash tablica svih vremenskih točaka
+            bluePoints.ForEach(p => allUniqueTimes.Add(p.time)); // dodavanje svih vremena u hashset
+            redPoints.ForEach(p => allUniqueTimes.Add(p.time));
+            var sortedTimes = allUniqueTimes.OrderBy(t => t).ToList(); // sortirane sve jedinstvene vremenske točke u list
 
-            // Add points to series, using NaN for missing values
+            
             foreach (var time in sortedTimes)
             {
                 var bluePoint = bluePoints.FirstOrDefault(p => p.time == time);
                 var redPoint = redPoints.FirstOrDefault(p => p.time == time);
 
-                seriesBlue.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time),
+                seriesLTE.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time),
                     bluePoint.time != default ? bluePoint.value : double.NaN));
 
-                seriesRed.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time),
+                seriesNR.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time),
                     redPoint.time != default ? redPoint.value : double.NaN));
             }
 
-            model.Series.Add(seriesBlue);
-            model.Series.Add(seriesRed);
+            model.Series.Add(seriesLTE);
+            model.Series.Add(seriesNR);
 
-            // definiranje osi
-            // Parse hex color from graphConfig.GraphElements
             var parsedColor = OxyColor.Parse(graphConfig.GraphElements);
-
-            // Create base color for gridlines with 50 opacity
             var gridlineColor = OxyColor.FromAColor(50, parsedColor);
 
+            // definiranje osi
             var xAxis = new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                Title = "Time", // Optional axis title
-                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
-                MajorGridlineStyle = LineStyle.Solid, // Gridline style
-                AxislineColor = parsedColor, // Parsed color for axis line
-                TitleColor = parsedColor, // Parsed color for axis title
-                TextColor = parsedColor, // Parsed color for axis labels
-                MinorTicklineColor = parsedColor, // Parsed color for tick marks
-                TicklineColor = parsedColor, // Parsed color for tick marks
+                Title = "Time",
+                MajorGridlineColor = gridlineColor,
+                MajorGridlineStyle = LineStyle.Solid,
+                AxislineColor = parsedColor,
+                TitleColor = parsedColor,
+                TextColor = parsedColor,
+                MinorTicklineColor = parsedColor,
+                TicklineColor = parsedColor,
             };
 
             var yAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
                 Title = dataSelection,
-                MajorGridlineColor = gridlineColor, // Parsed color with 50 opacity
+                MajorGridlineColor = gridlineColor,
                 MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = parsedColor, // Parsed color for axis line
-                TitleColor = parsedColor, // Parsed color for axis title
-                TextColor = parsedColor, // Parsed color for axis labels
-                MinorTicklineColor = parsedColor, // Parsed color for tick marks
-                TicklineColor = parsedColor, // Parsed color for tick marks
+                AxislineColor = parsedColor,
+                TitleColor = parsedColor,
+                TextColor = parsedColor,
+                MinorTicklineColor = parsedColor,
+                TicklineColor = parsedColor,
             };
 
             model.Axes.Add(xAxis);
             model.Axes.Add(yAxis);
-
-            return model;
-        }
-
-        private static PlotModel ColumnModel(List<BaseCsvData> inputList, string dataSelection)
-        {
-            var model = new PlotModel
-            {
-                Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.Transparent,
-            };
-
-            // Create series for both technologies
-            var seriesBlue = new BarSeries // LTE
-            {
-                Title = "LTE",
-                FillColor = OxyColor.Parse("#349DC8"),
-                StrokeColor = OxyColor.Parse("#349DC8"),
-                StrokeThickness = 1,
-                XAxisKey = "Value",
-                YAxisKey = "Category",
-                BarWidth = 0.8
-            };
-
-            var seriesRed = new BarSeries // NR
-            {
-                Title = "NR",
-                FillColor = OxyColor.Parse("#C41F1F"),
-                StrokeColor = OxyColor.Parse("#C41F1F"),
-                StrokeThickness = 1,
-                XAxisKey = "Value",
-                YAxisKey = "Category",
-                BarWidth = 0.8
-            };
-
-            // Create category axis with time labels
-            var categoryAxis = new CategoryAxis
-            {
-                Position = AxisPosition.Bottom,
-                Key = "Category",
-                Title = "Time",
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255)
-            };
-
-            // Add data points and time labels
-            for (int i = 0; i < inputList.Count; i++)
-            {
-                categoryAxis.Labels.Add(inputList[i].Time.ToString("HH:mm:ss"));
-
-                if (inputList[i].Tech == "EN-DC")
-                {
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesRed.Items.Add(new BarItem { Value = Convert.ToDouble(dataValue) });
-                        seriesBlue.Items.Add(new BarItem { Value = double.NaN });
-                    }
-                    else
-                    {
-                        seriesRed.Items.Add(new BarItem { Value = double.NaN });
-                    }
-                }
-                else
-                {
-                    object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);
-
-                    if (dataValue != null)
-                    {
-                        seriesBlue.Items.Add(new BarItem { Value = Convert.ToDouble(dataValue) });
-                        seriesRed.Items.Add(new BarItem { Value = double.NaN });
-                    }
-                    else
-                    {
-                        seriesBlue.Items.Add(new BarItem { Value = double.NaN });
-                    }
-                }
-            }
-
-            // Add value axis
-            var valueAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Key = "Value",
-                Title = dataSelection,
-                MajorGridlineColor = OxyColor.FromAColor(50, OxyColors.White),
-                MajorGridlineStyle = LineStyle.Solid,
-                AxislineColor = OxyColor.FromRgb(255, 255, 255),
-                TitleColor = OxyColor.FromRgb(255, 255, 255),
-                TextColor = OxyColor.FromRgb(255, 255, 255),
-                MinorTicklineColor = OxyColor.FromRgb(255, 255, 255),
-                TicklineColor = OxyColor.FromRgb(255, 255, 255)
-            };
-
-            model.Axes.Add(categoryAxis);
-            model.Axes.Add(valueAxis);
-            model.Series.Add(seriesBlue);
-            model.Series.Add(seriesRed);
 
             return model;
         }
@@ -743,11 +319,11 @@ namespace Dora.Data
                 BarWidth = 0.8
             };
 
-            // Calculate total time span and intervals
+
             var startTime = inputList[0].Time;
-            var endTime = inputList[inputList.Count - 1].Time;  // Changed from [^1] to [Count - 1]
+            var endTime = inputList[inputList.Count - 1].Time;
             var totalSeconds = (endTime - startTime).TotalSeconds;
-            var intervalSeconds = totalSeconds / 20; // Split into 20 intervals
+            var intervalSeconds = totalSeconds / 20;
 
             var categoryAxis = new CategoryAxis
             {
@@ -763,28 +339,25 @@ namespace Dora.Data
                 TicklineColor = OxyColor.FromRgb(255, 255, 255)
             };
 
-            // Initialize both series with zero values for all time points
             for (int i = 0; i < inputList.Count; i++)
             {
-                // Only add labels for strategic points
                 var currentTime = inputList[i].Time;
                 var elapsedSeconds = (currentTime - startTime).TotalSeconds;
 
-                if (i == 0 || i == inputList.Count - 1 || // Always show first and last
-                    i % Math.Max(1, inputList.Count / 20) == 0) // Show approximately 20 points
+                if (i == 0 || i == inputList.Count - 1 ||
+                    i % Math.Max(1, inputList.Count / 20) == 0)
                 {
                     categoryAxis.Labels.Add(currentTime.ToString("HH:mm:ss"));
                 }
                 else
                 {
-                    categoryAxis.Labels.Add(""); // Empty label for other points
+                    categoryAxis.Labels.Add("");
                 }
 
                 seriesBlue.Items.Add(new BarItem { Value = 0 });
                 seriesRed.Items.Add(new BarItem { Value = 0 });
             }
 
-            // Fill in actual values where they exist
             for (int i = 0; i < inputList.Count; i++)
             {
                 object dataValue = inputList[i].GetType().GetProperty(dataSelection).GetValue(inputList[i]);

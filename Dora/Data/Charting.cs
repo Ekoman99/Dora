@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Dora.Data
 {
-    internal class Charting
+    static class Charting
     {
-        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection)
+        private static List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection)
         {
             //trenutno za throughtput
 
@@ -60,7 +60,7 @@ namespace Dora.Data
             return colorAssignments;
         }
 
-        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> dataIntervals)
+        public static List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> dataIntervals)
         {
             List<(int Id, string Color)> colorAssignments = new List<(int Id, string Color)>();
 

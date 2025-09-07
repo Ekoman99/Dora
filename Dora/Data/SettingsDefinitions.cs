@@ -30,6 +30,6 @@ namespace Dora.Data
 
         public string AxisColor { get; set; }
 
-        public double MaxRelativeHeight { get; set; } // New setting for maximum relative height
+        public double MaxRelativeHeight { get; set; }
     }
 }

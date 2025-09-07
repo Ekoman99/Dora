@@ -145,8 +145,20 @@
     {
       "Id": 4,
       "LowerLimit": 6.25,
-      "UpperLimit": 1000.0,
+      "UpperLimit": 10.0,
       "Color": "Green"
+    },
+    {
+      "Id": 0,
+      "LowerLimit": 10.0,
+      "UpperLimit": 23.0,
+      "Color": "#E39120"
+    },
+    {
+      "Id": 0,
+      "LowerLimit": 23.0,
+      "UpperLimit": 1000.0,
+      "Color": "#DD2FE1"
     }
   ]
 }

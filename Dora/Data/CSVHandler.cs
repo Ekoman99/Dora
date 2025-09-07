@@ -17,13 +17,11 @@ namespace Dora.Data
         {
             List<BaseCsvData> dataList = new List<BaseCsvData>();
 
-            // definiranje kulture zbog zareza kao separatora
-            var commaDecimalCulture = new CultureInfo("hr-HR");
+            var commaDecimal = new CultureInfo("hr-HR"); // zbog decimalnog zareza u hrv
 
-            // pohrana .csv u listu objekata
-            var csvConfig = new CsvConfiguration(commaDecimalCulture);
+            var csvConfig = new CsvConfiguration(commaDecimal);
             csvConfig.Delimiter = ";";
-            csvConfig.HasHeaderRecord = true; // csv header
+            csvConfig.HasHeaderRecord = true;
 
             using (var reader = new StreamReader(filePath))
             using (var csv = new CsvReader(reader, csvConfig))

@@ -163,20 +163,20 @@ namespace Dora
 
         public class NullableIntTypeConverter : DefaultTypeConverter
         {
-            public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+            public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData) //override standardnog konvertera za format podataka
             {
                 if (string.IsNullOrWhiteSpace(text) || text.Equals("N/A", StringComparison.OrdinalIgnoreCase))
                 {
-                    return null; // Return null for "N/A" or empty values
+                    return null;
                 }
 
                 if (int.TryParse(text, out int result))
                 {
-                    return result; // Return the parsed integer value
+                    return result;
                 }
                 else
                 {
-                    throw new Exception("errror");
+                    throw new Exception("error");
                 }
             }
         }
@@ -249,7 +249,7 @@ namespace Dora
             {
                 if (tabSelector == "Downlink" || tabSelector == "RSRP" || tabSelector == "SINR" || tabSelector == "RSRQ" || tabSelector == "CQI" || tabSelector == "Ping")
                 {
-                    List<(int Id, string Color)> boje = AssignColors(inputDataList, tabSelector, dataIntervals);
+                    List<(int Id, string Color)> boje = Charting.AssignColors(inputDataList, tabSelector, dataIntervals);
 
                     var mapWindow = new RouteWindow(mainGeoList, boje);
                     mapWindow.Show();
@@ -302,10 +302,9 @@ namespace Dora
             var colorWindow = new ColorSettingsWindow(allSettings, settingsPath);
             colorWindow.ShowDialog();
 
-            // reload settings after window closes
+            // reload nakon
             InitializeSettings();
 
-            // Update the graph with new colors if data is loaded
             if (loadComplete)
             {
                 UpdateGraph();
@@ -377,12 +376,7 @@ namespace Dora
 
         private void CalculateCards(string dataSelection, string unit, bool peakSmooth, int peakUpperLimit)
         {
-            var (greenValue, redValue, blueValue) = MathEngine.CalculateCardValues(
-                inputDataList,
-                dataSelection,
-                unit,
-                peakSmooth,
-                peakUpperLimit);
+            var (greenValue, redValue, blueValue) = MathEngine.CalculateCardValues(inputDataList, dataSelection, unit, peakSmooth, peakUpperLimit);
 
             greenCard.Number = greenValue;
             redCard.Number = redValue;
@@ -395,14 +389,14 @@ namespace Dora
             {
                 if(!isLineOptionSelected)
                 {
-                    var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector, graphConfig, interpolationValue, isInterpolationEnabled); // Execute StemGraph method if toggle button is off
+                    var oxyplotChart = VisualisationEngine.StemGraph(inputDataList, tabSelector, graphConfig, interpolationValue, isInterpolationEnabled); // ako je toggle off
                     model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
                 }
                 else if (isLineOptionSelected)
                 {
-                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, graphConfig); // Execute StemGraph method if toggle button is off
+                    var oxyplotChart = VisualisationEngine.LineGraph(inputDataList, tabSelector, graphConfig); // ako je toggle on
                     model = oxyplotChart.Model;
                     oxyplotChartContainer.Children.Clear();
                     oxyplotChartContainer.Children.Add(oxyplotChart);
@@ -431,48 +425,48 @@ namespace Dora
             return coordinatesList;
         }
 
-        private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> colorIntervals)
+        /*private List<(int Id, string Color)> AssignColors(List<BaseCsvData> list, string dataSelection, Dictionary<string, List<MapColorIntervals>> colorIntervals)
         {
             List<(int Id, string Color)> colorList = new List<(int Id, string Color)>();
 
-            // ako lista podataka nije prazna i intervali boja sadrže odrabranu tehnologiju, kopiraj potrebne intervale i dodijeli boje
-            if (list.Count > 0 && colorIntervals.ContainsKey(dataSelection))
+            if (!colorIntervals.ContainsKey(dataSelection))
             {
-                var intervals = colorIntervals[dataSelection];
+                return colorList;
+            }
 
-                for (int i = 0; i < list.Count; i++)
+            var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection);
+            if (propertyInfo == null)
+            {
+                return colorList;
+            }
+
+            var intervals = colorIntervals[dataSelection];
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var item = list[i];
+                var value = propertyInfo.GetValue(item);
+                string color = null;
+
+                if (value != null && (value is double || value is int || value is float))
                 {
-                    var item = list[i];
-                    var propertyInfo = typeof(BaseCsvData).GetProperty(dataSelection); // provjera sadrži li BaseCsvData traženi property
+                    double numberValue = Convert.ToDouble(value);
 
-                    if (propertyInfo != null)
+                    foreach (var interval in intervals)
                     {
-                        int id = i;
-                        string color = null;
-
-                        object dataSelectionValue = propertyInfo.GetValue(item, null); // kopirati vrijednost traženog property-a iz liste
-
-                        if (dataSelectionValue != null && (dataSelectionValue is double || dataSelectionValue is int || dataSelectionValue is float))
+                        if (numberValue >= interval.LowerLimit && numberValue < interval.UpperLimit)
                         {
-                            double value = Convert.ToDouble(dataSelectionValue);
-
-                            foreach (var interval in intervals)
-                            {
-                                if (value >= interval.LowerLimit && value < interval.UpperLimit)
-                                {
-                                    color = interval.Color;
-                                    break;
-                                }
-                            }
+                            color = interval.Color;
+                            break;
                         }
-
-                        colorList.Add((id, color));
                     }
                 }
+
+                colorList.Add((i, color));
             }
 
             return colorList;
-        }
+        }*/
 
         private void InfoCardText()
         {

@@ -27,10 +27,10 @@ namespace Dora
             currentSettings = settings;
             settingsFilePath = filePath;
 
-            // Create a deep copy of original settings
+            // kopija postavki
             originalSettings = JsonConvert.DeserializeObject<SettingsDefinitions>(JsonConvert.SerializeObject(settings));
 
-            // Define default values
+            // default za reset
             defaultSettings = new SettingsDefinitions
             {
                 NRColor = "#C41F1F",      // crvena
@@ -67,7 +67,7 @@ namespace Dora
 
             colorDialog.FullOpen = true;
 
-            // Try to set current color
+            // postavi boju
             try
             {
                 var currentColor = (Color)ColorConverter.ConvertFromString(colorItem.ColorHex);
@@ -81,7 +81,7 @@ namespace Dora
                 var hexColor = $"#{selectedColor.R:X2}{selectedColor.G:X2}{selectedColor.B:X2}";
                 colorItem.ColorHex = hexColor;
 
-                // Update the current settings based on property name
+                // update
                 switch (colorItem.PropertyName)
                 {
                     case "NRColor":
@@ -98,7 +98,7 @@ namespace Dora
                         break;
                 }
 
-                // Refresh the collection view to update the color display
+                // refresh kolecije
                 CollectionViewSource.GetDefaultView(ColorsGrid.ItemsSource).Refresh();
             }
         }
@@ -133,7 +133,7 @@ namespace Dora
 
             colorItem.ColorHex = defaultValue;
 
-            // Refresh the collection view to update the color display
+            // refresh kolekcije
             CollectionViewSource.GetDefaultView(ColorsGrid.ItemsSource).Refresh();
         }
 
@@ -141,7 +141,7 @@ namespace Dora
         {
             try
             {
-                // Save to file
+                // spremanje u datoteku
                 string json = JsonConvert.SerializeObject(currentSettings, Formatting.Indented);
                 File.WriteAllText(settingsFilePath, json);
 
@@ -165,13 +165,13 @@ namespace Dora
 
             if (result == MessageBoxResult.Yes)
             {
-                // Update current settings with defaults
+                // osvježavanje postavki
                 currentSettings.NRColor = defaultSettings.NRColor;
                 currentSettings.LTEColor = defaultSettings.LTEColor;
                 currentSettings.GraphBackground = defaultSettings.GraphBackground;
                 currentSettings.GraphElements = defaultSettings.GraphElements;
 
-                // Update the observable collection
+                // update kolecije
                 foreach (var item in colorItems)
                 {
                     switch (item.PropertyName)
@@ -191,7 +191,7 @@ namespace Dora
                     }
                 }
 
-                // Save the reset settings and close the window
+                // reset
                 try
                 {
                     string json = JsonConvert.SerializeObject(currentSettings, Formatting.Indented);
@@ -213,7 +213,7 @@ namespace Dora
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {
-            // Restore original settings
+            // originalne postavke
             currentSettings.NRColor = originalSettings.NRColor;
             currentSettings.LTEColor = originalSettings.LTEColor;
             currentSettings.GraphBackground = originalSettings.GraphBackground;

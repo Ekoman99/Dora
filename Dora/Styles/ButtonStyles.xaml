@@ -252,20 +252,17 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
                     <Grid>
-                        <!-- Gray background -->
                         <Rectangle x:Name="Background" Fill="LightGray" RadiusX="10" RadiusY="10"/>
-                        <!-- Circle -->
                         <Ellipse x:Name="Circle" Fill="Transparent" Stroke="Transparent" StrokeThickness="2" HorizontalAlignment="Left" Margin="5"/>
-                        <!-- Text -->
                         <TextBlock x:Name="TextBlock" Text="{TemplateBinding Content}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <!-- Toggle Button Checked state -->
+                        <!-- check state -->
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Background" Property="Fill" Value="#3b699b"/>
                             <Setter TargetName="Circle" Property="HorizontalAlignment" Value="Right"/>
                         </Trigger>
-                        <!-- Mouse over state -->
+                        <!-- mouse -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Background" Property="Fill" Value="#3b699b"/>
                         </Trigger>
@@ -280,13 +277,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Grid>
-                        <!-- Background -->
                         <Rectangle x:Name="Background" Fill="LightGray" RadiusX="10" RadiusY="10"/>
-                        <!-- Text -->
                         <TextBlock x:Name="TextBlock" Text="{TemplateBinding Content}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <!-- Mouse over state -->
+                        <!-- mouse -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Background" Property="Fill" Value="#3b699b"/>
                         </Trigger>

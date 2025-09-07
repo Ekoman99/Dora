@@ -92,14 +92,13 @@ namespace Dora
         {
             InitializeComponent();
 
-            // Initialize GMapControl
             gmapControl = new GMapControl
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch
             };
 
-            // Init map settings
+            // default
             gmapControl.MapProvider = GMapProviders.OpenStreetMap;
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             gmapControl.MinZoom = 1;
@@ -107,7 +106,7 @@ namespace Dora
             gmapControl.Zoom = 14;
             gmapControl.ShowCenter = false;
 
-            // Add markers
+            // markeri
             foreach (var (latitude, longitude) in coordinates)
             {
                 GMapMarker marker = new GMapMarker(new PointLatLng(latitude, longitude))
@@ -115,7 +114,7 @@ namespace Dora
                     Shape = new Ellipse()
                     {
                         Fill = new SolidColorBrush(Colors.Red),
-                        Width = 0, // 0 da se ne vide markeri
+                        Width = 0, // 0 da se ne vide markeri nego samo linije
                         Height = 4,
                         Margin = new Thickness(-4, -4, 0, 0)
                     }
@@ -123,7 +122,6 @@ namespace Dora
                 gmapControl.Markers.Add(marker);
             }
 
-            // List of route points
             List<PointLatLng> routePoints = coordinates.Select(c => new PointLatLng(c.Latitude, c.Longitude)).ToList();
 
             for (int i = 0; i < routePoints.Count - 1; i++)
@@ -135,7 +133,6 @@ namespace Dora
 
                 Color selectedColor = (Color)ColorConverter.ConvertFromString(colorName);
 
-                // Antialiasing for smoother lines
                 routeSegment.Shape = new Path()
                 {
                     Stroke = new SolidColorBrush(selectedColor),
@@ -147,19 +144,14 @@ namespace Dora
                 gmapControl.Markers.Add(routeSegment);
             }
 
-            // Set initial position to the first coordinate
             gmapControl.Position = new PointLatLng(coordinates[0].Latitude, coordinates[0].Longitude);
 
-            // Add GMapControl to Grid (which already exists in XAML)
             MainGrid.Children.Add(gmapControl);
 
-            // Handle resizing dynamically
-            this.SizeChanged += RouteWindow_SizeChanged;
+            this.SizeChanged += RouteWindow_SizeChanged; // resizing dynamically
 
-            // Zooming
             gmapControl.MouseWheel += GmapControlMouseWheel;
 
-            // Cleanup on window close
             this.Closed += (sender, e) =>
             {
                 gmapControl.Markers.Clear();
@@ -178,16 +170,14 @@ namespace Dora
         {
             e.Handled = true;
 
-            double zoomStep = 0.2; // Smaller steps for finer control
+            double zoomStep = 0.2;
 
             if (e.Delta > 0)
             {
-                // Zoom in
                 gmapControl.Zoom = Math.Min(gmapControl.MaxZoom, gmapControl.Zoom + zoomStep);
             }
             else if (e.Delta < 0)
             {
-                // Zoom out
                 gmapControl.Zoom = Math.Max(gmapControl.MinZoom, gmapControl.Zoom - zoomStep);
             }
         }

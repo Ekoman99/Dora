@@ -28,30 +28,9 @@
 
             <StackPanel>
                 <TextBlock Text="Dora" FontSize="26" Foreground="Black" HorizontalAlignment="Center" FontWeight="SemiBold" Margin="0 50 0 20"/>
-                <!--user-->
-                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30 0 0 0">
-                    <Border CornerRadius="10" Width="40" Height="40">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
-                                <GradientStop Color="#7f7cf1" Offset="0"/>
-                                <GradientStop Color="#27396b" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
-
-                        <TextBlock Text="AD" Foreground="#ffffff" FontSize="22" FontWeight="SemiBold"
-                                   TextAlignment="Center" VerticalAlignment="Center" Margin="3 0 0 2"/>
-                    </Border>
-
-                    <StackPanel Margin="10 0 0 0" VerticalAlignment="Center">
-                        <TextBlock Text="Admin" FontSize="15" Margin="0 0 0 5" Foreground="black"/>
-                        <TextBlock Text="Version" FontSize="11" Foreground="#7788bf"/>
-                    </StackPanel>
-                    
-                </StackPanel>-->
-
                 <Separator Height="1" Margin="20 30" Background="#46558a"/>
                 
-                <!--menu-->
+                <!--buttons-->
                 <Button x:Name="rsrpButton" Style="{StaticResource menuButton}" Click="ClickRSRP">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="TowerCell" Style="{StaticResource menuButtonIcon}"/>
@@ -97,7 +76,6 @@
                 <Button x:Name="downButton" Style="{StaticResource menuButton}" Click="ClickThroughput">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="ArrowDown" Style="{StaticResource menuButtonIcon}"/>
-                        <!--<fa:IconImage Icon="Home"/>-->
                         <TextBlock Text="Throughput" Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </Button>
@@ -136,13 +114,8 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 0 30">
-                    <!--<Button Content="min" Style="{StaticResource topMenuButton}" Background="#DCC742" Foreground="#ffffff" Click="MinimiseButton_Click"/>
-                    <Button Content="close" Style="{StaticResource topMenuButtonRight}" Background="#EC3535" Foreground="#ffffff" Click="CloseButton_Click"/>-->
                 </StackPanel>
-                
-                <!--program name-->
-                
-                
+
                 <!--infocards-->
                 <Grid x:Name="infoCardGrid" Grid.Row="2" Margin="50 20 15 40">
                     <Grid.ColumnDefinitions>
@@ -151,7 +124,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- main window initializes InfoCards here so they can be used as objects -->
+                    <!-- infocards initialised -->
                     
                 </Grid>
 
@@ -174,7 +147,7 @@
                                 <TextBlock x:Name="chartTitle" Text="Chart" Style="{StaticResource titleText}"/>
                             </StackPanel>
 
-                            <!-- graph-->
+                            <!--graph-->
                             <Grid Grid.Row="1" Name="oxyplotChartContainer"/>
 
                         </Grid>
@@ -208,9 +181,9 @@
                                     <Separator Opacity="0" Height="20"/>
                                     <ToggleButton Content="Line graph" Width="120" Height="30" ToggleButton.Checked="ToggleButton_Checked" ToggleButton.Unchecked="ToggleButton_Unchecked" IsChecked="{Binding IsLineOptionSelected, Mode=TwoWay}" Style="{StaticResource CustomToggleButtonStyle}"/>
                                     <Separator Opacity="0" Height="20"/>
-                                    <Button Width="120" Height="30" Content="Modify intervals" Click="MapIntervalEditor" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Button Width="120" Height="30" Content="Modify map intervals" Click="MapIntervalEditor" Style="{StaticResource sideMenuButtonStyle}"/>
                                     <Separator Opacity="0" Height="20"/>
-                                    <Button Width="120" Height="30" Content="Color settings" Click="OpenColorSettings" Style="{StaticResource sideMenuButtonStyle}"/>
+                                    <Button Width="120" Height="30" Content="Chart color settings" Click="OpenColorSettings" Style="{StaticResource sideMenuButtonStyle}"/>
                                     <Separator Opacity="0" Height="20"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <TextBox Width="50" Height="30" Text="{Binding InterpolationValue, UpdateSourceTrigger=PropertyChanged}">
